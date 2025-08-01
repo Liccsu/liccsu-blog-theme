@@ -14,18 +14,26 @@ function createBackToTop() {
     progressStroke: '0 113',
     
     init() {
+      // 初始化时计算一次进度
+      this.updateProgress();
+      
       // 监听滚动事件
       window.addEventListener('scroll', () => {
-        const scrollTop = window.scrollY;
-        this.isVisible = scrollTop > 300;
-        
-        // 计算进度条
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = Math.min(scrollTop / maxScroll, 1);
-        const circumference = 2 * Math.PI * 18; // r=18
-        const strokeDasharray = circumference * progress;
-        this.progressStroke = `${strokeDasharray} ${circumference}`;
+        this.updateProgress();
       });
+    },
+    
+    updateProgress() {
+      const scrollTop = window.scrollY;
+      // 按钮在滚动超过100px时显示
+      this.isVisible = scrollTop > 100;
+      
+      // 进度环始终根据滚动位置更新
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = maxScroll > 0 ? Math.min(scrollTop / maxScroll, 1) : 0;
+      const circumference = 2 * Math.PI * 18; // r=18
+      const strokeDasharray = circumference * progress;
+      this.progressStroke = `${strokeDasharray} ${circumference}`;
     },
     
     scrollToTop() {
@@ -95,44 +103,37 @@ function createNavbarController() {
 /**
  * 主题切换控制器
  * 模板使用：templates/modules/nav.html
+ * 统一管理整个应用的主题状态
  */
 function createThemeToggle() {
   return {
     isDark: false,
     lightTheme: '',
     darkTheme: '',
-    defaultTheme: '',
     
     init() {
-      // 从 Thymeleaf 数据属性获取主题配置
+      // 在初始化时保存主题配置到组件实例
       this.lightTheme = this.$el.dataset.lightTheme || 'light';
       this.darkTheme = this.$el.dataset.darkTheme || 'dark';
-      this.defaultTheme = this.$el.dataset.defaultTheme || 'dark_theme';
+      const defaultTheme = this.$el.dataset.defaultTheme || 'dark_theme';
       
-      // 从 localStorage 读取用户选择
+      // 从 localStorage 读取用户偏好
       const savedTheme = localStorage.getItem('theme-mode');
       
-      if (savedTheme) {
-        this.isDark = savedTheme === 'dark_theme';
-      } else {
-        // 使用后台配置的默认主题
-        this.isDark = this.defaultTheme === 'dark_theme';
-      }
+      // 确定当前主题状态
+      this.isDark = savedTheme ? (savedTheme === 'dark_theme') : (defaultTheme === 'dark_theme');
       
-      this.applyTheme();
+      // 应用主题
+      const themeName = this.isDark ? this.darkTheme : this.lightTheme;
+      document.documentElement.setAttribute('data-theme', themeName);
     },
     
     toggleTheme() {
       this.isDark = !this.isDark;
       const themeMode = this.isDark ? 'dark_theme' : 'light_theme';
+      
       localStorage.setItem('theme-mode', themeMode);
-      this.applyTheme();
-    },
-    
-    applyTheme() {
-      // 应用具体的 DaisyUI 主题名称
-      const themeName = this.isDark ? this.darkTheme : this.lightTheme;
-      document.documentElement.setAttribute('data-theme', themeName);
+      document.documentElement.setAttribute('data-theme', this.isDark ? this.darkTheme : this.lightTheme);
     }
   };
 }

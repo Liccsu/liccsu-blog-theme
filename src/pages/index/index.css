@@ -39,35 +39,6 @@
     0 0 20px rgba(123, 66, 246, 0.2);
 }
 
-/* 副标题打字机效果 */
-.sub-title—typewriter {
-  overflow: hidden;
-  border-right: 2px solid var(--sky-primary);
-  white-space: nowrap;
-  animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
-}
-
-@keyframes typing {
-  from {
-    width: 0;
-  }
-
-  to {
-    width: 100%;
-  }
-}
-
-@keyframes blink-caret {
-
-  from,
-  to {
-    border-color: transparent;
-  }
-
-  50% {
-    border-color: var(--sky-primary);
-  }
-}
 
 
 
@@ -463,4 +434,47 @@
   background: linear-gradient(5deg, #fff 50%, var(--sky-primary) 50%);
   -webkit-background-clip: text;
   background-clip: text;
+}
+
+/* 副标题打字机效果 */
+.typewriter {
+  font-family: 'Comic Neue', cursive, Arial, sans-serif;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  line-height: 1.4;
+  overflow: hidden;
+  border-right: 2px solid var(--sky-primary);
+  white-space: nowrap;
+  animation: typing 3s steps(40, end), blink-caret .75s step-end infinite;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+
+  from,
+  to {
+    border-color: transparent;
+  }
+
+  50% {
+    border-color: var(--sky-primary);
+  }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .typewriter {
+    font-size: 1.125rem;
+    letter-spacing: 0.05em;
+    animation: typing 2.5s steps(30, end), blink-caret 0.75s step-end infinite;
+  }
 }

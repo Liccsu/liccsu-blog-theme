@@ -28,7 +28,7 @@
             </span>
             <!-- 站点标题 -->
             <span th:if="${theme.config.nav.logo_settings.show_logo_title}" 
-                  th:text="${#strings.isEmpty(theme.config.nav.logo_settings.custom_logo_title) ? site.title : theme.config.nav.logo_settings.custom_logo_title}">
+                  th:text="${theme.config.nav.logo_settings.custom_logo_title}">
             </span>
           </a>
         </div>
@@ -93,7 +93,8 @@
                x-data="createThemeToggle()"
                th:attr="data-light-theme=${theme.config.nav.theme_settings.light_theme}, 
                         data-dark-theme=${theme.config.nav.theme_settings.dark_theme},
-                        data-default-theme=${theme.config.nav.theme_settings.default_theme}">
+                        data-default-theme=${theme.config.nav.theme_settings.default_theme}"
+               x-init="$nextTick(() => init())">
             <button @click="toggleTheme()" 
                     class="btn btn-ghost btn-circle hover:bg-base-200/50 border-0"
                     :title="isDark ? '切换到浅色模式' : '切换到深色模式'">
@@ -289,67 +290,5 @@
   
 </div>
 
-<!-- 主题切换功能脚本 -->
-<script>
-/**
- * 创建主题切换组件
- * 支持 DaisyUI 主题系统，从后台配置获取主题名称
- */
-function createThemeToggle() {
-  return {
-    isDark: false,
-    lightTheme: '',
-    darkTheme: '',
-    defaultTheme: '',
-    
-    /**
-     * 组件初始化
-     */
-    init() {
-      // 从 Thymeleaf 数据属性获取主题配置
-      this.lightTheme = this.$el.dataset.lightTheme || 'light';
-      this.darkTheme = this.$el.dataset.darkTheme || 'dark';
-      this.defaultTheme = this.$el.dataset.defaultTheme || 'dark_theme';
-      
-      // 从 localStorage 读取用户选择
-      const savedTheme = localStorage.getItem('theme-mode');
-      
-      if (savedTheme) {
-        this.isDark = savedTheme === 'dark_theme';
-      } else {
-        // 使用后台配置的默认主题
-        this.isDark = this.defaultTheme === 'dark_theme';
-      }
-      
-      this.applyTheme();
-    },
-    
-    /**
-     * 切换主题
-     */
-    toggleTheme() {
-      this.isDark = !this.isDark;
-      const themeMode = this.isDark ? 'dark_theme' : 'light_theme';
-      localStorage.setItem('theme-mode', themeMode);
-      this.applyTheme();
-    },
-    
-    /**
-     * 应用主题到文档
-     */
-    applyTheme() {
-      const themeName = this.isDark ? this.darkTheme : this.lightTheme;
-      document.documentElement.setAttribute('data-theme', themeName);
-      
-      // 为了兼容其他可能依赖 dark 类的组件
-      if (this.isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
-  };
-}
-</script>
 
 </html>

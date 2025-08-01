@@ -1,10 +1,10 @@
 <!-- 增强版视差沉浸Banner Header -->
     <div class="relative min-h-screen overflow-hidden mt-[-50px] z-10" x-data="headerController()">
         <!-- 背景层：图片Banner背景 -->
-        <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 z-0" th:if="${theme.config.index.background_settings.show_background}">
             <!-- 图片背景 -->
             <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"
-                 style="background-image: url('https://www.dmoe.cc/random.php'); opacity: 0.6;">
+                 th:style="'background-image: url(' + ${theme.config.index.background_settings.background_image} + '); opacity: 0.6;'">
             </div>
 
             <!-- 渐变蒙版 -->
@@ -22,19 +22,23 @@
 
             <!-- 主标题 - 增强特效 -->
             <h1 id="main-title" 
+                th:if="${theme.config.index.title_settings.show_title}"
                 class="text-6xl md:text-8xl font-bold mb-6 text-white animate-in fade-in zoom-in duration-700 effect-base"
                 style="animation-delay: 0.2s;"
-                th:data-text="${site.title}"
-                th:data-original-text="${site.title}"
-                th:data-decoration-effect="${theme.config.index.title_effects.decoration_effect}"
-                th:data-style-effect="${theme.config.index.title_effects.style_effect}">
-                <span th:text="${site.title}">Sky Blog</span>
+                th:data-text="${#strings.isEmpty(theme.config.index.title_settings.custom_title) ? site.title : theme.config.index.title_settings.custom_title}"
+                th:data-original-text="${#strings.isEmpty(theme.config.index.title_settings.custom_title) ? site.title : theme.config.index.title_settings.custom_title}"
+                th:data-decoration-effect="${theme.config.index.title_settings.decoration_effect}"
+                th:data-style-effect="${theme.config.index.title_settings.style_effect}">
+                <span th:text="${#strings.isEmpty(theme.config.index.title_settings.custom_title) ? site.title : theme.config.index.title_settings.custom_title}">Sky Blog</span>
             </h1>
 
             <!-- 副标题 - 增强特效 -->
-            <div class="text-xl md:text-2xl mb-8 max-w-2xl animate-in text-white fade-in slide-in-from-bottom-4 duration-700"
+            <div th:if="${theme.config.index.subtitle_settings.show_subtitle}"
+                 class="text-xl md:text-2xl mb-8 max-w-2xl animate-in text-white fade-in slide-in-from-bottom-4 duration-700"
                  style="animation-delay: 0.4s;">
-                <p id="subtitle" class="sub-title—typewriter subtitle-glow">
+                <p id="subtitle" 
+                   th:class="${theme.config.index.subtitle_settings.subtitle_effect == 'typewriter'} ? 'subtitle-glow typewriter' : 'subtitle-glow'"
+                   th:text="${theme.config.index.subtitle_settings.subtitle_text}">
                     记录生活，分享思考，探索无限可能
                 </p>
             </div>

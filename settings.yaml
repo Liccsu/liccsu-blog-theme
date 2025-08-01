@@ -189,43 +189,6 @@ spec:
                 - label: 隐藏
                   value: false
 
-    - group: index
-      label: 首页设置
-      formSchema:
-        - $formkit: group
-          name: title_effects
-          label: 标题样式组
-          value:
-            decoration_effect: none
-            style_effect: none
-          children:
-            - $formkit: select
-              name: decoration_effect
-              label: 装饰效果
-              help: 选择标题的装饰特效
-              value: none
-              options:
-                - value: none
-                  label: 无装饰
-                - value: effect-particles
-                  label: 粒子特效
-                - value: effect-starlight
-                  label: 星光特效
-                - value: effect-neon-edge
-                  label: 标题发光
-            - $formkit: select
-              name: style_effect
-              label: 样式效果
-              help: 选择标题的样式特效
-              value: none
-              options:
-                - value: none
-                  label: 无样式
-                - value: effect-marker-pop
-                  label: 麦克笔感
-                - value: effect-diagonal-split
-                  label: 斜切双色
-
     - group: footer
       label: 页脚设置
       formSchema:
@@ -529,3 +492,120 @@ spec:
                 - $formkit: text
                   name: url
                   label: 链接地址
+    - group: index
+      label: 首页设置
+      formSchema:
+        - $formkit: group
+          name: background_settings
+          label: 头部背景设置
+          value:
+            show_background: true
+            background_image: "https://www.dmoe.cc/random.php"
+          children:
+            - $formkit: radio
+              id: show_background
+              name: show_background
+              label: 显示背景图片
+              help: 是否显示首页头部背景图片
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: text
+              name: background_image
+              key: background_image_field
+              if: $get(show_background).value
+              label: 背景图片地址
+              help: 首页头部背景图片的URL地址
+        - $formkit: group
+          name: title_settings
+          label: 主标题设置
+          value:
+            show_title: true
+            custom_title: "sky blog"
+            decoration_effect: effect-particles
+            style_effect: effect-marker-pop
+          children:
+            - $formkit: radio
+              id: show_title
+              name: show_title
+              label: 显示主标题
+              help: 是否显示首页头部的主标题
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: text
+              name: custom_title
+              key: custom_title_field
+              if: $get(show_title).value
+              label: 自定义主标题
+              help: 留空则使用站点标题，填写则使用自定义标题
+            - $formkit: select
+              name: decoration_effect
+              key: decoration_effect_field
+              if: $get(show_title).value
+              label: 装饰效果
+              help: 选择主标题的装饰特效
+              value: none
+              options:
+                - value: none
+                  label: 无
+                - value: effect-particles
+                  label: 粒子特效
+                - value: effect-starlight
+                  label: 星光特效
+                - value: effect-neon-edge
+                  label: 标题发光
+            - $formkit: select
+              name: style_effect
+              key: style_effect_field
+              if: $get(show_title).value
+              label: 样式效果
+              help: 选择主标题的样式特效
+              value: none
+              options:
+                - value: none
+                  label: 无
+                - value: effect-marker-pop
+                  label: 麦克笔感
+                - value: effect-diagonal-split
+                  label: 斜切双色
+        - $formkit: group
+          name: subtitle_settings
+          label: 副标题设置
+          value:
+            show_subtitle: true
+            subtitle_text: "记录生活，分享思考，探索无限可能"
+            subtitle_effect: typewriter
+          children:
+            - $formkit: radio
+              id: show_subtitle
+              name: show_subtitle
+              label: 显示副标题
+              help: 是否显示首页头部的副标题
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: text
+              name: subtitle_text
+              key: subtitle_text_field
+              if: $get(show_subtitle).value
+              label: 副标题文本
+              help: 首页头部副标题的文字内容
+            - $formkit: select
+              name: subtitle_effect
+              key: subtitle_effect_field
+              if: $get(show_subtitle).value
+              label: 副标题效果
+              help: 选择副标题的显示效果
+              value: none
+              options:
+                - value: none
+                  label: 无
+                - value: typewriter
+                  label: 打字机效果
