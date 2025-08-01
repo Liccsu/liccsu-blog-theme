@@ -1,0 +1,21 @@
+apiVersion: theme.halo.run/v1alpha1
+kind: Theme
+metadata:
+  name: theme-sky-blog-1
+spec:
+  displayName: Sky Blog Theme
+  author:
+    name: sky
+    website: https://github.com/sky121666
+  description: 基于Vite、Tailwind CSS、DaisyUI和Alpine.js的现代化Halo主题
+  logo: https://www.halo.run/logo
+  homepage: https://github.com/sky121666/halo-theme-sky-blog-1#readme
+  repo: https://github.com/sky121666/halo-theme-sky-blog-1
+  issues: https://github.com/sky121666/halo-theme-sky-blog-1/issues
+  settingName: "theme-sky-blog-1-setting"
+  configMapName: "theme-sky-blog-1-configMap"
+  version: "1.0.0"
+  requires: "2.21.3"
+  license:
+    - name: "GPL-3.0"
+      url: "https://github.com/sky121666/halo-theme-sky-blog-1/blob/main/LICENSE"

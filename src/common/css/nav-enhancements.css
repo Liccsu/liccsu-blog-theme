@@ -1,0 +1,303 @@
+/* ==================== 导航栏增强样式 ==================== */
+
+/**
+ * 导航栏核心样式配置
+ * 功能：提供透明背景、渐变遮罩和平滑过渡效果
+ * 特性：响应式设计、主题适配、性能优化
+ */
+
+/* 基础导航栏样式 - 透明背景与过渡效果 */
+.navbar {
+  position: relative;
+  background-color: transparent;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+
+
+/* 导航栏内容层级管理 - 确保内容显示在遮罩上层 */
+.navbar > * {
+  position: relative;
+  z-index: 10;
+}
+
+
+
+/**
+ * 导航菜单交互效果
+ * 功能：菜单项悬停动画、下划线指示器、位移效果
+ */
+
+/* 导航菜单项基础悬停效果 */
+.nav-menu-item {
+  position: relative;
+  transition: all 0.3s ease-out;
+  overflow: hidden;
+}
+
+.nav-menu-item::before {
+  content: "";
+  position: absolute;
+  bottom: 0.25rem;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  transform: translateX(-50%);
+  transition: width 0.3s ease-out;
+  opacity: 0.8;
+}
+
+.nav-menu-item:hover::before {
+  width: 60%;
+}
+
+.nav-menu-item:hover {
+  transform: translateY(-1px);
+  transition: all 0.3s ease-out;
+}
+
+/* Logo 区域交互效果 - 缩放与位移动画 */
+.flex-shrink-0 a {
+  transition: all 0.3s ease-out;
+}
+
+.flex-shrink-0 a:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.flex-shrink-0 a span {
+  transition: all 0.3s ease-out;
+}
+
+.flex-shrink-0 a:hover span {
+  transform: translateX(2px);
+}
+
+/* 按钮交互效果 - 简约优雅风格 */
+.btn-ghost {
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.btn-ghost:hover {
+  background-color: color-mix(in srgb, var(--color-base-content) 5%, transparent);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-base-content) 8%, transparent);
+}
+
+.btn-ghost:active {
+  transform: translateY(0);
+  transition: all 0.1s ease;
+}
+
+
+/**
+ * 移动端菜单系统
+ * 功能：抽屉式菜单、触摸优化、动画效果
+ */
+
+/* 移动端抽屉背景模糊效果 */
+.drawer-side {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: color-mix(in srgb, var(--color-base-content) 5%, transparent);
+}
+
+/* 移动端菜单项触摸交互优化 */
+.mobile-menu-link {
+  transition: all 0.3s ease-out;
+  position: relative;
+}
+
+.mobile-menu-link:hover {
+  transform: translateX(4px);
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+/* 移动端二级菜单折叠展开效果 */
+.mobile-menu-item .collapse {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.mobile-menu-item .collapse-title {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-menu-item .collapse-content {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 移动端子菜单项交互样式 */
+.mobile-menu-item .menu-item a {
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-menu-item .menu-item a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent);
+  transition: width 0.3s ease-out;
+}
+
+.mobile-menu-item .menu-item a:hover::before {
+  width: 100%;
+}
+
+/* 移动端子菜单容器滑入动画 */
+.mobile-menu-item .collapse-content .menu {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 移动端菜单项激活状态样式 */
+.mobile-menu-item .collapse[open] .collapse-title {
+  background-color: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  border-left-color: var(--color-primary);
+}
+
+/* 移动端触摸反馈效果 - 按压缩放动画 */
+.mobile-menu-item .collapse-title:active {
+  transform: scale(0.98);
+  transition-duration: 0.1s;
+}
+
+.mobile-menu-item .menu-item a:active {
+  transform: scale(0.95);
+  transition-duration: 0.1s;
+}
+
+/**
+ * 导航栏滚动状态增强
+ * 功能：滚动时的渐变遮罩、阴影效果、背景变化
+ */
+
+/* 滚动状态渐变遮罩效果 - 使用主题背景色的渐变透明效果 */
+.navbar::after {
+ content: "";
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: calc(100% + 1rem);
+  background: linear-gradient(
+    to bottom,
+    var(--color-base-100) 0%,
+    color-mix(in srgb, var(--color-base-100) 99%, transparent) 14%,
+    color-mix(in srgb, var(--color-base-100) 95%, transparent) 26.2%,
+    color-mix(in srgb, var(--color-base-100) 89%, transparent) 36.8%,
+    color-mix(in srgb, var(--color-base-100) 82%, transparent) 45.9%,
+    color-mix(in srgb, var(--color-base-100) 74%, transparent) 53.7%,
+    color-mix(in srgb, var(--color-base-100) 65%, transparent) 60.4%,
+    color-mix(in srgb, var(--color-base-100) 55%, transparent) 66.2%,
+    color-mix(in srgb, var(--color-base-100) 45%, transparent) 71.2%,
+    color-mix(in srgb, var(--color-base-100) 35%, transparent) 75.6%,
+    color-mix(in srgb, var(--color-base-100) 26%, transparent) 79.6%,
+    color-mix(in srgb, var(--color-base-100) 18%, transparent) 83.4%,
+    color-mix(in srgb, var(--color-base-100) 11%, transparent) 87.2%,
+    color-mix(in srgb, var(--color-base-100) 5%, transparent) 91.1%,
+    color-mix(in srgb, var(--color-base-100) 1%, transparent) 95.3%,
+    transparent 100%
+  );
+  pointer-events: none;
+  opacity: 1;
+  z-index: -1;
+  transition: opacity 0.4s, transform 0.4s, visibility 0.4s, -webkit-transform 0.4s;
+}
+
+/* 滚动状态样式已移除 - 避免灰色蒙版问题 */
+
+
+/**
+ * 菜单状态指示器
+ * 功能：当前活动菜单项的视觉标识
+ */
+
+/* 活动菜单项样式 */
+.nav-menu-item.active {
+  color: var(--color-primary);
+}
+
+.nav-menu-item.active::before {
+  width: 40%;
+  background: var(--color-primary);
+}
+
+/**
+ * 响应式设计优化
+ * 功能：移动端专用样式、触摸交互、性能优化
+ */
+
+/* 移动端导航栏响应式样式 */
+@media (max-width: 1023px) {
+  
+  .drawer-button:hover {
+    transform: scale(1.05);
+    background-color: color-mix(in srgb, var(--color-base-200) 40%, transparent);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-base-content) 8%, transparent);
+  }
+  
+  /* 移动端触摸反馈 */
+  .drawer-button:active {
+    transform: scale(0.98);
+    transition-duration: 0.1s;
+  }
+}
+
+/**
+ * 下拉子菜单交互效果
+ * 功能：子菜单项的悬停动画和背景变化
+ */
+
+/* 下拉子菜单项悬停效果 */
+.dropdown-content a {
+  transition: all 0.2s ease-out;
+}
+
+.dropdown-content a:hover {
+  transform: translateX(2px);
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+/* 自定义动画 - 用于移动端菜单 */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 移动端抽屉背景模糊效果 - DaisyUI 不提供的复杂效果 */
+.drawer-side {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background-color: color-mix(in srgb, var(--color-base-content) 5%, transparent);
+}
+
+/* 移动端菜单动画类 */
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out;
+}
+

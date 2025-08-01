@@ -1,0 +1,85 @@
+/* Halo 搜索组件样式变量 - 完全基于 DaisyUI 主题系统 */
+:root {
+    /* 基础样式变量 */
+    --halo-search-widget-base-font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    /* 颜色变量 - 使用正确的 DaisyUI 5 变量格式 */
+    --halo-search-widget-base-bg-color: var(--color-base-100);
+    /* base-100 */
+    --halo-search-widget-primary-color: var(--color-primary);
+    /* primary */
+    --halo-search-widget-muted-color: color-mix(in oklch, var(--color-base-content) 80%, transparent);
+    /* base-content/80 */
+    --halo-search-widget-content-color: var(--color-base-content);
+    /* base-content */
+    /* 模态框样式 */
+    --halo-search-widget-modal-bg-color: var(--color-base-100);
+    /* base-100 */
+    --halo-search-widget-modal-layer-color: color-mix(in oklch, var(--color-base-100) 80%, transparent);
+    /* base-100/80 */
+    /* 搜索结果项样式 */
+    --halo-search-widget-hit-bg-color: var(--color-base-200);
+    /* base-200 */
+    /* 分割线和边框样式 */
+    --halo-search-widget-divider-color: var(--color-base-300);
+    /* base-300 */
+    --halo-search-widget-kbd-border-color: var(--color-base-300);
+    /* base-300 */
+    --halo-search-widget-kbd-shadow: 0 1px 3px 0 color-mix(in oklch, var(--color-base-100) 10%, transparent), 0 1px 2px -1px color-mix(in oklch, var(--color-base-100) 10%, transparent);
+
+    /* Header 文字颜色变量 - 智能适配 DaisyUI 主题 */
+    --header-title-color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+    /* 标题文字颜色 */
+    --header-title-color-scrolled: color-mix(in oklch, var(--color-base-content) 90%, transparent);
+    /* 滚动后标题文字颜色 */
+    --header-subtitle-color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+    /* 副标题文字颜色 */
+    --header-subtitle-color-scrolled: color-mix(in oklch, var(--color-base-content) 80%, transparent);
+    /* 滚动后副标题文字颜色 */
+    --header-moment-title-color: var(--color-base-content);
+    /* 说说标题颜色 */
+    --header-moment-text-color: var(--color-base-content);
+    /* 说说文字颜色 */
+    --header-moment-meta-color: var(--color-base-content);
+    /* 说说元信息颜色 */
+    --header-moment-time-color: var(--color-base-content);
+    /* 说说时间颜色 */
+    --header-moment-like-color: var(--color-base-content);
+    /* 说说点赞按钮颜色 */
+    --header-moment-nav-color: var(--color-base-content);
+    /* 说说导航按钮颜色 */
+    --header-moment-control-color: var(--color-base-content);
+    /* 说说控制按钮颜色 */
+
+    /* 主题颜色变量，使用DaisyUI的颜色系统 */
+    --sky-primary: var(--color-primary);
+    --sky-secondary: var(--color-secondary);
+    --sky-accent: var(--color-accent);
+    --bg: var(--color-base-100);
+    --title-color: var(--color-white);
+    /* 发光效果尺寸 */
+    --glow-size: 20px;
+    /* 发光强度级别 */
+    --glow-intensity-light: 0.3;
+    --glow-intensity-medium: 0.6;
+    --glow-intensity-strong: 0.8;
+}
+
+/* 滚动条修复 - 防止页面跳动 */
+body {
+    scrollbar-gutter: stable;
+}
+
+body[style*="overflow: hidden"] {
+    overflow: auto !important;
+}
+
+@supports not (scrollbar-gutter: stable) {
+    :root {
+        --scrollbar-width: calc(100vw - 100%);
+    }
+
+    body[style*="overflow: hidden"] {
+        padding-right: var(--scrollbar-width);
+        overflow: hidden;
+    }
+}

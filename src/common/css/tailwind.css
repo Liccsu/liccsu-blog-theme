@@ -1,0 +1,7 @@
+/* 导入 Tailwind CSS 和 DaisyUI */
+@import "tailwindcss";
+@plugin "@iconify/tailwind4";
+@plugin "daisyui" {
+  themes: all;
+}
+

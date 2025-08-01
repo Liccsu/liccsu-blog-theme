@@ -1,0 +1,531 @@
+apiVersion: v1alpha1
+kind: Setting
+metadata:
+  name: theme-sky-blog-1-setting
+spec:
+  forms:
+    - group: nav
+      label: 导航设置
+      formSchema:
+        - $formkit: group
+          name: logo_settings
+          label: Logo 设置
+          value:
+            show_logo_icon: true
+            logo_icon_html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="M17.5 19H6.5C4.01472 19 2 16.9853 2 14.5C2 12.1597 3.79594 10.1953 6.08203 10.021C6.55632 6.45499 9.49378 3.5 13.25 3.5C16.3663 3.5 19.0378 5.50437 19.932 8.33691C22.0368 8.88413 23.5 10.864 23.5 13.25C23.5 15.7353 21.4853 17.75 19 17.75H18.75C18.3358 17.75 18 17.4142 18 17C18 16.5858 18.3358 16.25 18.75 16.25H19C20.6569 16.25 22 14.9069 22 13.25C22 11.5931 20.6569 10.25 19 10.25C18.5858 10.25 18.25 9.91421 18.25 9.5C18.25 7.01472 16.2353 5 13.75 5C11.2647 5 9.25 7.01472 9.25 9.5C9.25 9.91421 8.91421 10.25 8.5 10.25C6.01472 10.25 4 12.2647 4 14.75C4 16.2353 5.21472 17.5 6.75 17.5H17.25C17.6642 17.5 18 17.8358 18 18.25C18 18.6642 17.6642 19 17.25 19Z"/></svg>'
+            show_logo_title: true
+            custom_logo_title: "5ee"
+          children:
+            - $formkit: radio
+              id: show_logo_icon
+              name: show_logo_icon
+              label: 显示 Logo 图标
+              help: 是否显示 Logo 左侧的图标
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: code
+              name: logo_icon_html
+              key: logo_icon_html_field
+              if: $get(show_logo_icon).value
+              label: Logo svg 代码
+              help: 直接输入 SVG 或其他 HTML 代码，将在页面中直接渲染
+              language: html
+              height: 120
+              value:
+            - $formkit: radio
+              id: show_logo_title
+              name: show_logo_title
+              label: 显示 Logo 标题
+              help: 是否显示 Logo 右侧的标题文字
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: text
+              name: custom_logo_title
+              key: custom_logo_title_field
+              if: $get(show_logo_title).value
+              label: 自定义 Logo 标题
+              help: 留空则使用站点标题，填写则使用自定义标题
+        - $formkit: group
+          name: menu_settings
+          label: 菜单设置
+          value:
+            primary_menu: primary
+          children:
+            - $formkit: menuRadio
+              name: primary_menu
+              label: 主菜单
+              value: primary
+              help: 选择要在主导航栏显示的菜单
+        - $formkit: group
+          name: theme_settings
+          label: 主题设置
+          value:
+            show_theme_toggle: true
+            default_theme: dark_theme
+            light_theme: light
+            dark_theme: dark
+          children:
+            - $formkit: radio
+              name: show_theme_toggle
+              label: 主题切换按钮
+              help: 右上角主题切换按钮的显示控制
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: radio
+              name: default_theme
+              label: 默认主题
+              value: dark_theme
+              options:
+                - value: light_theme
+                  label: 浅色主题
+                - value: dark_theme
+                  label: 深色主题
+            - $formkit: select
+              name: light_theme
+              label: 浅色主题
+              value: light
+              options:
+                - value: light
+                  label: light (明亮)
+                - value: cupcake
+                  label: cupcake (纸杯蛋糕)
+                - value: bumblebee
+                  label: bumblebee (大黄蜂)
+                - value: emerald
+                  label: emerald (翡翠)
+                - value: corporate
+                  label: corporate (企业)
+                - value: retro
+                  label: retro (复古)
+                - value: valentine
+                  label: valentine (情人节)
+                - value: garden
+                  label: garden (花园)
+                - value: aqua
+                  label: aqua (水蓝)
+                - value: lofi
+                  label: lofi (低保真)
+                - value: pastel
+                  label: pastel (粉彩)
+                - value: fantasy
+                  label: fantasy (幻想)
+                - value: wireframe
+                  label: wireframe (线框)
+                - value: cmyk
+                  label: cmyk (印刷色)
+                - value: autumn
+                  label: autumn (秋天)
+                - value: acid
+                  label: acid (酸性)
+                - value: lemonade
+                  label: lemonade (柠檬水)
+                - value: winter
+                  label: winter (冬天)
+                - value: nord
+                  label: nord (北欧)
+            - $formkit: select
+              name: dark_theme
+              label: 深色主题
+              value: dark
+              options:
+                - value: dark
+                  label: dark (暗黑)
+                - value: business
+                  label: business (商务)
+                - value: synthwave
+                  label: synthwave (合成波)
+                - value: cyberpunk
+                  label: cyberpunk (赛博朋克)
+                - value: halloween
+                  label: halloween (万圣节)
+                - value: forest
+                  label: forest (森林)
+                - value: black
+                  label: black (黑色)
+                - value: luxury
+                  label: luxury (奢华)
+                - value: dracula
+                  label: dracula (德古拉)
+                - value: night
+                  label: night (夜晚)
+                - value: coffee
+                  label: coffee (咖啡)
+                - value: dim
+                  label: dim (昏暗)
+                - value: sunset
+                  label: sunset (日落)
+        - $formkit: group
+          name: right_settings
+          label: 功能设置
+          value:
+            show_search: true
+            show_user_actions: true
+          children:
+            - $formkit: radio
+              name: show_search
+              label: 搜索按钮
+              help: 右上角搜索按钮
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: radio
+              name: show_user_actions
+              label: 登录按钮
+              help: 右上角登录/用户菜单按钮
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+
+    - group: index
+      label: 首页设置
+      formSchema:
+        - $formkit: group
+          name: title_effects
+          label: 标题样式组
+          value:
+            decoration_effect: none
+            style_effect: none
+          children:
+            - $formkit: select
+              name: decoration_effect
+              label: 装饰效果
+              help: 选择标题的装饰特效
+              value: none
+              options:
+                - value: none
+                  label: 无装饰
+                - value: effect-particles
+                  label: 粒子特效
+                - value: effect-starlight
+                  label: 星光特效
+                - value: effect-neon-edge
+                  label: 标题发光
+            - $formkit: select
+              name: style_effect
+              label: 样式效果
+              help: 选择标题的样式特效
+              value: none
+              options:
+                - value: none
+                  label: 无样式
+                - value: effect-marker-pop
+                  label: 麦克笔感
+                - value: effect-diagonal-split
+                  label: 斜切双色
+
+    - group: footer
+      label: 页脚设置
+      formSchema:
+        - $formkit: group
+          name: brand_settings
+          label: 品牌信息设置
+          value:
+            show_brand_icon: true
+            brand_icon_html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="M17.5 19H6.5C4.01472 19 2 16.9853 2 14.5C2 12.1597 3.79594 10.1953 6.08203 10.021C6.55632 6.45499 9.49378 3.5 13.25 3.5C16.3663 3.5 19.0378 5.50437 19.932 8.33691C22.0368 8.88413 23.5 10.864 23.5 13.25C23.5 15.7353 21.4853 17.75 19 17.75H18.75C18.3358 17.75 18 17.4142 18 17C18 16.5858 18.3358 16.25 18.75 16.25H19C20.6569 16.25 22 14.9069 22 13.25C22 11.5931 20.6569 10.25 19 10.25C18.5858 10.25 18.25 9.91421 18.25 9.5C18.25 7.01472 16.2353 5 13.75 5C11.2647 5 9.25 7.01472 9.25 9.5C9.25 9.91421 8.91421 10.25 8.5 10.25C6.01472 10.25 4 12.2647 4 14.75C4 16.2353 5.21472 17.5 6.75 17.5H17.25C17.6642 17.5 18 17.8358 18 18.25C18 18.6642 17.6642 19 17.25 19Z"/></svg>'
+            show_brand_title: true
+            custom_brand_title: "Sky Blog"
+            show_brand_subtitle: true
+            brand_subtitle: "现代博客主题"
+            show_site_days: true
+            site_start_date: "2024-01-01"
+          children:
+            - $formkit: radio
+              id: show_brand_icon
+              name: show_brand_icon
+              label: 显示品牌图标
+              help: 是否显示页脚品牌区域的图标
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: code
+              name: brand_icon_html
+              id: brand_icon_html_field
+              key: brand_icon_html_field
+              if: $get(show_brand_icon).value
+              label: 品牌图标代码
+              help: 直接输入 SVG 或其他 HTML 代码，将在页面中直接渲染
+              language: html
+              height: 120
+            - $formkit: radio
+              id: show_brand_title
+              name: show_brand_title
+              label: 显示品牌标题
+              help: 是否显示页脚品牌标题
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: text
+              name: custom_brand_title
+              id: custom_brand_title_field
+              key: custom_brand_title_field
+              if: $get(show_brand_title).value
+              label: 自定义品牌标题
+              help: 留空则使用站点标题，填写则使用自定义标题
+            - $formkit: radio
+              id: show_brand_subtitle
+              name: show_brand_subtitle
+              label: 显示品牌副标题
+              help: 是否显示页脚品牌副标题
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: text
+              name: brand_subtitle
+              id: brand_subtitle_field
+              key: brand_subtitle_field
+              if: $get(show_brand_subtitle).value
+              label: 品牌副标题
+              help: 品牌标题下方的描述文字
+            - $formkit: radio
+              id: show_site_days
+              name: show_site_days
+              label: 显示运行天数
+              help: 是否显示网站运行天数统计
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: date
+              name: site_start_date
+              id: site_start_date_field
+              key: site_start_date_field
+              if: $get(show_site_days).value
+              label: 建站日期
+              help: 网站建立日期，格式：YYYY-MM-DD
+        - $formkit: group
+          name: navigation_settings
+          label: 快速导航设置
+          value:
+            show_quick_nav: true
+            nav_title: "快速导航"
+            nav_links:
+              - name: "首页"
+                url: "/"
+              - name: "关于"
+                url: "/about"
+              - name: "联系"
+                url: "/contact"
+              - name: "RSS 订阅"
+                url: "/rss"
+          children:
+            - $formkit: radio
+              id: show_quick_nav
+              name: show_quick_nav
+              label: 显示快速导航
+              help: 是否显示页脚快速导航区域
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: text
+              name: nav_title
+              id: nav_title_field
+              key: nav_title_field
+              if: $get(show_quick_nav).value
+              label: 导航标题
+              help: 快速导航区域的标题
+            - $formkit: repeater
+              name: nav_links
+              id: nav_links_field
+              key: nav_links_field
+              if: $get(show_quick_nav).value
+              label: 导航链接
+              help: 配置快速导航的链接项
+              children:
+                - $formkit: text
+                  name: name
+                  label: 链接名称
+                - $formkit: text
+                  name: url
+                  label: 链接地址
+        - $formkit: group
+          name: social_settings
+          label: 社交媒体设置
+          value:
+            show_social_links: true
+            social_title: "关注我们"
+            social_links:
+              - name: "GitHub"
+                url: "https://github.com/sky121666/halo-theme-sky-blog-1"
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>'
+              - name: "Twitter"
+                url: "https://twitter.com/username"
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>'
+              - name: "Telegram"
+                url: "https://t.me/username"
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>'
+              - name: "邮箱"
+                url: "mailto:sky@5ee.net"
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z"/><path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z"/></svg>'
+              - name: "RSS 订阅"
+                url: "/rss.xml"
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M3.429 2.25c9.615 0 17.321 7.706 17.321 17.321a.75.75 0 01-1.5 0c0-8.786-7.035-15.821-15.821-15.821a.75.75 0 010-1.5z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M3.429 7.5c6.902 0 12.321 5.419 12.321 12.321a.75.75 0 01-1.5 0c0-5.983-4.838-10.821-10.821-10.821a.75.75 0 010-1.5z" clip-rule="evenodd"/><path d="M6.75 15a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>'
+          children:
+            - $formkit: radio
+              id: show_social_links
+              name: show_social_links
+              label: 显示社交媒体
+              help: 是否显示页脚社交媒体链接
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: text
+              name: social_title
+              id: social_title_field
+              key: social_title_field
+              if: $get(show_social_links).value
+              label: 社交媒体标题
+              help: 社交媒体区域的标题
+            - $formkit: repeater
+              name: social_links
+              id: social_links_field
+              key: social_links_field
+              if: $get(show_social_links).value
+              label: 社交媒体链接
+              help: 配置社交媒体链接
+              children:
+                - $formkit: text
+                  name: name
+                  label: 平台名称
+                - $formkit: text
+                  name: url
+                  label: 链接地址
+                - $formkit: code
+                  name: icon
+                  label: 图标 SVG 代码
+                  help: 输入 SVG 代码，建议使用 24x24 viewBox，class="w-4 h-4"
+                  language: html
+                  height: 80
+        - $formkit: group
+          name: copyright_settings
+          label: 版权信息设置
+          value:
+            show_legal_links: true
+            legal_links:
+              - name: "隐私政策"
+                url: "/privacy"
+              - name: "使用条款"
+                url: "/terms"
+              - name: "网站地图"
+                url: "/sitemap.xml"
+            copyright_text: "© 2025 Sky Blog •  Powered by Halo"
+            show_icp_info: true
+            icp_number: "京ICP备2024001234号-1"
+            show_police_info: true
+            police_number: "京公网安备11010802024567号"
+            show_hosting_info: true
+            hosting_links:
+              - name: "CloudFlare CDN"
+                url: "https://www.cloudflare.com"
+              - name: "阿里云"
+                url: "https://www.aliyun.com"
+          children:
+            - $formkit: radio
+              id: show_legal_links
+              name: show_legal_links
+              label: 显示法律链接
+              help: 是否显示隐私政策、使用条款等法律链接
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: repeater
+              name: legal_links
+              id: legal_links_field
+              key: legal_links_field
+              if: $get(show_legal_links).value
+              label: 法律链接
+              help: 配置法律相关链接
+              children:
+                - $formkit: text
+                  name: name
+                  label: 链接名称
+                - $formkit: text
+                  name: url
+                  label: 链接地址
+            - $formkit: text
+              name: copyright_text
+              label: 版权文字
+              help: 版权声明文字
+            - $formkit: radio
+              id: show_icp_info
+              name: show_icp_info
+              label: 显示ICP备案
+              help: 是否显示ICP备案信息
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: text
+              name: icp_number
+              id: icp_number_field
+              key: icp_number_field
+              if: $get(show_icp_info).value
+              label: ICP备案号
+              help: ICP备案号码
+            - $formkit: radio
+              id: show_police_info
+              name: show_police_info
+              label: 显示公安备案
+              help: 是否显示公安备案信息
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: text
+              name: police_number
+              id: police_number_field
+              key: police_number_field
+              if: $get(show_police_info).value
+              label: 公安备案号
+              help: 公安备案号码
+            - $formkit: radio
+              id: show_hosting_info
+              name: show_hosting_info
+              label: 显示托管信息
+              help: 是否显示CDN和托管服务信息
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: repeater
+              name: hosting_links
+              id: hosting_links_field
+              key: hosting_links_field
+              if: $get(show_hosting_info).value
+              label: 托管服务链接
+              help: 配置CDN和托管服务相关链接
+              children:
+                - $formkit: text
+                  name: name
+                  label: 服务名称
+                - $formkit: text
+                  name: url
+                  label: 链接地址
