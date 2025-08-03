@@ -9,7 +9,7 @@
   font-weight: 400;
   font-display: swap;
   src: url(/themes/theme-sky-blog-1/assets/fonts/monoton-0.woff2) format('woff2');
- }
+}
 
 @font-face {
   font-family: 'Monoton';
@@ -17,7 +17,7 @@
   font-weight: 400;
   font-display: swap;
   src: url(/themes/theme-sky-blog-1/assets/fonts/monoton-1.woff2) format('woff2');
- }
+}
 
 /* Titan One - 开源装饰字体 */
 @font-face {
@@ -26,7 +26,7 @@
   font-weight: 400;
   font-display: swap;
   src: url(/themes/theme-sky-blog-1/assets/fonts/titan-one-0.woff2) format('woff2');
-  }
+}
 
 @font-face {
   font-family: 'Titan One';
@@ -34,39 +34,39 @@
   font-weight: 400;
   font-display: swap;
   src: url(/themes/theme-sky-blog-1/assets/fonts/titan-one-1.woff2) format('woff2');
-  }
+}
 
 /* ===== 字体工具类 ===== */
 
 /* 英文开源字体工具类 */
 .font-monoton {
-    font-family: 'Monoton', 'Courier New', monospace;
-    font-weight: 400;
-    font-display: swap;
+  font-family: 'Monoton', 'Courier New', monospace;
+  font-weight: 400;
+  font-display: swap;
 }
 
 .font-titan-one {
-    font-family: 'Titan One', Impact, 'Arial Black', sans-serif;
-    font-weight: 400;
-    font-display: swap;
+  font-family: 'Titan One', Impact, 'Arial Black', sans-serif;
+  font-weight: 400;
+  font-display: swap;
 }
 
 /* 中文开源字体工具类 */
 .font-lxgw-wenkai-bright {
-    font-family: 'LXGW WenKai Bright', '霞鹜文楷', '楷体', 'KaiTi', 'STKaiti', serif;
-    font-weight: 300;
-    font-display: swap;
+  font-family: 'LXGW WenKai Bright', '霞鹜文楷', '楷体', 'KaiTi', 'STKaiti', serif;
+  font-weight: 300;
+  font-display: swap;
 }
 
 .font-siyuan-songti {
-    font-family: '思源屏显臻宋', '思源宋体', '宋体', 'SimSun', 'STSong', serif;
-    font-weight: 400;
-    font-display: swap;
+  font-family: '思源屏显臻宋', '思源宋体', '宋体', 'SimSun', 'STSong', serif;
+  font-weight: 400;
+  font-display: swap;
 }
 
 /* 默认字体工具类 */
 .font-default {
-    font-family: '楷体', 'KaiTi', 'STKaiti', serif;
-    font-weight: 400;
-    font-display: swap;
+  font-family: '楷体', 'KaiTi', 'STKaiti', serif;
+  font-weight: 400;
+  font-display: swap;
 }

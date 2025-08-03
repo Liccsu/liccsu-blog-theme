@@ -560,6 +560,24 @@ spec:
                 - value: effect-neon-edge
                   label: 标题发光
             - $formkit: select
+              name: title_font
+              key: title_font_field
+              if: $get(show_title).value
+              label: 主标题字体
+              help: 选择主标题的字体
+              value: font-titan-one
+              options:
+                - value: font-default
+                  label: 默认字体
+                - value: font-monoton
+                  label: Monoton (英文开源)
+                - value: font-titan-one
+                  label: Titan One (英文开源)
+                - value: font-lxgw-wenkai-bright
+                  label: 霞鹜文楷亮 (中文开源)
+                - value: font-siyuan-songti
+                  label: 思源屏显臻宋 (中文开源)
+            - $formkit: select
               name: style_effect
               key: style_effect_field
               if: $get(show_title).value
@@ -570,13 +588,13 @@ spec:
                 - value: none
                   label: 无
                 - value: effect-marker-pop
-                  label: 麦克笔感 (英文开源)
+                  label: 麦克笔感
                 - value: effect-diagonal-split
-                  label: 斜切双色 (英文开源)
-                - value: effect-lxgw-wenkai-bright
-                  label: 霞鹜文楷亮 (中文开源)
-                - value: effect-siyuan-songti
-                  label: 思源屏显臻宋 (中文开源)
+                  label: 斜切双色
+                - value: effect-neon-glow
+                  label: 霓虹发光
+                - value: effect-text-shadow
+                  label: 立体阴影
         - $formkit: group
           name: subtitle_settings
           label: 副标题设置
@@ -613,3 +631,23 @@ spec:
                   label: 无
                 - value: typewriter
                   label: 打字机效果
+                - value: gradient-flow
+                  label: 渐变流动效果
+            - $formkit: select
+              name: subtitle_font
+              key: subtitle_font_field
+              if: $get(show_subtitle).value
+              label: 副标题字体
+              help: 选择副标题的字体样式
+              value: font-default
+              options:
+                - value: font-default
+                  label: 默认字体
+                - value: font-monoton
+                  label: Monoton (英文开源)
+                - value: font-titan-one
+                  label: Titan One (英文开源)
+                - value: font-lxgw-wenkai-bright
+                  label: 霞鹜文楷亮 (中文开源)
+                - value: font-siyuan-songti
+                  label: 思源屏显臻宋 (中文开源)

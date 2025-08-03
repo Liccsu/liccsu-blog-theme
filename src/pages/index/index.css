@@ -543,6 +543,57 @@
 }
 
 /**
+ * 3.2 副标题样式
+ * 副标题的基础样式和特效
+ */
+.subtitle-base {
+  position: relative;
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+/* 副标题打字机效果 */
+.typewriter {
+  overflow: hidden;
+  border-right: 2px solid rgba(255, 255, 255, 0.75);
+  white-space: nowrap;
+  margin: 0 auto;
+  letter-spacing: 0.05em;
+  animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: rgba(255, 255, 255, 0.75) }
+}
+
+/* 副标题渐变流动效果 */
+.gradient-flow {
+  background: linear-gradient(45deg, 
+    var(--sky-primary), var(--sky-secondary), var(--sky-accent), 
+    var(--sky-primary), var(--sky-secondary), var(--sky-accent));
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow-flow 4s ease-in-out infinite;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes rainbow-flow {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
+/**
  * 3.2 装饰特效层 - 不影响文字样式
  * 为标题添加装饰性效果，如粒子、星光等
  */
@@ -884,23 +935,30 @@
 }
 
 /**
- * 3.3 样式特效层 - 只改变文字样式
- * 为标题添加不同的文字样式效果
+ * 3.3 标题和副标题字体
+ * 注意：字体类直接使用 open-fonts.css 中定义的类
+ * - font-default: 默认字体
+ * - font-monoton: Monoton 英文装饰字体
+ * - font-titan-one: Titan One 英文装饰字体
+ * - font-lxgw-wenkai-bright: 霞鹜文楷亮 中文开源字体
+ * - font-siyuan-songti: 思源屏显臻宋 中文开源字体
  */
 
-/* 默认样式 - 楷体 (当选择"无"样式时使用) */
+/**
+ * 3.4 标题样式效果
+ * 为标题提供不同的视觉效果
+ */
+
+/* 无效果 - 基础样式 */
 .effect-none {
-  font-family: '楷体', 'KaiTi', 'STKaiti', serif;
   color: var(--title-color);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  letter-spacing: 0.02em;
 }
 
 /* 麦克笔感特效 - 手绘风格 */
 .effect-marker-pop {
   color: transparent;
   -webkit-text-stroke: 2px #000;
-  font-family: 'Titan One', cursive, Arial, sans-serif;
   transform: rotate(-1deg);
   text-shadow:
     -3px -3px 0px rgba(255, 255, 255, 0.3),
@@ -908,43 +966,60 @@
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-/* 斜切双色特效 - 按照标准实现 */
+/* 斜切双色特效 */
 .effect-diagonal-split {
   color: transparent;
-  letter-spacing: 1px;
-  font-family: 'Monoton', cursive, Arial, sans-serif;
   background: linear-gradient(5deg, #fff 50%, var(--sky-primary) 50%);
   -webkit-background-clip: text;
   background-clip: text;
 }
 
-/* 霞鹜文楷亮特效 - 优雅的开源中文字体风格 */
-.effect-lxgw-wenkai-bright {
-  font-family: 'LXGW WenKai Bright', '霞鹜文楷', '楷体', 'KaiTi', serif;
-  color: var(--title-color);
-  text-shadow: 
-    1px 1px 0px rgba(0, 0, 0, 0.5),
-    2px 2px 4px rgba(0, 0, 0, 0.3),
-    0 0 8px var(--sky-primary);
-  letter-spacing: 0.05em;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  font-weight: 300;
+/* 霓虹发光效果 */
+.effect-neon-glow {
+  color: #fff;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 15px var(--sky-primary),
+    0 0 20px var(--sky-primary),
+    0 0 25px var(--sky-primary),
+    0 0 30px var(--sky-primary),
+    0 0 35px var(--sky-primary);
+  animation: neon-flicker 1.5s infinite alternate;
 }
 
-/* 思源屏显臻宋特效 - 现代开源中文宋体风格 */
-.effect-siyuan-songti {
-  font-family: '思源屏显臻宋', '思源宋体', '宋体', 'SimSun', serif;
-  color: transparent;
-  background: linear-gradient(45deg, 
-    var(--sky-primary), var(--sky-secondary), var(--sky-accent), 
-    var(--sky-primary), var(--sky-secondary), var(--sky-accent));
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: rainbow-flow 4s ease-in-out infinite;
-  letter-spacing: 0.02em;
-  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.2));
-  font-weight: 400;
+@keyframes neon-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow:
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 15px var(--sky-primary),
+      0 0 20px var(--sky-primary),
+      0 0 25px var(--sky-primary),
+      0 0 30px var(--sky-primary),
+      0 0 35px var(--sky-primary);
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+  }
+}
+
+/* 立体阴影效果 */
+.effect-3d-shadow {
+  color: #fff;
+  text-shadow:
+    0 1px 0 #ccc,
+    0 2px 0 #c9c9c9,
+    0 3px 0 #bbb,
+    0 4px 0 #b9b9b9,
+    0 5px 0 #aaa,
+    0 6px 1px rgba(0,0,0,.1),
+    0 0 5px rgba(0,0,0,.1),
+    0 1px 3px rgba(0,0,0,.3),
+    0 3px 5px rgba(0,0,0,.2),
+    0 5px 10px rgba(0,0,0,.25),
+    0 10px 10px rgba(0,0,0,.2),
+    0 20px 20px rgba(0,0,0,.15);
 }
 
 @keyframes rainbow-flow {
