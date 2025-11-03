@@ -73,7 +73,7 @@ spec:
           children:
             - $formkit: radio
               name: show_theme_toggle
-              label: 主题切换按钮
+              label: 主题前端开关
               help: 右上角主题切换按钮的显示控制
               options:
                 - label: 显示
@@ -512,12 +512,16 @@ spec:
                   value: true
                 - label: 隐藏
                   value: false
-            - $formkit: text
+            - $formkit: attachment
               name: background_image
               key: background_image_field
               if: $get(show_background).value
-              label: 背景图片地址
-              help: 首页头部背景图片的URL地址
+              label: 背景图片
+              help: 上传首页头部背景图片（支持 JPG/PNG/WebP 格式）
+              accepts:
+                - image/jpeg
+                - image/png
+                - image/webp
         - $formkit: group
           name: title_settings
           label: 主标题设置
@@ -797,57 +801,6 @@ spec:
                   label: 图标 SVG 代码
                   language: html
                   height: 100
-    - group: general
-      label: 通用设置
-      formSchema:
-        - $formkit: group
-          name: loading_screen
-          label: 加载屏幕
-          value:
-            enable: true
-            type: spinner
-            image_url: ""
-            text: "加载中..."
-          children:
-            - $formkit: radio
-              name: enable
-              label: 启用加载屏幕
-              help: 页面加载时显示加载动画
-              options:
-                - label: 启用
-                  value: true
-                - label: 禁用
-                  value: false
-            - $formkit: select
-              name: type
-              label: 加载图标类型
-              value: spinner
-              help: 选择加载动画样式
-              if: $get(enable).value
-              options:
-                - value: spinner
-                  label: 旋转圆圈（Spinner）
-                - value: dots
-                  label: 跳动圆点（Dots）
-                - value: ring
-                  label: 圆环（Ring）
-                - value: ball
-                  label: 小球（Ball）
-                - value: bars
-                  label: 条形（Bars）
-                - value: image
-                  label: 自定义图片
-            - $formkit: text
-              name: image_url
-              label: 自定义图片 URL
-              help: 填写图片地址，建议使用 GIF 动画
-              if: $get(enable).value && $get(type).value === 'image'
-            - $formkit: text
-              name: text
-              label: 加载文字
-              value: "加载中..."
-              help: 加载屏幕显示的文字
-              if: $get(enable).value
     - group: article
       label: 文章设置
       formSchema:
