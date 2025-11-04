@@ -47,18 +47,18 @@ document.addEventListener('alpine:init', () => {
     
     async toggleLike() {
       if (!this.postName) {
-        console.warn('文章名称未找到');
+        // console.warn('文章名称未找到');
         return;
       }
       
       // 检查是否已点赞（防止重复）
       if (this.isLiked) {
-        console.log('已经点赞过了');
+        // console.log('已经点赞过了');
         return;
       }
       
       try {
-        console.log('发送点赞请求:', this.postName);
+        // console.log('发送点赞请求:', this.postName);
         
         // 调用 Halo 官方点赞 API
         const response = await fetch('/apis/api.halo.run/v1alpha1/trackers/upvote', {
@@ -73,10 +73,10 @@ document.addEventListener('alpine:init', () => {
           })
         });
         
-        console.log('点赞响应状态:', response.status);
+        // console.log('点赞响应状态:', response.status);
         
         if (response.ok) {
-          console.log('点赞成功');
+          // console.log('点赞成功');
           
           // 更新点赞状态
           this.isLiked = true;
@@ -95,10 +95,10 @@ document.addEventListener('alpine:init', () => {
           }
         } else {
           const errorText = await response.text();
-          console.error('点赞失败:', response.status, errorText);
+          // console.error('点赞失败:', response.status, errorText);
         }
       } catch (error) {
-        console.error('点赞请求错误:', error);
+        // console.error('点赞请求错误:', error);
       }
     }
   }));
@@ -145,10 +145,77 @@ document.addEventListener('alpine:init', () => {
          * 初始化所有功能
          */
         init() {
+            this.initWordCount();
+            this.initHeadingAnchors();
             this.initTOC();
             this.initReadingProgress();
             this.initCodeCopy();
             this.initScrollToTop();
+        },
+
+        /**
+         * 初始化标题锚点链接
+         */
+        initHeadingAnchors() {
+            const articleContent = document.getElementById('article-content');
+            if (!articleContent) return;
+            
+            const headings = articleContent.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
+            
+            headings.forEach(heading => {
+                const id = heading.getAttribute('id');
+                if (!id) return;
+                
+                // 创建锚点链接包装器
+                heading.style.position = 'relative';
+                heading.style.cursor = 'pointer';
+                
+                // 创建锚点图标
+                const anchor = document.createElement('a');
+                anchor.href = `#${id}`;
+                anchor.className = 'heading-anchor';
+                anchor.innerHTML = '<span class="icon-[heroicons--link] w-4 h-4"></span>';
+                anchor.setAttribute('aria-label', '复制链接');
+                anchor.style.cssText = `
+                    position: absolute;
+                    left: -1.5em;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    opacity: 0;
+                    transition: opacity 0.2s ease;
+                    color: var(--color-primary);
+                    text-decoration: none;
+                    display: inline-flex;
+                    align-items: center;
+                `;
+                
+                // 悬停显示
+                heading.addEventListener('mouseenter', () => {
+                    anchor.style.opacity = '1';
+                });
+                
+                heading.addEventListener('mouseleave', () => {
+                    anchor.style.opacity = '0';
+                });
+                
+                // 点击复制链接
+                anchor.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const url = window.location.origin + window.location.pathname + `#${id}`;
+                    
+                    try {
+                        await navigator.clipboard.writeText(url);
+                        anchor.innerHTML = '<span class="icon-[heroicons--check] w-4 h-4"></span>';
+                        setTimeout(() => {
+                            anchor.innerHTML = '<span class="icon-[heroicons--link] w-4 h-4"></span>';
+                        }, 2000);
+                    } catch (err) {
+                        // 复制失败静默处理
+                    }
+                });
+                
+                heading.insertBefore(anchor, heading.firstChild);
+            });
         },
 
         /**
@@ -595,21 +662,21 @@ document.addEventListener('alpine:init', () => {
                     });
                     
                     // 调试信息（开发环境可启用）
-                    if (window.location.hostname === 'localhost') {
-                        console.log('TOC Scroll Debug:', {
-                            itemOffsetTop,
-                            containerHeight,
-                            containerScrollHeight,
-                            targetScrollTop,
-                            currentScrollTop,
-                            scrollDifference,
-                            scrollBehavior,
-                            isFullyVisible,
-                            isPartiallyVisible,
-                            maxScrollTop,
-                            minScrollTop
-                        });
-                    }
+                    // if (window.location.hostname === 'localhost') {
+                    //     console.log('TOC Scroll Debug:', {
+                    //         itemOffsetTop,
+                    //         containerHeight,
+                    //         containerScrollHeight,
+                    //         targetScrollTop,
+                    //         currentScrollTop,
+                    //         scrollDifference,
+                    //         scrollBehavior,
+                    //         isFullyVisible,
+                    //         isPartiallyVisible,
+                    //         maxScrollTop,
+                    //         minScrollTop
+                    //     });
+                    // }
                 }
             }
         },
@@ -673,7 +740,7 @@ document.addEventListener('alpine:init', () => {
                             copyButton.classList.remove('bg-success', 'text-success-content');
                         }, 2000);
                     } catch (copyError) {
-                        console.error('复制失败:', copyError);
+                        // console.error('复制失败:', copyError);
                         copyButton.textContent = '复制失败';
                         setTimeout(() => {
                             copyButton.textContent = '复制';
@@ -681,6 +748,48 @@ document.addEventListener('alpine:init', () => {
                     }
                 });
             });
+        },
+
+        /**
+         * 初始化字数统计和阅读时间计算
+         */
+        initWordCount() {
+            const articleContent = document.getElementById('article-content');
+            const wordCountEl = document.getElementById('word-count');
+            const readingTimeEl = document.getElementById('reading-time');
+            
+            if (!articleContent || !wordCountEl || !readingTimeEl) return;
+            
+            // 克隆内容以便处理
+            const clone = articleContent.cloneNode(true);
+            
+            // 移除所有代码块
+            const codeBlocks = clone.querySelectorAll('pre');
+            codeBlocks.forEach(block => block.remove());
+            
+            // 获取纯文本内容
+            const text = clone.textContent || clone.innerText || '';
+            
+            // 统计中文字符数
+            const chineseChars = text.match(/[\u4e00-\u9fa5]/g) || [];
+            const chineseCount = chineseChars.length;
+            
+            // 统计英文单词数
+            const englishText = text.replace(/[\u4e00-\u9fa5]/g, ' ');
+            const englishWords = englishText.match(/[a-zA-Z]+/g) || [];
+            const englishCount = englishWords.length;
+            
+            // 总字数（中文字符 + 英文单词）
+            const totalWords = chineseCount + englishCount;
+            
+            // 计算阅读时间（中文 300 字/分钟，英文 200 词/分钟）
+            const readingTimeMinutes = Math.ceil(
+                (chineseCount / 300) + (englishCount / 200)
+            );
+            
+            // 更新显示
+            wordCountEl.textContent = totalWords.toLocaleString();
+            readingTimeEl.textContent = Math.max(1, readingTimeMinutes);
         },
 
         /**

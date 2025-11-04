@@ -71,82 +71,257 @@ function createFloatingDock() {
 /**
  * 分享抽屉控制器
  * 模板使用：templates/modules/post/floating-dock.html
+ * 参考 theme-earth 的优雅设计：预设平台 + ID 过滤模式
  */
 function createShareModal() {
   return {
-    shareUrl: '',
-    shareTitle: '',
-    shareTitleTemplate: '',
-    copied: false,
-    showQRCode: false,
-    isShareOpen: false,
+    // 页面信息
+    permalink: '',
+    title: '',
     
-    init() {
-      this.shareUrl = window.location.href;
-      const originalTitle = document.title;
-      const siteName = document.querySelector('meta[property="og:site_name"]')?.content || '';
-      const author = document.querySelector('meta[name="author"]')?.content || '';
-      
-      // 从模板的 data 属性读取分享标题模板
-      this.shareTitleTemplate = this.$el.dataset.shareTitleTemplate || '';
-      
-      // 如果有模板，替换变量
-      if (this.shareTitleTemplate) {
-        this.shareTitle = this.shareTitleTemplate
-          .replace(/{title}/g, originalTitle)
-          .replace(/{site}/g, siteName)
-          .replace(/{author}/g, author);
-      } else {
-        this.shareTitle = originalTitle;
+    // 状态
+    isShareOpen: false,
+    copied: false,
+    
+    // 启用的平台 ID 列表（从配置读取）
+    shareItemIds: [],
+    
+    // 预设的所有分享平台
+    presetShareItems: [
+      {
+        id: "wechat",
+        name: "微信",
+        icon: "icon-[simple-icons--wechat]",
+        type: "qrcode",  // 特殊类型：打开二维码页面
+        url: "/themes/theme-sky-blog-1/assets/qrcode-share.html?url={url}"
+      },
+      {
+        id: "x",
+        name: "X",
+        icon: "icon-[simple-icons--x]",
+        type: "url",
+        url: "https://twitter.com/intent/tweet?url={url}&text={title}"
+      },
+      {
+        id: "telegram",
+        name: "Telegram",
+        icon: "icon-[simple-icons--telegram]",
+        type: "url",
+        url: "https://telegram.me/share/url?url={url}&text={title}"
+      },
+      {
+        id: "facebook",
+        name: "Facebook",
+        icon: "icon-[simple-icons--facebook]",
+        type: "url",
+        url: "https://facebook.com/sharer/sharer.php?u={url}"
+      },
+      {
+        id: "qq",
+        name: "QQ",
+        icon: "icon-[simple-icons--tencentqq]",
+        type: "url",
+        url: "https://connect.qq.com/widget/shareqq/index.html?url={url}&title={title}"
+      },
+      {
+        id: "qzone",
+        name: "QQ空间",
+        icon: "icon-[simple-icons--qzone]",
+        type: "url",
+        url: "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}"
+      },
+      {
+        id: "weibo",
+        name: "微博",
+        icon: "icon-[simple-icons--sinaweibo]",
+        type: "url",
+        url: "https://service.weibo.com/share/share.php?url={url}&title={title}"
+      },
+      {
+        id: "douban",
+        name: "豆瓣",
+        icon: "icon-[simple-icons--douban]",
+        type: "url",
+        url: "https://www.douban.com/share/service?href={url}&name={title}"
+      },
+      {
+        id: "native",
+        name: "系统分享",
+        icon: "icon-[tabler--device-desktop]",
+        type: "native"  // 原生浏览器分享
       }
+    ],
+    
+    // 初始化
+    init() {
+      // 从模板的 data 属性读取文章信息
+      const postTitle = this.$el.dataset.postTitle || '';
+      const siteTitle = this.$el.dataset.siteTitle || '';
+      const postUrl = this.$el.dataset.postUrl || '';
+      const shareTitleTemplate = this.$el.dataset.shareTitleTemplate || '';
+      
+      // 读取启用的平台 ID 列表
+      const shareItemIdsStr = this.$el.dataset.shareItemIds || '';
+      this.shareItemIds = shareItemIdsStr ? shareItemIdsStr.split(',') : [];
+      
+      // 设置分享链接（转换为绝对 URL）
+      if (postUrl) {
+        // 如果是相对路径，转换为绝对 URL
+        if (postUrl.startsWith('/')) {
+          const origin = window.location.origin;
+          this.permalink = origin + postUrl;
+        } else if (postUrl.startsWith('http://') || postUrl.startsWith('https://')) {
+          // 已经是绝对 URL
+          this.permalink = postUrl;
+        } else {
+          // 其他情况使用当前页面 URL
+          this.permalink = window.location.href;
+        }
+      } else {
+        this.permalink = window.location.href;
+      }
+      
+      // 设置分享标题
+      if (shareTitleTemplate && shareTitleTemplate.trim() !== '') {
+        // 自定义模板
+        this.title = shareTitleTemplate
+          .replace(/{title}/g, postTitle)
+          .replace(/{site}/g, siteTitle)
+          .replace(/{author}/g, document.querySelector('meta[name="author"]')?.content || '');
+      } else {
+        // 默认使用文章标题
+        this.title = postTitle || document.title;
+      }
+      
+      // console.log('🔗 分享功能初始化', {
+      //   标题: this.title,
+      //   原始链接: postUrl,
+      //   完整链接: this.permalink,
+      //   启用平台: this.shareItemIds,
+      //   可用平台数: this.activeShareItems.length
+      // });
     },
     
+    // 计算属性：过滤出启用的分享平台
+    get activeShareItems() {
+      if (!this.shareItemIds || this.shareItemIds.length === 0) {
+        // 如果没有配置，返回所有平台
+        return this.presetShareItems;
+      }
+      
+      return this.shareItemIds
+        .map(id => this.presetShareItems.find(item => item.id === id))
+        .filter(Boolean)
+        .filter(item => {
+          // 如果是 native 类型，检查浏览器是否支持
+          if (item?.type === 'native') {
+            return navigator.canShare?.({
+              title: this.title,
+              url: this.permalink
+            });
+          }
+          return true;
+        });
+    },
+    
+    // 关闭抽屉
     closeShareDrawer() {
       this.isShareOpen = false;
-      this.showQRCode = false;
     },
     
+    // 复制链接
     async copyUrl() {
       try {
-        await navigator.clipboard.writeText(this.shareUrl);
+        await navigator.clipboard.writeText(this.permalink);
         this.copied = true;
         setTimeout(() => {
           this.copied = false;
         }, 2000);
       } catch (err) {
-        console.error('复制失败:', err);
+        // console.error('❌ 复制失败:', err);
       }
     },
     
-    shareToPlatform(element) {
-      const urlTemplate = element.dataset.shareUrl;
+    // 处理分享
+    handleShare(platformId) {
+      const platform = this.activeShareItems.find(item => item?.id === platformId);
+      if (!platform) {
+        // console.error('❌ 未找到分享平台:', platformId);
+        return;
+      }
       
-      // 替换 URL 中的变量
-      const shareUrl = urlTemplate
-        .replace(/{url}/g, encodeURIComponent(this.shareUrl))
-        .replace(/{title}/g, encodeURIComponent(this.shareTitle));
+      // console.log('📤 分享到', platform.name);
       
-      // 打开分享链接
-      window.open(shareUrl, '_blank', 'width=600,height=400');
+      // 根据平台类型处理
+      if (platform.type === 'native') {
+        // 原生分享
+        this.shareNative();
+      } else if (platform.type === 'qrcode') {
+        // 微信二维码（打开独立窗口）
+        this.shareToWeChat();
+      } else {
+        // URL 分享（其他平台）
+        this.shareToUrl(platform);
+      }
     },
     
-    shareToWeChat() {
-      this.showQRCode = !this.showQRCode;
-      
-      if (this.showQRCode) {
-        // 使用简单的方式生成二维码（可以后续集成 QRCode 库）
-        this.$nextTick(() => {
-          const container = document.getElementById('qrcode-container');
-          if (container) {
-            container.innerHTML = `
-              <div class="text-center p-8 bg-base-200 rounded">
-                <p class="text-sm">二维码功能需要集成 QRCode 库</p>
-                <p class="text-xs text-base-content/60 mt-2">URL: ${this.shareUrl}</p>
-              </div>
-            `;
-          }
+    // 原生分享
+    shareNative() {
+      if (navigator.share) {
+        navigator.share({
+          title: this.title,
+          url: this.permalink
+        }).catch(err => {
+          // console.error('❌ 原生分享失败:', err);
         });
       }
+    },
+    
+    // URL 分享
+    shareToUrl(platform) {
+      // 替换 URL 模板中的变量
+      const shareUrl = platform.url
+        .replace(/{url}/g, encodeURIComponent(this.permalink))
+        .replace(/{title}/g, encodeURIComponent(this.title));
+      
+      // 计算居中位置
+      const width = 600;
+      const height = 500;
+      const left = (window.innerWidth - width) / 2;
+      const top = (window.innerHeight - height) / 2;
+      const features = `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes`;
+      
+      // 打开分享窗口
+      window.open(
+        shareUrl,
+        `分享到${platform.name}`,
+        features
+      );
+    },
+    
+    // 微信二维码分享 - 打开独立二维码页面
+    shareToWeChat() {
+      // 计算居中位置
+      const width = 400;
+      const height = 500;
+      const left = (window.innerWidth - width) / 2;
+      const top = (window.innerHeight - height) / 2;
+      const features = `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no`;
+      
+      // 构建二维码页面 URL（使用 assets 路径）
+      const qrcodePageUrl = `/themes/theme-sky-blog-1/assets/qrcode-share.html?url=${encodeURIComponent(this.permalink)}`;
+      
+      // console.log('📱 打开微信二维码页面:', {
+      //   链接: this.permalink,
+      //   二维码页面: qrcodePageUrl
+      // });
+      
+      // 打开新窗口显示二维码
+      window.open(
+        qrcodePageUrl,
+        '微信扫码分享',
+        features
+      );
     }
   };
 }
@@ -283,11 +458,11 @@ function createThemeToggle() {
       // 从 localStorage 读取用户偏好
       const savedTheme = localStorage.getItem('theme-mode');
       
-      // 确定当前主题状态
+      // 确定当前主题状态（同步到组件状态，不触发切换）
       this.isDark = savedTheme ? (savedTheme === 'dark_theme') : (defaultTheme === 'dark_theme');
       
-      // 应用主题
-      this.applyTheme();
+      // 注意：不调用 applyTheme()，因为主题已经在 <head> 内联脚本中设置好了
+      // 这里只是同步状态到组件，避免闪烁
     },
     
     toggleTheme() {

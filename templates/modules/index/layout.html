@@ -1,13 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" th:fragment="html (content)" 
-      th:attr="data-theme=${
-        (theme.config.nav.theme_settings.default_theme ?: 'dark_theme') == 'light_theme' ? 
-        (theme.config.nav.theme_settings.light_theme ?: 'light') :
-        (theme.config.nav.theme_settings.dark_theme ?: 'dark')
-      },
-      data-theme-mode=${
-        (theme.config.nav.theme_settings.default_theme ?: 'dark_theme') == 'light_theme' ? 'light' : 'dark'
-      }">
+<html lang="zh-CN" th:fragment="html (content)">
 
 <!-- 页面头部 -->
 
@@ -15,6 +7,23 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 防止主题闪烁 - 在渲染前立即应用 localStorage 中的主题 -->
+  <script th:inline="javascript">
+    (function() {
+      const savedTheme = localStorage.getItem('theme-mode');
+      const defaultTheme = /*[[${theme.config.nav.theme_settings.default_theme}]]*/ 'dark_theme';
+      const lightTheme = /*[[${theme.config.nav.theme_settings.light_theme}]]*/ 'light';
+      const darkTheme = /*[[${theme.config.nav.theme_settings.dark_theme}]]*/ 'dark';
+      
+      const isDark = savedTheme ? (savedTheme === 'dark_theme') : (defaultTheme === 'dark_theme');
+      const themeName = isDark ? darkTheme : lightTheme;
+      const themeMode = isDark ? 'dark' : 'light';
+      
+      document.documentElement.setAttribute('data-theme', themeName);
+      document.documentElement.setAttribute('data-theme-mode', themeMode);
+    })();
+  </script>
 
   <!-- 页面标题 -->
   <title th:text="${site.title}"></title>

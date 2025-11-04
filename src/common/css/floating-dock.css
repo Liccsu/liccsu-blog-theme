@@ -252,17 +252,10 @@
   backface-visibility: hidden;
 }
 
-/* 分享平台按钮图标样式 */
-.share-icon-wrapper svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.share-icon-wrapper svg,
-.share-icon-wrapper svg * {
-  fill: currentColor !important;
-  color: currentColor !important;
+/* 分享平台按钮样式 */
+.share-platform-btn {
+  cursor: pointer;
+  user-select: none;
 }
 
 /* 深色模式微光圈效果 - 使用 data-theme-mode 统一判断 */

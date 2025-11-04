@@ -105,6 +105,22 @@
         <span th:text="${post.stats.visit ?: 0}"></span>
       </div>
       
+      <span class="text-white/40">|</span>
+      
+      <!-- 字数统计 -->
+      <div class="flex items-center gap-1">
+        <span class="icon-[heroicons--document-text] w-4 h-4"></span>
+        <span id="word-count">-</span> 
+      </div>
+      
+      <span class="text-white/40">|</span>
+      
+      <!-- 阅读时间 -->
+      <div class="flex items-center gap-1">
+        <span class="icon-[heroicons--clock] w-4 h-4"></span>
+        <span id="reading-time">-</span> min
+      </div>
+      
       <!-- 评论数 -->
       <th:block th:if="${post.stats.comment != null and post.stats.comment > 0}">
         <span class="text-white/40">|</span>

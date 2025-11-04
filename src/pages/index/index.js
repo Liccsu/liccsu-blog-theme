@@ -76,7 +76,7 @@ window.hideMomentCardGlow = function(card) {
             // 查找标题元素
             this.titleElement = document.getElementById('main-title');
             if (!this.titleElement) {
-                console.warn('未找到标题元素 #main-title');
+                // console.warn('未找到标题元素 #main-title');
                 return;
             }
 

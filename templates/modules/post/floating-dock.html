@@ -122,7 +122,11 @@
 <div th:fragment="shareModal" 
      th:if="${theme.config.floating_dock.post_settings.enable_share}"
      x-data="shareModal"
-     th:attr="data-share-title-template=${theme.config.floating_dock.share_settings.share_title_template}">
+     th:attr="data-post-title=${post.spec.title},
+              data-post-url=${post.status.permalink},
+              data-site-title=${site.title},
+              data-share-title-template=${theme.config.floating_dock.share_settings.share_title_template},
+              data-share-item-ids=${#strings.listJoin(theme.config.floating_dock.share_settings.share_item_ids, ',')}">
   
   <!-- 抽屉容器 -->
   <div class="drawer drawer-end z-[9995]">
@@ -162,7 +166,7 @@
             <label class="text-sm font-medium text-base-content/70 mb-2 block">文章链接</label>
             <div class="join w-full">
               <input type="text" 
-                     x-model="shareUrl" 
+                     x-model="permalink" 
                      readonly
                      class="input input-sm join-item flex-1 bg-base-100 border-base-300/50 focus:border-primary/50 transition-all duration-200" />
               <button @click="copyUrl()" 
@@ -181,45 +185,29 @@
             <label class="text-sm font-medium text-base-content/70 block">分享到社交平台</label>
             
             <div class="grid grid-cols-1 gap-2">
-              <th:block th:each="platform : ${theme.config.floating_dock.share_settings.share_platforms}">
-                <!-- 微信分享（特殊处理：显示二维码） -->
-                <button th:if="${platform.url == 'wechat'}"
-                        @click="shareToWeChat()" 
-                        class="share-platform-btn group bg-base-200/50 backdrop-blur-sm border border-base-300/30 rounded-lg p-3 flex items-center gap-3 transition-all duration-300 hover:bg-primary/10 hover:border-primary/30 hover:scale-[1.02] hover:shadow-lg">
-                  <div class="share-icon-wrapper w-6 h-6 text-base-content/80 group-hover:text-primary transition-colors duration-200" th:utext="${platform.icon}"></div>
-                  <span class="share-platform-name text-sm font-medium group-hover:text-primary transition-colors duration-200" th:text="${platform.name}"></span>
+              <!-- Alpine.js 动态渲染启用的平台 -->
+              <template x-for="item in activeShareItems" :key="item.id">
+                <button 
+                  @click="handleShare(item.id)"
+                  class="share-platform-btn group bg-base-200/50 backdrop-blur-sm border border-base-300/30 rounded-lg p-3 flex items-center gap-3 transition-all duration-300 hover:bg-primary/10 hover:border-primary/30 hover:scale-[1.02] hover:shadow-lg">
+                  <!-- 平台图标 -->
+                  <div class="w-6 h-6 text-base-content/80 group-hover:text-primary transition-colors duration-200" 
+                       :class="item.icon"></div>
+                  <!-- 平台名称 -->
+                  <span class="text-sm font-medium group-hover:text-primary transition-colors duration-200" 
+                        x-text="item.name"></span>
+                  <!-- 箭头图标 -->
                   <span class="icon-[heroicons--chevron-right] w-4 h-4 ml-auto text-base-content/40 group-hover:text-primary/70 group-hover:translate-x-1 transition-all duration-200"></span>
                 </button>
-                
-                <!-- 其他平台（直接跳转） -->
-                <a th:unless="${platform.url == 'wechat'}"
-                   th:href="${platform.url}"
-                   th:attr="data-share-url=${platform.url},data-platform-name=${platform.name}"
-                   @click.prevent="shareToPlatform($event.currentTarget)"
-                   target="_blank"
-                   class="share-platform-btn group bg-base-200/50 backdrop-blur-sm border border-base-300/30 rounded-lg p-3 flex items-center gap-3 transition-all duration-300 hover:bg-primary/10 hover:border-primary/30 hover:scale-[1.02] hover:shadow-lg">
-                  <div class="share-icon-wrapper w-6 h-6 text-base-content/80 group-hover:text-primary transition-colors duration-200" th:utext="${platform.icon}"></div>
-                  <span class="share-platform-name text-sm font-medium group-hover:text-primary transition-colors duration-200" th:text="${platform.name}"></span>
-                  <span class="icon-[heroicons--chevron-right] w-4 h-4 ml-auto text-base-content/40 group-hover:text-primary/70 group-hover:translate-x-1 transition-all duration-200"></span>
-                </a>
-              </th:block>
+              </template>
             </div>
-          </div>
-          
-          <!-- 二维码区域 -->
-          <div x-show="showQRCode" 
-               x-transition:enter="transition ease-out duration-300"
-               x-transition:enter-start="opacity-0 scale-95"
-               x-transition:enter-end="opacity-100 scale-100"
-               x-transition:leave="transition ease-in duration-200"
-               x-transition:leave-start="opacity-100 scale-100"
-               x-transition:leave-end="opacity-0 scale-95"
-               class="bg-base-200/50 backdrop-blur-sm rounded-box p-4 border border-base-300/30">
-            <p class="text-sm text-center text-base-content/70 mb-3 flex items-center justify-center gap-2">
-              <span class="icon-[heroicons--qr-code] w-5 h-5 text-primary"></span>
-              <span>微信扫码分享</span>
-            </p>
-            <div id="qrcode-container" class="flex justify-center bg-white p-3 rounded-lg shadow-inner"></div>
+            
+            <!-- 无平台提示 -->
+            <div x-show="activeShareItems.length === 0" 
+                 class="text-center py-8 text-base-content/50 text-sm">
+              <p>未配置分享平台</p>
+              <p class="text-xs mt-1">请在主题设置中启用分享平台</p>
+            </div>
           </div>
           
         </div>
