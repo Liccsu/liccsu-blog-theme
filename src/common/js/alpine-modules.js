@@ -50,9 +50,11 @@ function createFloatingDock() {
     
     // 文章页专用方法
     openShareModal() {
-      const modal = document.getElementById('share_modal');
-      if (modal) {
-        modal.showModal();
+      const checkbox = document.getElementById('share-drawer');
+      if (checkbox) {
+        checkbox.checked = true;
+        // 触发 Alpine 的响应式更新
+        checkbox.dispatchEvent(new Event('change'));
       }
     },
     
@@ -67,7 +69,7 @@ function createFloatingDock() {
 }
 
 /**
- * 分享模态框控制器
+ * 分享抽屉控制器
  * 模板使用：templates/modules/post/floating-dock.html
  */
 function createShareModal() {
@@ -77,6 +79,7 @@ function createShareModal() {
     shareTitleTemplate: '',
     copied: false,
     showQRCode: false,
+    isShareOpen: false,
     
     init() {
       this.shareUrl = window.location.href;
@@ -96,6 +99,11 @@ function createShareModal() {
       } else {
         this.shareTitle = originalTitle;
       }
+    },
+    
+    closeShareDrawer() {
+      this.isShareOpen = false;
+      this.showQRCode = false;
     },
     
     async copyUrl() {

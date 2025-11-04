@@ -4,9 +4,8 @@
 
 /* Dock 容器样式 */
 .floating-dock-wrapper {
-  /* 确保在最顶层 */
+  /* z-index 通过 Alpine 动态控制 */
   position: relative;
-  z-index: 9999;
 }
 
 .dock-container {
@@ -253,14 +252,17 @@
   backface-visibility: hidden;
 }
 
-/* 分享模态框样式增强 */
-.modal-box {
-  max-width: 28rem;
+/* 分享平台按钮图标样式 */
+.share-icon-wrapper svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
-/* 评论抽屉样式 */
-.drawer-side {
-  z-index: 9998;
+.share-icon-wrapper svg,
+.share-icon-wrapper svg * {
+  fill: currentColor !important;
+  color: currentColor !important;
 }
 
 /* 深色模式微光圈效果 - 使用 data-theme-mode 统一判断 */
