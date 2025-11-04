@@ -618,32 +618,12 @@
     color: color-mix(in srgb, var(--color-base-content) 75%, transparent);
 }
 
-/* 深色模式优化 */
-[data-theme="dark"] #article-content.article-style-tailwind pre,
-[data-theme="night"] #article-content.article-style-tailwind pre,
-[data-theme="black"] #article-content.article-style-tailwind pre,
-[data-theme="dracula"] #article-content.article-style-tailwind pre,
-[data-theme="forest"] #article-content.article-style-tailwind pre,
-[data-theme="business"] #article-content.article-style-tailwind pre,
-[data-theme="coffee"] #article-content.article-style-tailwind pre,
-[data-theme="dim"] #article-content.article-style-tailwind pre,
-[data-theme="synthwave"] #article-content.article-style-tailwind pre,
-[data-theme="halloween"] #article-content.article-style-tailwind pre,
-[data-theme="luxury"] #article-content.article-style-tailwind pre {
+/* 深色模式优化 - 使用 data-theme-mode 统一判断 */
+[data-theme-mode="dark"] #article-content.article-style-tailwind pre {
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
-[data-theme="dark"] #article-content.article-style-github pre,
-[data-theme="night"] #article-content.article-style-github pre,
-[data-theme="black"] #article-content.article-style-github pre,
-[data-theme="dracula"] #article-content.article-style-github pre,
-[data-theme="forest"] #article-content.article-style-github pre,
-[data-theme="business"] #article-content.article-style-github pre,
-[data-theme="coffee"] #article-content.article-style-github pre,
-[data-theme="dim"] #article-content.article-style-github pre,
-[data-theme="synthwave"] #article-content.article-style-github pre,
-[data-theme="halloween"] #article-content.article-style-github pre,
-[data-theme="luxury"] #article-content.article-style-github pre {
+[data-theme-mode="dark"] #article-content.article-style-github pre {
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 

@@ -83,6 +83,7 @@ spec:
             - $formkit: radio
               name: default_theme
               label: 默认主题
+              help: https://daisyui.com/theme-generator/ 查看具体配色方案
               value: dark_theme
               options:
                 - value: light_theme
@@ -95,74 +96,80 @@ spec:
               value: light
               options:
                 - value: light
-                  label: light (明亮白色)
+                  label: light 
                 - value: cupcake
-                  label: cupcake (粉色系)
+                  label: cupcake 
                 - value: bumblebee
-                  label: bumblebee (黄色系)
+                  label: bumblebee 
                 - value: emerald
-                  label: emerald (绿色系)
+                  label: emerald 
                 - value: corporate
-                  label: corporate (企业蓝)
+                  label: corporate 
                 - value: retro
-                  label: retro (复古橙)
+                  label: retro 
                 - value: valentine
-                  label: valentine (粉红色)
+                  label: valentine 
                 - value: garden
-                  label: garden (自然绿)
-                - value: aqua
-                  label: aqua (水蓝色)
+                  label: garden 
                 - value: lofi
-                  label: lofi (低保真)
+                  label: lofi 
                 - value: pastel
-                  label: pastel (粉彩色)
+                  label: pastel 
                 - value: fantasy
-                  label: fantasy (幻想紫)
+                  label: fantasy 
                 - value: wireframe
-                  label: wireframe (线框风)
+                  label: wireframe 
                 - value: cmyk
-                  label: cmyk (印刷色)
+                  label: cmyk 
                 - value: autumn
-                  label: autumn (秋日橙)
+                  label: autumn 
                 - value: acid
-                  label: acid (酸性绿)
+                  label: acid 
                 - value: lemonade
-                  label: lemonade (柠檬黄)
+                  label: lemonade
                 - value: winter
-                  label: winter (冬日蓝)
+                  label: winter 
                 - value: nord
-                  label: nord (北欧风)
+                  label: nord 
+                - value: caramellatte
+                  label: caramellatte 
+                - value: silk
+                  label: silk 
             - $formkit: select
               name: dark_theme
               label: 深色主题
               value: dark
               options:
                 - value: dark
-                  label: dark (经典暗色)
-                - value: business
-                  label: business (商务灰)
+                  label: dark
                 - value: synthwave
-                  label: synthwave (合成波)
+                  label: synthwave
                 - value: cyberpunk
-                  label: cyberpunk (赛博朋克)
+                  label: cyberpunk
                 - value: halloween
-                  label: halloween (万圣节)
+                  label: halloween
                 - value: forest
-                  label: forest (森林绿)
+                  label: forest
+                - value: aqua
+                  label: aqua
                 - value: black
-                  label: black (纯黑色)
+                  label: black
                 - value: luxury
-                  label: luxury (奢华金)
+                  label: luxury
                 - value: dracula
-                  label: dracula (德古拉)
+                  label: dracula
+                - value: business
+                  label: business
                 - value: night
-                  label: night (深夜蓝)
+                  label: night
                 - value: coffee
-                  label: coffee (咖啡棕)
+                  label: coffee
                 - value: dim
-                  label: dim (昏暗灰)
+                  label: dim
                 - value: sunset
-                  label: sunset (日落橙)
+                  label: sunset
+                - value: abyss
+                  label: abyss
         - $formkit: group
           name: right_settings
           label: 功能设置
@@ -804,6 +811,44 @@ spec:
     - group: article
       label: 文章设置
       formSchema:
+        - $formkit: group
+          name: header_background
+          label: 文章头部背景设置
+          value:
+            background_type: cover
+            custom_image_url: "https://www.dmoe.cc/random.php"
+            upload_image: ""
+          children:
+            - $formkit: radio
+              id: background_type
+              name: background_type
+              label: 背景图片来源
+              help: 选择文章头部背景图片的来源方式
+              value: cover
+              options:
+                - label: 使用文章封面图
+                  value: cover
+                - label: 自定义图片地址
+                  value: custom_url
+                - label: 本地上传图片
+                  value: upload
+            - $formkit: text
+              name: custom_image_url
+              key: custom_image_url_field
+              if: $get(background_type).value === 'custom_url'
+              label: 自定义图片地址
+              help: 输入图片的完整 URL 地址，支持随机图片（https://www.dmoe.cc/random.php）
+              placeholder: "https://www.dmoe.cc/random.php"
+            - $formkit: attachment
+              name: upload_image
+              key: upload_image_field
+              if: $get(background_type).value === 'upload'
+              label: 上传背景图片
+              help: 上传文章头部背景图片（固定图片，不随文章变动）
+              accepts:
+                - image/jpeg
+                - image/png
+                - image/webp
         - $formkit: group
           name: content_style
           label: 内容样式

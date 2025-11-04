@@ -204,59 +204,24 @@ body[style*="overflow: hidden"] {
     }
 }
 
-/* 深色模式组件微光效果 - 统一使用淡灰色光圈 */
-[data-theme="dark"] .card,
-[data-theme="night"] .card,
-[data-theme="black"] .card,
-[data-theme="dracula"] .card,
-[data-theme="forest"] .card,
-[data-theme="business"] .card,
-[data-theme="coffee"] .card,
-[data-theme="dim"] .card,
-[data-theme="synthwave"] .card,
-[data-theme="halloween"] .card,
-[data-theme="luxury"] .card {
+/* 深色模式组件微光效果 - 使用 data-theme-mode 统一判断亮暗模式 */
+/* 优势：无需枚举所有暗色主题，新增暗色主题自动生效 */
+
+/* 卡片组件阴影 */
+[data-theme-mode="dark"] .card {
     box-shadow: 0 2px 8px color-mix(in srgb, var(--color-base-content) 15%, transparent);
 }
 
-[data-theme="dark"] .card:hover,
-[data-theme="night"] .card:hover,
-[data-theme="black"] .card:hover,
-[data-theme="dracula"] .card:hover,
-[data-theme="forest"] .card:hover,
-[data-theme="business"] .card:hover,
-[data-theme="coffee"] .card:hover,
-[data-theme="dim"] .card:hover,
-[data-theme="synthwave"] .card:hover,
-[data-theme="halloween"] .card:hover,
-[data-theme="luxury"] .card:hover {
+[data-theme-mode="dark"] .card:hover {
     box-shadow: 0 4px 12px color-mix(in srgb, var(--color-base-content) 20%, transparent);
 }
 
-[data-theme="dark"] .modal-box,
-[data-theme="night"] .modal-box,
-[data-theme="black"] .modal-box,
-[data-theme="dracula"] .modal-box,
-[data-theme="forest"] .modal-box,
-[data-theme="business"] .modal-box,
-[data-theme="coffee"] .modal-box,
-[data-theme="dim"] .modal-box,
-[data-theme="synthwave"] .modal-box,
-[data-theme="halloween"] .modal-box,
-[data-theme="luxury"] .modal-box {
+/* 模态框阴影 */
+[data-theme-mode="dark"] .modal-box {
     box-shadow: 0 4px 16px color-mix(in srgb, var(--color-base-content) 20%, transparent);
 }
 
-[data-theme="dark"] .drawer-side > div,
-[data-theme="night"] .drawer-side > div,
-[data-theme="black"] .drawer-side > div,
-[data-theme="dracula"] .drawer-side > div,
-[data-theme="forest"] .drawer-side > div,
-[data-theme="business"] .drawer-side > div,
-[data-theme="coffee"] .drawer-side > div,
-[data-theme="dim"] .drawer-side > div,
-[data-theme="synthwave"] .drawer-side > div,
-[data-theme="halloween"] .drawer-side > div,
-[data-theme="luxury"] .drawer-side > div {
+/* 抽屉侧边栏阴影 */
+[data-theme-mode="dark"] .drawer-side > div {
     box-shadow: -4px 0 16px color-mix(in srgb, var(--color-base-content) 15%, transparent);
 }

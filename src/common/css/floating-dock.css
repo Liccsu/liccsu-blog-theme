@@ -147,18 +147,8 @@
   background: color-mix(in srgb, var(--color-base-content) 15%, transparent);
 }
 
-/* 深色主题分隔线更亮 */
-[data-theme="dark"] .dock-container .w-px,
-[data-theme="night"] .dock-container .w-px,
-[data-theme="black"] .dock-container .w-px,
-[data-theme="dracula"] .dock-container .w-px,
-[data-theme="forest"] .dock-container .w-px,
-[data-theme="business"] .dock-container .w-px,
-[data-theme="coffee"] .dock-container .w-px,
-[data-theme="dim"] .dock-container .w-px,
-[data-theme="synthwave"] .dock-container .w-px,
-[data-theme="halloween"] .dock-container .w-px,
-[data-theme="luxury"] .dock-container .w-px {
+/* 深色模式分隔线更亮 - 使用 data-theme-mode 统一判断 */
+[data-theme-mode="dark"] .dock-container .w-px {
   background: color-mix(in srgb, var(--color-base-content) 25%, transparent);
 }
 
@@ -273,32 +263,12 @@
   z-index: 9998;
 }
 
-/* 深色模式微光圈效果 - 统一风格 */
-[data-theme="dark"] .dock-container,
-[data-theme="night"] .dock-container,
-[data-theme="black"] .dock-container,
-[data-theme="dracula"] .dock-container,
-[data-theme="forest"] .dock-container,
-[data-theme="business"] .dock-container,
-[data-theme="coffee"] .dock-container,
-[data-theme="dim"] .dock-container,
-[data-theme="synthwave"] .dock-container,
-[data-theme="halloween"] .dock-container,
-[data-theme="luxury"] .dock-container {
+/* 深色模式微光圈效果 - 使用 data-theme-mode 统一判断 */
+[data-theme-mode="dark"] .dock-container {
   box-shadow: 0 4px 12px color-mix(in srgb, var(--color-base-content) 15%, transparent);
 }
 
-[data-theme="dark"] .dock-container:hover,
-[data-theme="night"] .dock-container:hover,
-[data-theme="black"] .dock-container:hover,
-[data-theme="dracula"] .dock-container:hover,
-[data-theme="forest"] .dock-container:hover,
-[data-theme="business"] .dock-container:hover,
-[data-theme="coffee"] .dock-container:hover,
-[data-theme="dim"] .dock-container:hover,
-[data-theme="synthwave"] .dock-container:hover,
-[data-theme="halloween"] .dock-container:hover,
-[data-theme="luxury"] .dock-container:hover {
+[data-theme-mode="dark"] .dock-container:hover {
   box-shadow: 0 6px 16px color-mix(in srgb, var(--color-base-content) 20%, transparent);
 }
 

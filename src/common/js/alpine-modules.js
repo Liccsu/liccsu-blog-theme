@@ -258,6 +258,7 @@ function createNavbarController() {
  * 主题切换控制器
  * 模板使用：templates/modules/nav.html
  * 统一管理整个应用的主题状态
+ * 在 <html> 元素上添加 data-theme-mode 属性，便于 CSS 统一判断亮暗模式
  */
 function createThemeToggle() {
   return {
@@ -278,8 +279,7 @@ function createThemeToggle() {
       this.isDark = savedTheme ? (savedTheme === 'dark_theme') : (defaultTheme === 'dark_theme');
       
       // 应用主题
-      const themeName = this.isDark ? this.darkTheme : this.lightTheme;
-      document.documentElement.setAttribute('data-theme', themeName);
+      this.applyTheme();
     },
     
     toggleTheme() {
@@ -287,7 +287,19 @@ function createThemeToggle() {
       const themeMode = this.isDark ? 'dark_theme' : 'light_theme';
       
       localStorage.setItem('theme-mode', themeMode);
-      document.documentElement.setAttribute('data-theme', this.isDark ? this.darkTheme : this.lightTheme);
+      this.applyTheme();
+    },
+    
+    /**
+     * 应用主题到 HTML 元素
+     * 同时设置 data-theme（具体主题名）和 data-theme-mode（light/dark 标识）
+     */
+    applyTheme() {
+      const themeName = this.isDark ? this.darkTheme : this.lightTheme;
+      const themeMode = this.isDark ? 'dark' : 'light';
+      
+      document.documentElement.setAttribute('data-theme', themeName);
+      document.documentElement.setAttribute('data-theme-mode', themeMode);
     }
   };
 }
