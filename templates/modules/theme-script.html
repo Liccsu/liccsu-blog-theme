@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<!-- ========================================== -->
+<!--          主题切换内联脚本（防闪烁）          -->
+<!-- ========================================== -->
+
+<!--
+  此脚本必须在 <head> 中尽早执行，在页面渲染前应用主题
+  避免页面加载时的主题闪烁问题
+  
+  优先级逻辑：
+  1. 如果前端开关开启 && localStorage 有缓存 → 使用缓存主题
+  2. 否则 → 使用默认配置主题
+-->
+<script th:fragment="inline-script" th:inline="javascript">
+  (function() {
+    const showThemeToggle = /*[[${theme.config.nav.theme_settings.show_theme_toggle}]]*/ true;
+    const savedTheme = localStorage.getItem('theme-mode');
+    const defaultTheme = /*[[${theme.config.nav.theme_settings.default_theme}]]*/ 'dark_theme';
+    const lightTheme = /*[[${theme.config.nav.theme_settings.light_theme}]]*/ 'light';
+    const darkTheme = /*[[${theme.config.nav.theme_settings.dark_theme}]]*/ 'dark';
+    
+    // 如果前端开关关闭，忽略 localStorage，强制使用默认主题
+    const isDark = showThemeToggle && savedTheme 
+      ? (savedTheme === 'dark_theme') 
+      : (defaultTheme === 'dark_theme');
+    const themeName = isDark ? darkTheme : lightTheme;
+    const themeMode = isDark ? 'dark' : 'light';
+    
+    document.documentElement.setAttribute('data-theme', themeName);
+    document.documentElement.setAttribute('data-theme-mode', themeMode);
+  })();
+</script>
+
+</html>
+

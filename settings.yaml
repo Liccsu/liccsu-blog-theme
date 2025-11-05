@@ -5,7 +5,7 @@ metadata:
 spec:
   forms:
     - group: general
-      label: 通用设置
+      label: 通用
       formSchema:
         - $formkit: group
           name: loading_screen
@@ -93,7 +93,7 @@ spec:
               max: 3000
               step: 100
     - group: nav
-      label: Nav设置
+      label: 导航栏
       formSchema:
         - $formkit: group
           name: logo_settings
@@ -147,7 +147,7 @@ spec:
           children:
             - $formkit: menuRadio
               name: primary_menu
-              label: 主菜单
+              label: 导航栏菜单
               value: primary
               help: 选择要在主导航栏显示的菜单
         - $formkit: group
@@ -162,7 +162,7 @@ spec:
             - $formkit: radio
               name: show_theme_toggle
               label: 主题前端开关
-              help: 右上角主题切换按钮的显示控制
+              help: 前端右上角主题切换按钮的显示控制
               options:
                 - label: 显示
                   value: true
@@ -171,7 +171,7 @@ spec:
             - $formkit: radio
               name: default_theme
               label: 默认主题
-              help: https://daisyui.com/theme-generator/ 查看具体配色方案
+              help: 当前默认显示的主题,可从以下主题中选择,https://daisyui.com/theme-generator/ 查看具体配色方案
               value: dark_theme
               options:
                 - value: light_theme
