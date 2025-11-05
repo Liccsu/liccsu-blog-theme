@@ -168,19 +168,106 @@
     border-radius: 0.25rem;
 }
 
+/* ===================================================
+ * 列表样式 - GitHub 风格增强
+ * 支持深层嵌套（6层+），带颜色渐变和悬停效果
+ * ==================================================*/
+
+/* 无序列表和有序列表基础 */
 #article-content.article-style-github ul,
 #article-content.article-style-github ol {
-    margin: 0.75em 0;
+    margin: 1em 0;
+    padding-left: 2em;
+    line-height: 1.75;
+}
+
+/* 列表项基础样式 */
+#article-content.article-style-github li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    padding-left: 0.5em;
+    line-height: 1.75;
+    transition: background-color 0.2s ease;
+}
+
+/* 列表项悬停效果 */
+#article-content.article-style-github li:hover {
+    background: color-mix(in srgb, var(--color-base-200) 50%, transparent);
+    border-radius: 0.375rem;
+}
+
+/* 列表项内的段落 */
+#article-content.article-style-github li > p {
+    margin: 0;
+    line-height: 1.75;
+}
+
+/* 一级列表标记 - 最鲜艳 */
+#article-content.article-style-github ul > li::marker {
+    color: var(--color-primary);
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+#article-content.article-style-github ol > li::marker {
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 0.95em;
+}
+
+/* 二级嵌套列表 */
+#article-content.article-style-github li > ul,
+#article-content.article-style-github li > ol {
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
     padding-left: 1.75em;
 }
 
-#article-content.article-style-github li {
-    margin-top: 0.375em;
-    line-height: 1.6;
+#article-content.article-style-github ul ul > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 85%, transparent);
+    font-size: 1em;
 }
 
-#article-content.article-style-github li > p {
-    margin-bottom: 0.5em;
+#article-content.article-style-github ol ol > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 85%, transparent);
+    font-weight: 600;
+}
+
+/* 三级嵌套列表 */
+#article-content.article-style-github ul ul ul > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 70%, transparent);
+}
+
+#article-content.article-style-github ol ol ol > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 70%, transparent);
+    font-weight: 500;
+}
+
+/* 四级嵌套列表 */
+#article-content.article-style-github ul ul ul ul > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 55%, transparent);
+}
+
+#article-content.article-style-github ol ol ol ol > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 55%, transparent);
+}
+
+/* 五级嵌套列表 */
+#article-content.article-style-github ul ul ul ul ul > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+#article-content.article-style-github ol ol ol ol ol > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+/* 六级及以上嵌套列表 */
+#article-content.article-style-github ul ul ul ul ul ul > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+#article-content.article-style-github ol ol ol ol ol ol > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 /* 行内代码 - 基础样式 */
@@ -336,6 +423,40 @@
     font-weight: 600;
 }
 
+/* 任务列表 */
+#article-content.article-style-github ul[data-type="taskList"] {
+    list-style: none;
+    padding-left: 0;
+}
+
+#article-content.article-style-github li[data-type="taskItem"] {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5em;
+}
+
+/* 折叠内容 */
+#article-content.article-style-github details.details summary {
+    font-weight: 600;
+}
+
+/* 分栏卡片 */
+#article-content.article-style-github .columns {
+    display: flex;
+    gap: 1em;
+    margin: 1em 0;
+}
+
+#article-content.article-style-github .column {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 表格宽度自适应 */
+#article-content.article-style-github table[style*="width"] {
+    width: 100% !important;
+}
+
 
 /* ===================================================
  * Callout/Admonition 块样式 - 通用基础
@@ -470,10 +591,15 @@
     margin-bottom: 0;
 }
 
-/* 行内代码 - 基础样式 */
+/* 行内代码 - 苹果风格 */
 #article-content.article-style-default code {
     padding: 0.2em 0.5em;
     font-size: 0.9em;
+    background: var(--color-base-200);
+    color: var(--color-primary);
+    border-radius: 0.375rem;
+    font-family: ui-monospace, monospace;
+    font-weight: 500;
 }
 
 /* 代码块 - 基础布局（Shiki 插件负责样式渲染） */
@@ -489,29 +615,111 @@
     font-size: inherit;
 }
 
-/* 列表 */
+/* ===================================================
+ * 列表样式 - 苹果风格增强
+ * 支持深层嵌套（6层+），带颜色渐变和悬停效果
+ * ==================================================*/
+
+/* 无序列表和有序列表基础 */
 #article-content.article-style-default ul,
 #article-content.article-style-default ol {
-    margin: 0.75em 0;
+    margin: 1em 0;
+    padding-left: 2em;
+    line-height: 1.75;
+}
+
+/* 列表项基础样式 */
+#article-content.article-style-default li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    padding-left: 0.5em;
+    line-height: 1.75;
+    transition: background-color 0.2s ease;
+}
+
+/* 列表项悬停效果 */
+#article-content.article-style-default li:hover {
+    background: color-mix(in srgb, var(--color-base-200) 40%, transparent);
+    border-radius: 0.375rem;
+}
+
+/* 列表项内的段落 */
+#article-content.article-style-default li > p {
+    margin: 0;
+    line-height: 1.75;
+}
+
+/* 一级列表标记 - 最鲜艳 */
+#article-content.article-style-default ul > li::marker {
+    color: var(--color-primary);
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+#article-content.article-style-default ol > li::marker {
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 0.95em;
+}
+
+/* 二级嵌套列表 */
+#article-content.article-style-default li > ul,
+#article-content.article-style-default li > ol {
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
     padding-left: 1.75em;
 }
 
-#article-content.article-style-default li {
-    margin-top: 0.375em;
-    line-height: 1.65;
+#article-content.article-style-default ul ul > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 85%, transparent);
+    font-size: 1em;
 }
 
-#article-content.article-style-default li > p {
-    margin-bottom: 0.5em;
+#article-content.article-style-default ol ol > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 85%, transparent);
+    font-weight: 600;
 }
 
-#article-content.article-style-default li::marker {
-    color: var(--color-primary);
+/* 三级嵌套列表 */
+#article-content.article-style-default ul ul ul > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 70%, transparent);
+}
+
+#article-content.article-style-default ol ol ol > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 70%, transparent);
+    font-weight: 500;
+}
+
+/* 四级嵌套列表 */
+#article-content.article-style-default ul ul ul ul > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 55%, transparent);
+}
+
+#article-content.article-style-default ol ol ol ol > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 55%, transparent);
+}
+
+/* 五级嵌套列表 */
+#article-content.article-style-default ul ul ul ul ul > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+#article-content.article-style-default ol ol ol ol ol > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+
+/* 六级及以上嵌套列表 */
+#article-content.article-style-default ul ul ul ul ul ul > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+#article-content.article-style-default ol ol ol ol ol ol > li::marker {
+    color: color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 /* 表格 - 苹果风格 */
 #article-content.article-style-default table {
-    width: 100%;
+    width: 100% !important;
     margin: 1.5em 0;
     border-collapse: separate;
     border-spacing: 0;
@@ -519,6 +727,16 @@
     overflow: hidden;
     border: 1px solid var(--color-base-300);
     box-shadow: 0 1px 3px color-mix(in srgb, var(--color-base-content) 5%, transparent);
+}
+
+/* 覆盖编辑器内联样式 */
+#article-content.article-style-default table[style*="width"] {
+    width: 100% !important;
+}
+
+#article-content.article-style-default table col[style*="width"],
+#article-content.article-style-default table colgroup col {
+    width: auto !important;
 }
 
 #article-content.article-style-default table thead {
@@ -531,7 +749,14 @@
     font-size: 0.9em;
     text-align: left;
     color: var(--color-base-content);
-    border-bottom: 1px solid var(--color-base-300);
+    border-bottom: 2px solid var(--color-base-300);
+    background: var(--color-base-200);
+}
+
+/* 首行表头可能在 tbody 中 */
+#article-content.article-style-default table tbody tr:first-child th {
+    background: var(--color-base-200);
+    border-bottom: 2px solid var(--color-base-300);
 }
 
 #article-content.article-style-default table td {
@@ -539,12 +764,24 @@
     border-bottom: 1px solid color-mix(in srgb, var(--color-base-300) 50%, transparent);
 }
 
+/* 表格行悬停效果 */
+#article-content.article-style-default table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
 #article-content.article-style-default table tbody tr:hover {
     background: color-mix(in srgb, var(--color-base-200) 60%, transparent);
 }
 
-#article-content.article-style-default table tbody tr:last-child td {
+#article-content.article-style-default table tbody tr:last-child td,
+#article-content.article-style-default table tbody tr:last-child th {
     border-bottom: none;
+}
+
+/* 表格内的段落 */
+#article-content.article-style-default table p {
+    margin: 0;
+    line-height: 1.5;
 }
 
 /* 分隔线 - 苹果风格 */
@@ -731,6 +968,230 @@
     margin-bottom: 0.5em;
 }
 
+/* ===================================================
+ * 任务列表 - 苹果风格增强
+ * 带复选框、悬停效果和完成状态
+ * ==================================================*/
+
+/* 任务列表容器 */
+#article-content.article-style-default ul[data-type="taskList"] {
+    list-style: none;
+    padding-left: 0;
+    margin: 1.5em 0;
+}
+
+/* 任务列表项 */
+#article-content.article-style-default li[data-type="taskItem"] {
+    display: flex;
+    align-items: flex-start;
+    gap: 1em;
+    padding: 0.875em 1.25em;
+    margin: 0.75em 0;
+    background: var(--color-base-200);
+    border: 1px solid var(--color-base-300);
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--color-base-content) 3%, transparent);
+}
+
+/* 任务项悬停效果 */
+#article-content.article-style-default li[data-type="taskItem"]:hover {
+    background: color-mix(in srgb, var(--color-base-200) 120%, var(--color-base-100));
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 10%, transparent);
+    transform: translateX(2px);
+}
+
+/* 复选框标签 */
+#article-content.article-style-default li[data-type="taskItem"] label {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: 0.125em;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* 复选框样式 */
+#article-content.article-style-default li[data-type="taskItem"] input[type="checkbox"] {
+    margin: 0;
+    width: 1.25em;
+    height: 1.25em;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+    border-radius: 0.25rem;
+}
+
+/* 复选框后的 span（占位符） */
+#article-content.article-style-default li[data-type="taskItem"] label span {
+    display: none;
+}
+
+/* 任务项内容区域 */
+#article-content.article-style-default li[data-type="taskItem"] div {
+    flex: 1;
+    min-width: 0;
+}
+
+#article-content.article-style-default li[data-type="taskItem"] div p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* 已完成的任务项 */
+#article-content.article-style-default li[data-type="taskItem"][data-checked="true"] {
+    opacity: 0.65;
+    background: color-mix(in srgb, var(--color-base-200) 60%, transparent);
+    border-color: color-mix(in srgb, var(--color-base-300) 60%, transparent);
+}
+
+#article-content.article-style-default li[data-type="taskItem"][data-checked="true"]:hover {
+    opacity: 0.75;
+}
+
+#article-content.article-style-default li[data-type="taskItem"][data-checked="true"] div {
+    text-decoration: line-through;
+    color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
+}
+
+/* ===================================================
+ * 折叠内容 - 苹果风格增强
+ * 带卡片式设计、悬停效果和展开动画
+ * ==================================================*/
+
+#article-content.article-style-default details.details {
+    margin: 1.5em 0;
+    border: 1px solid var(--color-base-300);
+    border-radius: 1rem;
+    overflow: hidden;
+    background: var(--color-base-100);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-base-content) 6%, transparent);
+    transition: all 0.2s ease;
+}
+
+#article-content.article-style-default details.details:hover {
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-base-content) 10%, transparent);
+}
+
+#article-content.article-style-default details.details summary {
+    padding: 1.125rem 1.5rem;
+    background: var(--color-base-200);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.05em;
+    user-select: none;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+#article-content.article-style-default details.details summary::before {
+    content: '▶';
+    position: absolute;
+    left: 0.75rem;
+    transition: transform 0.2s ease;
+    color: var(--color-primary);
+    font-size: 0.85em;
+}
+
+#article-content.article-style-default details.details summary:hover {
+    background: color-mix(in srgb, var(--color-primary) 8%, var(--color-base-200));
+    color: var(--color-primary);
+}
+
+#article-content.article-style-default details.details[open] summary::before {
+    transform: rotate(90deg);
+}
+
+#article-content.article-style-default details.details[open] summary {
+    border-bottom: 2px solid var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 5%, var(--color-base-200));
+}
+
+#article-content.article-style-default details.details > div {
+    padding: 1.25rem 1.5rem;
+    animation: details-open 0.3s ease-out;
+}
+
+@keyframes details-open {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===================================================
+ * 分栏卡片 - 苹果风格增强
+ * 等宽布局、悬停上浮效果、响应式堆叠
+ * ==================================================*/
+
+#article-content.article-style-default .columns {
+    display: flex;
+    gap: 1.5em;
+    margin: 2em 0;
+    flex-wrap: wrap;
+}
+
+/* 覆盖内联样式 */
+#article-content.article-style-default .columns[style] {
+    gap: 1.5em !important;
+    width: 100% !important;
+}
+
+#article-content.article-style-default .column {
+    flex: 1;
+    min-width: 0;
+    padding: 1.5rem;
+    background: var(--color-base-200);
+    border-radius: 1rem;
+    border: 1px solid var(--color-base-300);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-base-content) 6%, transparent);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 覆盖内联样式 */
+#article-content.article-style-default .column[style] {
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+#article-content.article-style-default .column p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* 分栏卡片悬停效果 - 上浮 + 阴影增强 */
+#article-content.article-style-default .column:hover {
+    background: var(--color-base-100);
+    border-color: var(--color-primary);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-primary) 15%, transparent);
+    transform: translateY(-4px) scale(1.02);
+}
+
+/* 分栏响应式 - 移动端堆叠 */
+@media (max-width: 768px) {
+    #article-content.article-style-default .columns {
+        flex-direction: column;
+        gap: 1em;
+    }
+    
+    #article-content.article-style-default .column {
+        width: 100%;
+    }
+}
+
+/* 表格固定宽度处理 */
+#article-content.article-style-default table[style*="width"] {
+    width: 100% !important;
+}
+
+#article-content.article-style-default table col[style*="width"] {
+    width: auto !important;
+}
+
 /* 表格标题 */
 #article-content.article-style-default caption {
     padding: 0.75rem 0;
@@ -792,6 +1253,199 @@
 /* 时间 */
 #article-content.article-style-default time {
     color: color-mix(in srgb, var(--color-base-content) 80%, transparent);
+}
+
+/* ===================================================
+ * 媒体元素 - 苹果风格
+ * ==================================================*/
+
+/* 音频播放器 */
+#article-content.article-style-default audio {
+    width: 100%;
+    max-width: 100%;
+    margin: 1.5em 0;
+    border-radius: 0.75rem;
+    display: block;
+}
+
+/* 视频播放器 */
+#article-content.article-style-default video {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 2em auto;
+    border-radius: 1rem;
+    display: block;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--color-base-content) 8%, transparent);
+}
+
+/* iframe 嵌入内容 */
+#article-content.article-style-default iframe {
+    width: 100%;
+    max-width: 100%;
+    margin: 1.5em 0;
+    border-radius: 1rem;
+    border: 1px solid var(--color-base-300);
+    background: var(--color-base-200);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-base-content) 6%, transparent);
+}
+
+/* embed 和 object */
+#article-content.article-style-default embed,
+#article-content.article-style-default object {
+    max-width: 100%;
+    margin: 1.5em 0;
+    border-radius: 0.75rem;
+}
+
+/* picture 响应式图片容器 */
+#article-content.article-style-default picture {
+    display: block;
+    margin: 2em auto;
+}
+
+#article-content.article-style-default picture img {
+    margin: 0;
+}
+
+/* ===================================================
+ * 语义标记元素 - 苹果风格
+ * ==================================================*/
+
+/* 旁注/侧边栏 */
+#article-content.article-style-default aside {
+    margin: 1.5em 0;
+    padding: 1.25rem 1.5rem;
+    background: var(--color-base-200);
+    border-radius: 1rem;
+    border-left: 4px solid var(--color-accent);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-base-content) 6%, transparent);
+}
+
+/* 注音标记（中文拼音） */
+#article-content.article-style-default ruby {
+    font-size: inherit;
+}
+
+#article-content.article-style-default rt {
+    font-size: 0.6em;
+    color: color-mix(in srgb, var(--color-base-content) 70%, transparent);
+}
+
+#article-content.article-style-default rp {
+    color: color-mix(in srgb, var(--color-base-content) 50%, transparent);
+}
+
+/* 文本方向控制 */
+#article-content.article-style-default bdi,
+#article-content.article-style-default bdo {
+    unicode-bidi: isolate;
+}
+
+/* ===================================================
+ * 表单元素 - 苹果风格
+ * ==================================================*/
+
+/* 表单分组 */
+#article-content.article-style-default fieldset {
+    margin: 1.5em 0;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--color-base-300);
+    border-radius: 1rem;
+    background: var(--color-base-200);
+}
+
+#article-content.article-style-default legend {
+    padding: 0 0.75rem;
+    font-weight: 600;
+    font-size: 1.125em;
+    color: var(--color-base-content);
+}
+
+/* 输出结果 */
+#article-content.article-style-default output {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--color-base-200);
+    border-radius: 0.5rem;
+    font-family: ui-monospace, monospace;
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+/* 进度条 */
+#article-content.article-style-default progress {
+    width: 100%;
+    height: 1.5rem;
+    margin: 1em 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--color-base-200);
+    border: 1px solid var(--color-base-300);
+}
+
+#article-content.article-style-default progress::-webkit-progress-bar {
+    background: var(--color-base-200);
+    border-radius: 0.75rem;
+}
+
+#article-content.article-style-default progress::-webkit-progress-value {
+    background: var(--color-primary);
+    border-radius: 0.75rem;
+}
+
+#article-content.article-style-default progress::-moz-progress-bar {
+    background: var(--color-primary);
+    border-radius: 0.75rem;
+}
+
+/* 度量条 */
+#article-content.article-style-default meter {
+    width: 100%;
+    height: 1.5rem;
+    margin: 1em 0;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--color-base-200);
+    border: 1px solid var(--color-base-300);
+}
+
+#article-content.article-style-default meter::-webkit-meter-bar {
+    background: var(--color-base-200);
+    border-radius: 0.75rem;
+}
+
+#article-content.article-style-default meter::-webkit-meter-optimum-value {
+    background: var(--color-success);
+    border-radius: 0.75rem;
+}
+
+#article-content.article-style-default meter::-webkit-meter-suboptimum-value {
+    background: var(--color-warning);
+    border-radius: 0.75rem;
+}
+
+#article-content.article-style-default meter::-webkit-meter-even-less-good-value {
+    background: var(--color-error);
+    border-radius: 0.75rem;
+}
+
+/* ===================================================
+ * 特殊元素 - 苹果风格
+ * ==================================================*/
+
+/* 对话框 */
+#article-content.article-style-default dialog {
+    padding: 1.5rem;
+    border: 1px solid var(--color-base-300);
+    border-radius: 1rem;
+    background: var(--color-base-100);
+    box-shadow: 0 8px 32px color-mix(in srgb, var(--color-base-content) 15%, transparent);
+}
+
+#article-content.article-style-default dialog::backdrop {
+    background: color-mix(in srgb, var(--color-base-content) 20%, transparent);
+    backdrop-filter: blur(4px);
 }
 
 /* 默认风格 Callout - 苹果风格卡片 */

@@ -4,6 +4,94 @@ metadata:
   name: theme-sky-blog-1-setting
 spec:
   forms:
+    - group: general
+      label: 通用设置
+      formSchema:
+        - $formkit: group
+          name: loading_screen
+          label: 页面加载屏幕
+          value:
+            enable_loading: false
+            animation_type: css
+            css_style: spinner
+            loading_text: "加载中..."
+            min_duration: 500
+            custom_svg: ''
+            custom_gif: ''
+          children:
+            - $formkit: radio
+              id: enable_loading
+              name: enable_loading
+              label: 启用加载屏幕
+              help: 在页面加载时显示加载动画，避免样式闪烁和变形
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+            - $formkit: radio
+              id: animation_type
+              name: animation_type
+              if: $get(enable_loading).value
+              label: 动画来源
+              help: 选择加载动画的来源方式
+              value: css
+              options:
+                - label: 内置 CSS 动画
+                  value: css
+                - label: 自定义 SVG 动画
+                  value: svg
+                - label: 自定义 GIF 动图
+                  value: gif
+            - $formkit: select
+              name: css_style
+              key: css_style_field
+              if: $get(animation_type).value === 'css'
+              label: CSS 动画样式
+              help: 选择内置的 CSS 加载动画样式
+              value: spinner
+              options:
+                - label: 旋转圆环（Spinner）
+                  value: spinner
+                - label: 脉冲圆点（Dots）
+                  value: dots
+                - label: 加载条（Bars）
+                  value: bars
+                - label: DaisyUI Ring
+                  value: ring
+            - $formkit: code
+              name: custom_svg
+              key: custom_svg_field
+              if: $get(animation_type).value === 'svg'
+              label: 自定义 SVG 代码
+              help: 输入完整的 SVG 动画代码，建议尺寸 48x48 或 64x64
+              language: html
+              height: 150
+              placeholder: '<svg width="48" height="48" viewBox="0 0 48 48">...</svg>'
+            - $formkit: attachment
+              name: custom_gif
+              key: custom_gif_field
+              if: $get(animation_type).value === 'gif'
+              label: 上传 GIF 动图
+              help: 上传加载动画 GIF 图片，建议尺寸不超过 100KB
+              accepts:
+                - image/gif
+            - $formkit: text
+              if: $get(enable_loading).value
+              name: loading_text
+              label: 加载文字
+              help: 加载动画下方显示的文字提示
+              placeholder: "加载中..."
+              value: "加载中..."
+            - $formkit: number
+              if: $get(enable_loading).value
+              name: min_duration
+              label: 最小显示时间（毫秒）
+              help: 加载屏幕至少显示的时间，避免快速闪现，推荐 300-800 毫秒
+              value: 500
+              min: 0
+              max: 3000
+              step: 100
     - group: nav
       label: Nav设置
       formSchema:
@@ -867,6 +955,6 @@ spec:
               help: 选择文章内容的显示风格
               options:
                 - value: default
-                  label: 默认风格（推荐 - 现代苹果风）
+                  label: 默认风格（推荐）
                 - value: github
                   label: GitHub 风格（经典优雅）

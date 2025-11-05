@@ -1,4 +1,22 @@
-/* Halo 搜索组件样式变量 - 完全基于 DaisyUI 主题系统 */
+/**
+ * Sky Blog Theme - 基础全局样式
+ * 
+ * 功能：全局CSS变量定义、Halo组件适配、动画系统、暗色模式优化
+ * 内容：
+ *   - Halo搜索组件变量
+ *   - Halo评论组件变量  
+ *   - 主题自定义变量
+ *   - 全局动画系统
+ *   - 暗色模式组件微光效果
+ * 
+ * @author Sky
+ * @version 1.0.0
+ */
+
+/* ===================================================
+ * CSS 变量定义 - Halo 官方组件适配
+ * 将 Halo 搜索和评论组件适配到 DaisyUI 5 主题系统
+ * ==================================================*/
 :root {
     /* 基础样式变量 */
     --halo-search-widget-base-font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
