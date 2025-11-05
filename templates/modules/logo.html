@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<!-- ========================================== -->
+<!--              Logo 渲染组件                  -->
+<!-- ========================================== -->
+
+<!--
+  参数说明：
+  - sizeClass: Logo 图标的尺寸类（如 'w-8 h-8' 或 'w-6 h-6'）
+  
+  logo_type 可选值：
+  - none: 不显示图标
+  - svg: 显示 SVG 代码
+  - image: 显示上传的图片
+-->
+
+<!-- Logo 图标渲染片段 -->
+<span th:fragment="icon(sizeClass)">
+  <!-- SVG 代码类型 -->
+  <span th:if="${theme.config.nav.logo_settings.logo_type == 'svg'}"
+    th:utext="${theme.config.nav.logo_settings.logo_icon_html}"
+    th:class="${sizeClass} + ' text-primary flex items-center justify-center'">
+  </span>
+  
+  <!-- 图片类型 -->
+  <img th:if="${theme.config.nav.logo_settings.logo_type == 'image' && !#strings.isEmpty(theme.config.nav.logo_settings.logo_image)}"
+    th:src="${theme.config.nav.logo_settings.logo_image}"
+    th:alt="${#strings.isEmpty(theme.config.nav.logo_settings.custom_logo_title) ? site.title : theme.config.nav.logo_settings.custom_logo_title}"
+    th:class="${sizeClass} + ' object-contain'"
+  />
+</span>
+
+<!-- Logo 标题渲染片段 -->
+<span th:fragment="title" th:if="${theme.config.nav.logo_settings.show_logo_title}"
+  th:text="${#strings.isEmpty(theme.config.nav.logo_settings.custom_logo_title) ? site.title : theme.config.nav.logo_settings.custom_logo_title}">
+</span>
+
+</html>
+

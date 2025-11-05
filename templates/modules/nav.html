@@ -21,14 +21,9 @@
         <div class="flex-shrink-0">
           <a href="/" class="text-lg sm:text-xl font-bold flex items-center gap-2">
             <!-- Logo 图标 -->
-            <span th:if="${theme.config.nav.logo_settings.show_logo_icon}"
-              th:utext="${theme.config.nav.logo_settings.logo_icon_html}"
-              class="w-8 h-8 text-primary flex items-center justify-center">
-            </span>
+            <th:block th:replace="~{modules/logo :: icon('w-8 h-8')}" />
             <!-- 站点标题 -->
-            <span th:if="${theme.config.nav.logo_settings.show_logo_title}"
-              th:text="${theme.config.nav.logo_settings.custom_logo_title}">
-            </span>
+            <th:block th:replace="~{modules/logo :: title}" />
           </a>
         </div>
 
@@ -220,14 +215,9 @@
         <!-- Logo 区域 -->
         <a href="/" class="text-lg font-bold flex items-center gap-2">
           <!-- Logo 图标 -->
-          <span th:if="${theme.config.nav.logo_settings.show_logo_icon}"
-            th:utext="${theme.config.nav.logo_settings.logo_icon_html}"
-            class="w-6 h-6 text-primary flex items-center justify-center">
-          </span>
+          <th:block th:replace="~{modules/logo :: icon('w-6 h-6')}" />
           <!-- 站点标题 -->
-          <span th:if="${theme.config.nav.logo_settings.show_logo_title}"
-            th:text="${#strings.isEmpty(theme.config.nav.logo_settings.custom_logo_title) ? site.title : theme.config.nav.logo_settings.custom_logo_title}">
-          </span>
+          <th:block th:replace="~{modules/logo :: title}" />
         </a>
 
         <!-- 关闭按钮 -->

@@ -99,35 +99,48 @@ spec:
           name: logo_settings
           label: Logo 设置
           value:
-            show_logo_icon: true
+            logo_type: svg
             logo_icon_html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="M17.5 19H6.5C4.01472 19 2 16.9853 2 14.5C2 12.1597 3.79594 10.1953 6.08203 10.021C6.55632 6.45499 9.49378 3.5 13.25 3.5C16.3663 3.5 19.0378 5.50437 19.932 8.33691C22.0368 8.88413 23.5 10.864 23.5 13.25C23.5 15.7353 21.4853 17.75 19 17.75H18.75C18.3358 17.75 18 17.4142 18 17C18 16.5858 18.3358 16.25 18.75 16.25H19C20.6569 16.25 22 14.9069 22 13.25C22 11.5931 20.6569 10.25 19 10.25C18.5858 10.25 18.25 9.91421 18.25 9.5C18.25 7.01472 16.2353 5 13.75 5C11.2647 5 9.25 7.01472 9.25 9.5C9.25 9.91421 8.91421 10.25 8.5 10.25C6.01472 10.25 4 12.2647 4 14.75C4 16.2353 5.21472 17.5 6.75 17.5H17.25C17.6642 17.5 18 17.8358 18 18.25C18 18.6642 17.6642 19 17.25 19Z"/></svg>'
+            logo_image: ""
             show_logo_title: true
-            custom_logo_title: "5ee"
+            custom_logo_title: ""
           children:
             - $formkit: radio
-              id: show_logo_icon
-              name: show_logo_icon
-              label: 显示 Logo 图标
-              help: 是否显示 Logo 左侧的图标
+              id: logo_type
+              name: logo_type
+              label: Logo 图标类型
+              help: 选择 Logo 图标的显示方式
+              value: svg
               options:
-                - label: 显示
-                  value: true
                 - label: 隐藏
-                  value: false
+                  value: none
+                - label: SVG 代码
+                  value: svg
+                - label: 上传图片
+                  value: image
             - $formkit: code
               name: logo_icon_html
               key: logo_icon_html_field
-              if: $get(show_logo_icon).value
-              label: Logo svg 代码
+              if: $get(logo_type).value === 'svg'
+              label: Logo SVG 代码
               help: 直接输入 SVG 或其他 HTML 代码，将在页面中直接渲染
               language: html
               height: 120
-              value:
+              value: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="M17.5 19H6.5C4.01472 19 2 16.9853 2 14.5C2 12.1597 3.79594 10.1953 6.08203 10.021C6.55632 6.45499 9.49378 3.5 13.25 3.5C16.3663 3.5 19.0378 5.50437 19.932 8.33691C22.0368 8.88413 23.5 10.864 23.5 13.25C23.5 15.7353 21.4853 17.75 19 17.75H18.75C18.3358 17.75 18 17.4142 18 17C18 16.5858 18.3358 16.25 18.75 16.25H19C20.6569 16.25 22 14.9069 22 13.25C22 11.5931 20.6569 10.25 19 10.25C18.5858 10.25 18.25 9.91421 18.25 9.5C18.25 7.01472 16.2353 5 13.75 5C11.2647 5 9.25 7.01472 9.25 9.5C9.25 9.91421 8.91421 10.25 8.5 10.25C6.01472 10.25 4 12.2647 4 14.75C4 16.2353 5.21472 17.5 6.75 17.5H17.25C17.6642 17.5 18 17.8358 18 18.25C18 18.6642 17.6642 19 17.25 19Z"/></svg>'
+            - $formkit: attachment
+              name: logo_image
+              key: logo_image_field
+              if: $get(logo_type).value === 'image'
+              label: Logo 图片
+              help: 上传 Logo 图片，支持 PNG、JPG、SVG 等格式，建议尺寸 32x32 或 64x64
+              accepts:
+                - image/*
             - $formkit: radio
               id: show_logo_title
               name: show_logo_title
               label: 显示 Logo 标题
               help: 是否显示 Logo 右侧的标题文字
+              value: true
               options:
                 - label: 显示
                   value: true
@@ -136,9 +149,10 @@ spec:
             - $formkit: text
               name: custom_logo_title
               key: custom_logo_title_field
-              if: $get(show_logo_title).value
+              if: $get(show_logo_title).value === true
               label: 自定义 Logo 标题
               help: 留空则使用站点标题，填写则使用自定义标题
+              placeholder: "留空使用站点标题"
         - $formkit: group
           name: menu_settings
           label: 菜单设置
