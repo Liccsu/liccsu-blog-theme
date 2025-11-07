@@ -49,11 +49,12 @@
           </th:block>
         </th:block>
         
-        <!-- 分隔线 -->
-        <div class="w-px h-6"></div>
+        <!-- 分隔线（仅当返回顶部启用时显示） -->
+        <div class="w-px h-6" th:if="${theme.config.floating_dock.general_settings.enable_back_to_top}"></div>
         
         <!-- 返回顶部按钮 -->
-        <button @click="scrollToTop()"
+        <button th:if="${theme.config.floating_dock.general_settings.enable_back_to_top}"
+                @click="scrollToTop()"
                 class="dock-item dock-btn"
                 title="返回顶部">
           <span class="icon-[heroicons--arrow-up] w-4 h-4"></span>

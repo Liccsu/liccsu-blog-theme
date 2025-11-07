@@ -7,7 +7,7 @@
 
 <!-- 文章页悬浮 Dock 片段 -->
 <div th:fragment="dock" 
-     th:if="${theme.config.floating_dock.general_settings.enable_dock}"
+     th:if="${theme.config.floating_dock.post_settings.enable_dock}"
      x-data="floatingDock"
      @toggle-comment-drawer.window="toggleCommentDrawer()"
      th:attr="data-post-name=${post.metadata.name},data-upvote-count=${post.stats.upvote ?: 0},data-comment-count=${post.stats.comment ?: 0}"
@@ -52,13 +52,17 @@
           </th:block>
         </th:block>
         
-        <!-- 分隔线 -->
-        <div class="w-px h-6"></div>
+        <!-- 分隔线（仅当右侧至少有一个功能启用时显示） -->
+        <div class="w-px h-6" th:if="${theme.config.floating_dock.post_settings.enable_like
+                                        or theme.config.floating_dock.post_settings.enable_comment_drawer
+                                        or theme.config.floating_dock.post_settings.enable_share
+                                        or theme.config.floating_dock.post_settings.enable_back_to_top}"></div>
         
         <!-- 文章页特殊功能 -->
         
         <!-- 点赞按钮 -->
-        <button x-data="postLike()" 
+        <button th:if="${theme.config.floating_dock.post_settings.enable_like}"
+                x-data="postLike()" 
                 @click="toggleLike()"
                 class="dock-item dock-btn group relative"
                 title="点赞">
@@ -98,11 +102,15 @@
           </span>
         </button>
         
-        <!-- 分隔线 -->
-        <div class="w-px h-6"></div>
+        <!-- 分隔线（仅当返回顶部启用且前面至少有一个功能启用时显示） -->
+        <div class="w-px h-6" th:if="${theme.config.floating_dock.post_settings.enable_back_to_top
+                                        and (theme.config.floating_dock.post_settings.enable_like
+                                             or theme.config.floating_dock.post_settings.enable_comment_drawer
+                                             or theme.config.floating_dock.post_settings.enable_share)}"></div>
         
         <!-- 返回顶部按钮 -->
-        <button @click="scrollToTop()"
+        <button th:if="${theme.config.floating_dock.post_settings.enable_back_to_top}"
+                @click="scrollToTop()"
                 class="dock-item dock-btn"
                 title="返回顶部">
           <span class="icon-[heroicons--arrow-up] w-4 h-4"></span>
@@ -125,8 +133,8 @@
      th:attr="data-post-title=${post.spec.title},
               data-post-url=${post.status.permalink},
               data-site-title=${site.title},
-              data-share-title-template=${theme.config.floating_dock.share_settings.share_title_template},
-              data-share-item-ids=${#strings.listJoin(theme.config.floating_dock.share_settings.share_item_ids, ',')}">
+              data-share-title-template=${theme.config.floating_dock.post_settings.share_settings.share_title_template},
+              data-share-item-ids=${#strings.listJoin(theme.config.floating_dock.post_settings.share_settings.share_item_ids, ',')}">
   
   <!-- 抽屉容器 -->
   <div class="drawer drawer-end z-[9995]">

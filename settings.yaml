@@ -103,7 +103,7 @@ spec:
             logo_icon_html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-full h-full"><path d="M17.5 19H6.5C4.01472 19 2 16.9853 2 14.5C2 12.1597 3.79594 10.1953 6.08203 10.021C6.55632 6.45499 9.49378 3.5 13.25 3.5C16.3663 3.5 19.0378 5.50437 19.932 8.33691C22.0368 8.88413 23.5 10.864 23.5 13.25C23.5 15.7353 21.4853 17.75 19 17.75H18.75C18.3358 17.75 18 17.4142 18 17C18 16.5858 18.3358 16.25 18.75 16.25H19C20.6569 16.25 22 14.9069 22 13.25C22 11.5931 20.6569 10.25 19 10.25C18.5858 10.25 18.25 9.91421 18.25 9.5C18.25 7.01472 16.2353 5 13.75 5C11.2647 5 9.25 7.01472 9.25 9.5C9.25 9.91421 8.91421 10.25 8.5 10.25C6.01472 10.25 4 12.2647 4 14.75C4 16.2353 5.21472 17.5 6.75 17.5H17.25C17.6642 17.5 18 17.8358 18 18.25C18 18.6642 17.6642 19 17.25 19Z"/></svg>'
             logo_image: ""
             show_logo_title: true
-            custom_logo_title: ""
+            custom_logo_title: "5ee.net"
           children:
             - $formkit: radio
               id: logo_type
@@ -635,14 +635,20 @@ spec:
                   value: image
                 - label: CSS 特效
                   value: effect
-            - $formkit: text
+            - $formkit: attachment
               name: background_image
               key: background_image_field
               if: $get(background_type).value === 'image'
-              label: 背景图片地址
-              help: 输入图片 URL 地址，支持随机图片 API（如 https://www.dmoe.cc/random.php）或上传后的图片地址
-              placeholder: "https://www.dmoe.cc/random.php"
-              value: "https://www.dmoe.cc/random.php"
+              label: 背景媒体（上传或输入地址）
+              help: 上传图片/视频或直接输入 URL；附件控件兼容外链路径 https://www.dmoe.cc/random.php
+              accepts:
+                - image/jpeg
+                - image/png
+                - image/webp
+                - image/gif
+                - video/mp4
+                - video/webm
+                - video/ogg
             - $formkit: select
               name: effect_style
               key: effect_style_field
@@ -888,8 +894,10 @@ spec:
           value:
             enable_dock: true
             dock_menu: primary
+            enable_back_to_top: true
           children:
             - $formkit: radio
+              id: fd_general_enable_dock
               name: enable_dock
               label: 启用悬浮 Dock
               help: 是否显示底部悬浮控制栏
@@ -902,86 +910,134 @@ spec:
               name: dock_menu
               label: Dock 菜单
               value: primary
+              if: $get(fd_general_enable_dock).value
               help: 选择要在悬浮 Dock 中显示的菜单。菜单项的图标通过【元数据】中的 icon 字段设置（填入 SVG 代码）
+            - $formkit: radio
+              name: enable_back_to_top
+              label: 返回顶部按钮
+              help: 控制悬浮 Dock 中是否显示“返回顶部”按钮
+              if: $get(fd_general_enable_dock).value
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
         - $formkit: group
           name: post_settings
           label: 文章页设置
           value:
+            enable_dock: true
+            enable_like: true
             post_dock_menu: primary
             enable_share: true
             enable_comment_drawer: true
+            enable_back_to_top: true
           children:
+            - $formkit: radio
+              id: fd_post_enable_dock
+              name: enable_dock
+              label: 启用文章页 Dock
+              help: 仅控制文章页是否显示底部悬浮控制栏
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
             - $formkit: menuRadio
               name: post_dock_menu
               label: 文章页 Dock 菜单
               value: primary
+              if: $get(fd_post_enable_dock).value
               help: 选择要在文章页 Dock 中显示的菜单（可以和通用 Dock 菜单一样，也可以选择不同的菜单）
+            - $formkit: radio
+              id: enable_like
+              name: enable_like
+              label: 启用点赞功能
+              help: 文章页 Dock 中的点赞按钮
+              if: $get(fd_post_enable_dock).value
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
             - $formkit: radio
               id: enable_share
               name: enable_share
               label: 启用分享功能
               help: 文章页 Dock 中的分享按钮
+              if: $get(fd_post_enable_dock).value
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+            - $formkit: group
+              name: share_settings
+              label: 分享设置
+              if: $get(enable_share).value
+              value:
+                share_title_template: ""
+                share_item_ids:
+                  - wechat
+                  - weibo
+                  - x
+                  - qq
+              children:
+                - $formkit: text
+                  name: share_title_template
+                  label: 分享标题模板
+                  help: 留空使用文章标题，可使用变量 {title} {site} {author}
+                  placeholder: "推荐阅读：{title} - {site}"
+                - $formkit: select
+                  name: share_item_ids
+                  multiple: true
+                  sortable: true
+                  label: 启用的分享平台
+                  help: 选择要启用的分享平台，可拖拽调整顺序
+                  value:
+                    - wechat
+                    - weibo
+                    - x
+                    - qq
+                  options:
+                    - label: 微信
+                      value: wechat
+                    - label: X (Twitter)
+                      value: x
+                    - label: Telegram
+                      value: telegram
+                    - label: Facebook
+                      value: facebook
+                    - label: QQ
+                      value: qq
+                    - label: QQ 空间
+                      value: qzone
+                    - label: 微博
+                      value: weibo
+                    - label: 豆瓣
+                      value: douban
+                    - label: 系统分享
+                      value: native
+            - $formkit: radio
+              name: enable_comment_drawer
+              label: 启用评论抽屉
+              help: 从右侧展开的评论面板
+              if: $get(fd_post_enable_dock).value
               options:
                 - label: 启用
                   value: true
                 - label: 禁用
                   value: false
             - $formkit: radio
-              name: enable_comment_drawer
-              label: 启用评论抽屉
-              help: 从右侧展开的评论面板
+              name: enable_back_to_top
+              label: 返回顶部按钮
+              help: 控制文章页悬浮 Dock 中是否显示“返回顶部”按钮
+              if: $get(fd_post_enable_dock).value
               options:
-                - label: 启用
+                - label: 显示
                   value: true
-                - label: 禁用
+                - label: 隐藏
                   value: false
-        - $formkit: group
-          name: share_settings
-          label: 分享设置
-          if: $get(enable_share).value
-          value:
-            share_title_template: ""
-            share_item_ids:
-              - wechat
-              - weibo
-              - x
-              - qq
-          children:
-            - $formkit: text
-              name: share_title_template
-              label: 分享标题模板
-              help: 留空使用文章标题，可使用变量 {title} {site} {author}
-              placeholder: "推荐阅读：{title} - {site}"
-            - $formkit: select
-              name: share_item_ids
-              multiple: true
-              sortable: true
-              label: 启用的分享平台
-              help: 选择要启用的分享平台，可拖拽调整顺序
-              value:
-                - wechat
-                - weibo
-                - x
-                - qq
-              options:
-                - label: 微信
-                  value: wechat
-                - label: X (Twitter)
-                  value: x
-                - label: Telegram
-                  value: telegram
-                - label: Facebook
-                  value: facebook
-                - label: QQ
-                  value: qq
-                - label: QQ 空间
-                  value: qzone
-                - label: 微博
-                  value: weibo
-                - label: 豆瓣
-                  value: douban
-                - label: 系统分享
-                  value: native
     - group: article
       label: 文章设置
       formSchema:
