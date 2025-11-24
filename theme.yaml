@@ -21,9 +21,15 @@ spec:
       url: "https://github.com/sky121666/halo-theme-sky-blog-1/blob/main/LICENSE"
   customTemplates:
     category:
-      - name: 卡片风格
-        description: 卡片风格
+      - name: 强制卡片风格
+        description: 忽略全局设置，此分类强制使用卡片风格
         file: category-card.html
-      - name: 列表风格
-        description: 列表风格
+      - name: 强制列表风格
+        description: 忽略全局设置，此分类强制使用列表风格
         file: category-list.html
+      - name: 强制杂志风格
+        description: 忽略全局设置，此分类强制使用杂志风格
+        file: category-magazine.html
+      - name: 强制极简风格
+        description: 忽略全局设置，此分类强制使用极简风格
+        file: category-minimal.html

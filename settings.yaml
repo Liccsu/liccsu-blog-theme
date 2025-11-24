@@ -1143,6 +1143,10 @@ spec:
               value: modern
             - label: 列表
               value: media_text
+            - label: 杂志
+              value: magazine
+            - label: 极简
+              value: minimal
         # 分类封面回退设置（支持上传图片作为默认封面）
         - $formkit: group
           name: cover_fallback

@@ -48,8 +48,10 @@
       </h3>
 
       <!-- 摘要：响应式占满宽度，双行省略，移除固定宽度与高度以适配窄屏 -->
-      <p class="mt-2 text-sm text-base-content/70 line-clamp-2 w-full"
-         th:text="${post.spec.excerpt != null && post.spec.excerpt.raw != null ? post.spec.excerpt.raw : ''}"></p>
+      <p class="mt-2 text-sm text-base-content/70 line-clamp-2 w-full">
+        <a th:href="@{${post.status.permalink}}" class="hover:text-base-content"
+           th:text="${post.spec.excerpt != null && post.spec.excerpt.raw != null ? post.spec.excerpt.raw : ''}"></a>
+      </p>
 
       <!-- 元信息行：固定在右侧内容底部；按要求分两行：
            行1（左）：分类 + 标签；行2（右）：时间 + 浏览量 + 点赞 + 评论 -->

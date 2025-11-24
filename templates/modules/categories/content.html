@@ -72,6 +72,12 @@
               <th:block th:case="'media_text'">
                 <th:block th:replace="~{modules/categories/list-media :: media_text(${posts})}" />
               </th:block>
+              <th:block th:case="'magazine'">
+                <th:block th:replace="~{modules/categories/list-magazine :: magazine(${posts})}" />
+              </th:block>
+              <th:block th:case="'minimal'">
+                <th:block th:replace="~{modules/categories/list-minimal :: minimal(${posts})}" />
+              </th:block>
               <th:block th:case="*">
                 <!-- 默认使用列表风格 -->
                 <th:block th:replace="~{modules/categories/list-media :: media_text(${posts})}" />
@@ -140,9 +146,15 @@
           <th:block th:case="'media_text'">
             <th:block th:replace="~{modules/categories/list-media :: media_text(${posts})}" />
           </th:block>
+          <th:block th:case="'magazine'">
+            <th:block th:replace="~{modules/categories/list-magazine :: magazine(${posts})}" />
+          </th:block>
+          <th:block th:case="'minimal'">
+            <th:block th:replace="~{modules/categories/list-minimal :: minimal(${posts})}" />
+          </th:block>
           <th:block th:case="*">
-            <!-- 默认使用列表风格 -->
-            <th:block th:replace="~{modules/categories/list-media :: media_text(${posts})}" />
+            <!-- 默认使用卡片风格 -->
+            <th:block th:replace="~{modules/categories/list-modern :: modern(${posts})}" />
           </th:block>
         </th:block>
 
@@ -245,6 +257,106 @@
 
         <!-- 文章列表（当前分类）：强制使用列表风格 -->
         <th:block th:replace="~{modules/categories/list-media :: media_text(${posts})}" />
+
+        <!-- 分页（案例片段复用） -->
+        <th:block th:replace="~{modules/categories/pagination :: pagination(
+            context=@{/categories/{slug}/(slug=${category.metadata.name})},
+            prevUrl=${posts.prevUrl},
+            nextUrl=${posts.nextUrl},
+            totalPages=${posts.totalPages},
+            page=${posts.page},
+            hasPrevious=${posts.hasPrevious},
+            hasNext=${posts.hasNext}
+        )}" />
+      </section>
+
+      <!-- 右侧：通用功能区块（不含文章目录） -->
+      <aside th:if="${theme.config.list_settings.show_sidebar != false}" 
+             class="right-sidebar w-80 space-y-6 hidden lg:block">
+        <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
+        <th:block th:replace="~{modules/widgets/categories :: list}" />
+        <th:block th:replace="~{modules/widgets/tags :: cloud}" />
+        <th:block th:replace="~{modules/widgets/popular-posts :: list}" />
+      </aside>
+    </div>
+  </div>
+</main>
+
+<!-- 分类归档内容片段：/categories/:slug - 强制杂志风格 -->
+<main class="relative" th:fragment="category-archive-magazine">
+  <!-- 简约样式：不使用页头 Banner，直接展示分类按钮与当前分类列表 -->
+
+  <!-- 主体内容区域（与 post 一致的两列布局） -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex gap-8">
+      <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
+      <section class="flex-1" th:classappend="${theme.config.list_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+        <!-- 分类按钮循环（包含"全部"，当前分类高亮） -->
+        <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
+          <a th:href="@{/categories}"
+             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
+             th:classappend="${category != null} ? '' : ' active'"
+             th:attr="aria-pressed=${category == null}">全部</a>
+          <a th:each="c : ${categories}"
+             th:href="@{${c.status.permalink}}"
+             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
+             th:classappend="${category != null and category.metadata.name == c.metadata.name} ? ' active' : ''"
+             th:attr="aria-pressed=${category != null and category.metadata.name == c.metadata.name}"
+             th:text="${c.spec.displayName}"></a>
+        </div>
+
+        <!-- 文章列表（当前分类）：强制使用杂志风格 -->
+        <th:block th:replace="~{modules/categories/list-magazine :: magazine(${posts})}" />
+
+        <!-- 分页（案例片段复用） -->
+        <th:block th:replace="~{modules/categories/pagination :: pagination(
+            context=@{/categories/{slug}/(slug=${category.metadata.name})},
+            prevUrl=${posts.prevUrl},
+            nextUrl=${posts.nextUrl},
+            totalPages=${posts.totalPages},
+            page=${posts.page},
+            hasPrevious=${posts.hasPrevious},
+            hasNext=${posts.hasNext}
+        )}" />
+      </section>
+
+      <!-- 右侧：通用功能区块（不含文章目录） -->
+      <aside th:if="${theme.config.list_settings.show_sidebar != false}" 
+             class="right-sidebar w-80 space-y-6 hidden lg:block">
+        <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
+        <th:block th:replace="~{modules/widgets/categories :: list}" />
+        <th:block th:replace="~{modules/widgets/tags :: cloud}" />
+        <th:block th:replace="~{modules/widgets/popular-posts :: list}" />
+      </aside>
+    </div>
+  </div>
+</main>
+
+<!-- 分类归档内容片段：/categories/:slug - 强制极简风格 -->
+<main class="relative" th:fragment="category-archive-minimal">
+  <!-- 简约样式：不使用页头 Banner，直接展示分类按钮与当前分类列表 -->
+
+  <!-- 主体内容区域（与 post 一致的两列布局） -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex gap-8">
+      <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
+      <section class="flex-1" th:classappend="${theme.config.list_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+        <!-- 分类按钮循环（包含"全部"，当前分类高亮） -->
+        <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
+          <a th:href="@{/categories}"
+             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
+             th:classappend="${category != null} ? '' : ' active'"
+             th:attr="aria-pressed=${category == null}">全部</a>
+          <a th:each="c : ${categories}"
+             th:href="@{${c.status.permalink}}"
+             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
+             th:classappend="${category != null and category.metadata.name == c.metadata.name} ? ' active' : ''"
+             th:attr="aria-pressed=${category != null and category.metadata.name == c.metadata.name}"
+             th:text="${c.spec.displayName}"></a>
+        </div>
+
+        <!-- 文章列表（当前分类）：强制使用极简风格 -->
+        <th:block th:replace="~{modules/categories/list-minimal :: minimal(${posts})}" />
 
         <!-- 分页（案例片段复用） -->
         <th:block th:replace="~{modules/categories/pagination :: pagination(
