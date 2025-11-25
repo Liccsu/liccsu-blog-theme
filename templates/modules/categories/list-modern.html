@@ -14,7 +14,7 @@
   <!-- 中文注释：重构为 DaisyUI image-full 卡片。若有封面（或回退封面）使用覆盖式大图与底部文本；无有效封面使用常规卡片占位图。统一圆角、边框与悬停阴影。 -->
   <th:block th:each="post : ${posts.items}"
             th:with="
-              cf=${theme.config.list_settings.cover_fallback},
+              cf=${theme.config.category_settings?.cover_fallback ?: theme.config.tag_settings?.cover_fallback},
               en=${cf != null and cf.enable == true},
               mode=${en ? cf.mode : 'missing_only'},
               defaultImg=${en and cf.default_image != null and not #strings.isEmpty(cf.default_image) ? cf.default_image : null},

@@ -108,7 +108,6 @@ document.addEventListener('alpine:init', () => {
    */
   Alpine.data('postComment', () => ({
     commentCount: 0,
-    isOpen: false,
     
     init() {
       // 从父级 Dock 元素读取评论数据
@@ -116,13 +115,125 @@ document.addEventListener('alpine:init', () => {
       if (dockElement) {
         this.commentCount = parseInt(dockElement.dataset.commentCount || '0');
       }
+    },
+    
+    toggleCommentDrawer() {
+      const checkbox = document.getElementById('comment-drawer');
+      if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+      }
+    }
+  }));
+  
+  /**
+   * 目录抽屉组件
+   */
+  Alpine.data('tocDrawer', () => ({
+    isOpen: false,
+    
+    init() {
+      // 初始化目录抽屉内容
+      this.$nextTick(() => {
+        this.initTocDrawerContent();
+      });
+    },
+    
+    toggleDrawer() {
+      this.isOpen = !this.isOpen;
+    },
+    
+    initTocDrawerContent() {
+      const tocDrawerNav = document.getElementById('toc-drawer-nav');
+      const tocNav = document.getElementById('toc-nav');
       
-      // 监听抽屉状态
-      window.addEventListener('toggle-comment-drawer', () => {
-        const checkbox = document.getElementById('comment-drawer');
-        if (checkbox) {
-          this.isOpen = checkbox.checked;
+      if (!tocDrawerNav) return;
+      
+      // 如果侧边栏目录存在，复制其内容
+      if (tocNav && tocNav.innerHTML.trim()) {
+        tocDrawerNav.innerHTML = tocNav.innerHTML;
+        this.bindTocDrawerEvents();
+        return;
+      }
+      
+      // 如果侧边栏目录不存在，自行生成
+      const articleContent = document.getElementById('article-content');
+      if (!articleContent) {
+        tocDrawerNav.innerHTML = '<p class="text-base-content/50 text-sm">暂无目录</p>';
+        return;
+      }
+      
+      const headings = articleContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      if (headings.length === 0) {
+        tocDrawerNav.innerHTML = '<p class="text-base-content/50 text-sm">暂无目录</p>';
+        return;
+      }
+      
+      // 生成目录HTML
+      this.generateTocContent(tocDrawerNav, headings);
+      this.bindTocDrawerEvents();
+    },
+    
+    generateTocContent(container, headings) {
+      const headingArray = Array.from(headings);
+      const levels = headingArray.map(h => parseInt(h.tagName.charAt(1)));
+      const minLevel = Math.min(...levels);
+      const maxDisplayLevel = minLevel + 2;
+      
+      const filteredHeadings = headingArray.filter(h => {
+        const level = parseInt(h.tagName.charAt(1));
+        return level <= maxDisplayLevel;
+      });
+      
+      const ol = document.createElement('ol');
+      ol.className = 'toc-list';
+      
+      filteredHeadings.forEach((heading, index) => {
+        if (!heading.id) {
+          heading.id = `heading-${index}`;
         }
+        
+        const level = parseInt(heading.tagName.charAt(1));
+        const relativeLevel = level - minLevel;
+        
+        const li = document.createElement('li');
+        li.className = 'toc-item-wrapper';
+        li.style.setProperty('--toc-indent-multiplier', relativeLevel.toString());
+        
+        const link = document.createElement('a');
+        link.href = `#${heading.id}`;
+        link.textContent = heading.textContent.trim();
+        link.className = 'toc-link';
+        link.setAttribute('data-relative-level', relativeLevel.toString());
+        link.setAttribute('data-heading-id', heading.id);
+        
+        li.appendChild(link);
+        ol.appendChild(li);
+      });
+      
+      container.appendChild(ol);
+    },
+    
+    bindTocDrawerEvents() {
+      const tocDrawerNav = document.getElementById('toc-drawer-nav');
+      if (!tocDrawerNav) return;
+      
+      const links = tocDrawerNav.querySelectorAll('.toc-link');
+      links.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const headingId = link.getAttribute('data-heading-id') || link.getAttribute('href').slice(1);
+          const heading = document.getElementById(headingId);
+          if (heading) {
+            const navbarHeight = 80;
+            const targetPosition = heading.offsetTop - navbarHeight;
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            });
+            // 点击后关闭抽屉
+            this.isOpen = false;
+          }
+        });
       });
     }
   }));

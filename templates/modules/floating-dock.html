@@ -7,7 +7,7 @@
 
 <!-- 通用悬浮 Dock 片段 -->
 <div th:fragment="dock" 
-     th:if="${theme.config.floating_dock.general_settings.enable_dock}"
+     th:if="${theme.config.general.floating_dock.enable_dock}"
      x-data="floatingDock"
      x-show="isVisible"
      x-transition:enter="transition ease-in-out duration-400"
@@ -26,7 +26,7 @@
       <div class="flex items-center gap-1">
         
         <!-- 自定义菜单图标 -->
-        <th:block th:with="dockMenu = ${menuFinder.getByName(theme.config.floating_dock.general_settings.dock_menu ?: 'primary')}">
+        <th:block th:with="dockMenu = ${menuFinder.getByName(theme.config.general.floating_dock.dock_menu ?: 'primary')}">
           <th:block th:if="${dockMenu != null}">
             <a th:each="menuItem : ${dockMenu.menuItems}"
                th:href="@{${menuItem.status.href}}"
@@ -50,10 +50,10 @@
         </th:block>
         
         <!-- 分隔线（仅当返回顶部启用时显示） -->
-        <div class="w-px h-6" th:if="${theme.config.floating_dock.general_settings.enable_back_to_top}"></div>
+        <div class="w-px h-6" th:if="${theme.config.general.floating_dock.enable_back_to_top}"></div>
         
         <!-- 返回顶部按钮 -->
-        <button th:if="${theme.config.floating_dock.general_settings.enable_back_to_top}"
+        <button th:if="${theme.config.general.floating_dock.enable_back_to_top}"
                 @click="scrollToTop()"
                 class="dock-item dock-btn"
                 title="返回顶部">

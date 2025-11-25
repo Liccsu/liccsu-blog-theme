@@ -15,7 +15,7 @@
 
     <!-- 封面计算：支持主题的封面回退设置 -->
     <th:block th:with="
-        cf=${theme.config.list_settings.cover_fallback},
+        cf=${theme.config.category_settings?.cover_fallback ?: theme.config.tag_settings?.cover_fallback},
         en=${cf != null and cf.enable == true},
         mode=${en ? cf.mode : 'missing_only'},
         defaultImg=${en and cf.default_image != null and not #strings.isEmpty(cf.default_image) ? cf.default_image : null},

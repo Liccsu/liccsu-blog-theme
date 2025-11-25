@@ -38,7 +38,7 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与全部文章前 N（后台配置），并提供更多链接 -->
-      <section class="flex-1" th:classappend="${theme.config.list_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+      <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <th:block th:with="categories = ${categoryFinder.listAsTree()}">
           <!-- 分类按钮循环（包含“全部”）：链接使用永久链接 -->
           <div class="categories-switch flex flex-wrap gap-2 mb-6">
@@ -65,7 +65,7 @@
                              currentPage=${#numbers.formatInteger(pageParam, 0)}, 
                              posts=${postFinder.list({page: currentPage, size: pageSize})}">
             <!-- 动态渲染不同风格的列表 - 使用后台默认设置 -->
-            <th:block th:switch="${theme.config.list_settings.category_style}">
+            <th:block th:switch="${theme.config.category_settings.list_style}">
               <th:block th:case="'modern'">
                 <th:block th:replace="~{modules/categories/list-modern :: modern(${posts})}" />
               </th:block>
@@ -104,7 +104,7 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${theme.config.list_settings.show_sidebar != false}" 
+      <aside th:if="${theme.config.category_settings.show_sidebar != false}" 
              class="right-sidebar w-80 space-y-6 hidden lg:block">
         <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
         <th:block th:replace="~{modules/widgets/categories :: list}" />
@@ -123,7 +123,7 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
-      <section class="flex-1" th:classappend="${theme.config.list_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+      <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <!-- 分类按钮循环（包含“全部”，当前分类高亮） -->
         <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
           <a th:href="@{/categories}"
@@ -139,7 +139,7 @@
         </div>
 
         <!-- 文章列表（当前分类）：使用后台默认设置 -->
-        <th:block th:switch="${theme.config.list_settings.category_style}">
+        <th:block th:switch="${theme.config.category_settings.list_style}">
           <th:block th:case="'modern'">
             <th:block th:replace="~{modules/categories/list-modern :: modern(${posts})}" />
           </th:block>
@@ -171,7 +171,7 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${theme.config.list_settings.show_sidebar != false}" 
+      <aside th:if="${theme.config.category_settings.show_sidebar != false}" 
              class="right-sidebar w-80 space-y-6 hidden lg:block">
         <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
         <th:block th:replace="~{modules/widgets/categories :: list}" />
@@ -190,7 +190,7 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
-      <section class="flex-1" th:classappend="${theme.config.list_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+      <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <!-- 分类按钮循环（包含"全部"，当前分类高亮） -->
         <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
           <a th:href="@{/categories}"
@@ -221,7 +221,7 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${theme.config.list_settings.show_sidebar != false}" 
+      <aside th:if="${theme.config.category_settings.show_sidebar != false}" 
              class="right-sidebar w-80 space-y-6 hidden lg:block">
         <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
         <th:block th:replace="~{modules/widgets/categories :: list}" />
@@ -240,7 +240,7 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
-      <section class="flex-1" th:classappend="${theme.config.list_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+      <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <!-- 分类按钮循环（包含"全部"，当前分类高亮） -->
         <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
           <a th:href="@{/categories}"
@@ -271,7 +271,7 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${theme.config.list_settings.show_sidebar != false}" 
+      <aside th:if="${theme.config.category_settings.show_sidebar != false}" 
              class="right-sidebar w-80 space-y-6 hidden lg:block">
         <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
         <th:block th:replace="~{modules/widgets/categories :: list}" />
@@ -290,7 +290,7 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
-      <section class="flex-1" th:classappend="${theme.config.list_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+      <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <!-- 分类按钮循环（包含"全部"，当前分类高亮） -->
         <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
           <a th:href="@{/categories}"
@@ -321,7 +321,7 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${theme.config.list_settings.show_sidebar != false}" 
+      <aside th:if="${theme.config.category_settings.show_sidebar != false}" 
              class="right-sidebar w-80 space-y-6 hidden lg:block">
         <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
         <th:block th:replace="~{modules/widgets/categories :: list}" />
@@ -340,7 +340,7 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
-      <section class="flex-1" th:classappend="${theme.config.list_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+      <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <!-- 分类按钮循环（包含"全部"，当前分类高亮） -->
         <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
           <a th:href="@{/categories}"
@@ -371,7 +371,7 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${theme.config.list_settings.show_sidebar != false}" 
+      <aside th:if="${theme.config.category_settings.show_sidebar != false}" 
              class="right-sidebar w-80 space-y-6 hidden lg:block">
         <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
         <th:block th:replace="~{modules/widgets/categories :: list}" />

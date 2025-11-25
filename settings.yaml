@@ -92,6 +92,40 @@ spec:
               min: 0
               max: 3000
               step: 100
+        - $formkit: group
+          name: floating_dock
+          label: 悬浮控制栏
+          value:
+            enable_dock: true
+            dock_menu: primary
+            enable_back_to_top: true
+          children:
+            - $formkit: radio
+              id: fd_general_enable_dock
+              name: enable_dock
+              label: 启用悬浮 Dock
+              help: 是否显示底部悬浮控制栏（通用页面）
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+            - $formkit: menuRadio
+              name: dock_menu
+              label: Dock 菜单
+              value: primary
+              if: $get(fd_general_enable_dock).value
+              help: 选择要在悬浮 Dock 中显示的菜单。菜单项的图标通过【元数据】中的 icon 字段设置（填入 SVG 代码）
+            - $formkit: radio
+              name: enable_back_to_top
+              label: 返回顶部按钮
+              help: 控制悬浮 Dock 中是否显示"返回顶部"按钮
+              if: $get(fd_general_enable_dock).value
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
     - group: nav
       label: 顶部
       formSchema:
@@ -887,52 +921,89 @@ spec:
               label: 瞬间标题
               help: 瞬间说说模块的标题文字
               value: "瞬间"
-    - group: floating_dock
-      label: 悬浮控制栏
+    - group: article
+      label: 文章
       formSchema:
         - $formkit: group
-          name: general_settings
-          label: 通用设置
+          name: header_background
+          label: 文章头部背景设置
           value:
-            enable_dock: true
-            dock_menu: primary
-            enable_back_to_top: true
+            background_type: cover
+            custom_image_url: "https://www.dmoe.cc/random.php"
+            upload_image: ""
           children:
             - $formkit: radio
-              id: fd_general_enable_dock
-              name: enable_dock
-              label: 启用悬浮 Dock
-              help: 是否显示底部悬浮控制栏
+              id: background_type
+              name: background_type
+              label: 背景图片来源
+              help: 选择文章头部背景图片的来源方式
+              value: cover
               options:
-                - label: 启用
-                  value: true
-                - label: 禁用
-                  value: false
-            - $formkit: menuRadio
-              name: dock_menu
-              label: Dock 菜单
-              value: primary
-              if: $get(fd_general_enable_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单。菜单项的图标通过【元数据】中的 icon 字段设置（填入 SVG 代码）
+                - label: 使用文章封面图
+                  value: cover
+                - label: 自定义图片地址
+                  value: custom_url
+                - label: 本地上传图片
+                  value: upload
+            - $formkit: text
+              name: custom_image_url
+              key: custom_image_url_field
+              if: $get(background_type).value === 'custom_url'
+              label: 自定义图片地址
+              help: 输入图片的完整 URL 地址，支持随机图片（https://www.dmoe.cc/random.php）
+              placeholder: "https://www.dmoe.cc/random.php"
+            - $formkit: attachment
+              name: upload_image
+              key: upload_image_field
+              if: $get(background_type).value === 'upload'
+              label: 上传背景图片
+              help: 上传文章头部背景图片（固定图片，不随文章变动）
+              accepts:
+                - image/jpeg
+                - image/png
+                - image/webp
+        - $formkit: group
+          name: content_style
+          label: 内容样式
+          value:
+            style_theme: default
+          children:
+            - $formkit: select
+              name: style_theme
+              label: 文章样式主题
+              value: default
+              help: 选择文章内容的显示风格
+              options:
+                - value: default
+                  label: 默认风格（推荐）
+                - value: github
+                  label: GitHub 风格（经典优雅）
+        - $formkit: group
+          name: sidebar_settings
+          label: 侧边栏设置
+          value:
+            show_sidebar: true
+          children:
             - $formkit: radio
-              name: enable_back_to_top
-              label: 返回顶部按钮
-              help: 控制悬浮 Dock 中是否显示“返回顶部”按钮
-              if: $get(fd_general_enable_dock).value
+              name: show_sidebar
+              label: 显示侧边栏
+              help: 控制文章页是否显示右侧侧边栏（包含目录、分类、标签等小部件）
+              value: true
               options:
                 - label: 显示
                   value: true
                 - label: 隐藏
                   value: false
         - $formkit: group
-          name: post_settings
-          label: 文章页设置
+          name: dock_settings
+          label: 悬浮控制栏
           value:
             enable_dock: true
             enable_like: true
             post_dock_menu: primary
             enable_share: true
             enable_comment_drawer: true
+            enable_toc_drawer: false
             enable_back_to_top: true
           children:
             - $formkit: radio
@@ -1031,6 +1102,17 @@ spec:
                 - label: 禁用
                   value: false
             - $formkit: radio
+              id: enable_toc_drawer
+              name: enable_toc_drawer
+              label: 启用目录抽屉
+              help: 点击后从右侧展开文章目录（隐藏侧边栏时推荐启用）
+              if: $get(fd_post_enable_dock).value
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+            - $formkit: radio
               name: enable_back_to_top
               label: 返回顶部按钮
               help: 控制文章页悬浮 Dock 中是否显示“返回顶部”按钮
@@ -1040,103 +1122,27 @@ spec:
                   value: true
                 - label: 隐藏
                   value: false
-    - group: article
-      label: 文章
-      formSchema:
-        - $formkit: group
-          name: header_background
-          label: 文章头部背景设置
-          value:
-            background_type: cover
-            custom_image_url: "https://www.dmoe.cc/random.php"
-            upload_image: ""
-          children:
-            - $formkit: radio
-              id: background_type
-              name: background_type
-              label: 背景图片来源
-              help: 选择文章头部背景图片的来源方式
-              value: cover
-              options:
-                - label: 使用文章封面图
-                  value: cover
-                - label: 自定义图片地址
-                  value: custom_url
-                - label: 本地上传图片
-                  value: upload
-            - $formkit: text
-              name: custom_image_url
-              key: custom_image_url_field
-              if: $get(background_type).value === 'custom_url'
-              label: 自定义图片地址
-              help: 输入图片的完整 URL 地址，支持随机图片（https://www.dmoe.cc/random.php）
-              placeholder: "https://www.dmoe.cc/random.php"
-            - $formkit: attachment
-              name: upload_image
-              key: upload_image_field
-              if: $get(background_type).value === 'upload'
-              label: 上传背景图片
-              help: 上传文章头部背景图片（固定图片，不随文章变动）
-              accepts:
-                - image/jpeg
-                - image/png
-                - image/webp
-        - $formkit: group
-          name: content_style
-          label: 内容样式
-          value:
-            style_theme: default
-          children:
-            - $formkit: select
-              name: style_theme
-              label: 文章样式主题
-              value: default
-              help: 选择文章内容的显示风格
-              options:
-                - value: default
-                  label: 默认风格（推荐）
-                - value: github
-                  label: GitHub 风格（经典优雅）
-        - $formkit: group
-          name: sidebar_settings
-          label: 侧边栏设置
-          value:
-            show_sidebar: true
-          children:
-            - $formkit: radio
-              name: show_sidebar
-              label: 显示侧边栏
-              help: 控制文章页是否显示右侧侧边栏（包含目录、分类、标签等小部件）
-              value: true
-              options:
-                - label: 显示
-                  value: true
-                - label: 隐藏
-                  value: false
-    - group: list_settings
-      label: 列表
+    - group: category_settings
+      label: 分类
       formSchema:
         # 侧边栏开关
         - $formkit: radio
           name: show_sidebar
           label: 显示侧边栏
-          help: 控制博客分类列表页是否显示右侧侧边栏（包含博客统计、分类、标签等小部件）
+          help: 控制分类页是否显示右侧侧边栏
           value: true
           options:
             - label: 显示
               value: true
             - label: 隐藏
               value: false
-        # 分类列表风格选择（现代风格族）
+        # 分类列表风格选择
         - $formkit: select
-          name: category_style
-          label: 默认分类列表风格
+          name: list_style
+          label: 文章列表风格
           help: |
-            选择博客分类页列表的默认展示风格。
-            • 应用范围：未设置自定义模板的分类（使用 category.html）
-            • 如需为特定分类设置独特样式，请在「分类管理 → 编辑分类 → 自定义模板」中选择
-            • 自定义模板优先级最高，会直接关联到对应的模板文件
-            • 功能配置（侧边栏、封面等）在所有模板中共享
+            选择分类页的文章列表展示风格。
+            • 分类页可通过「分类管理 → 自定义模板」单独覆盖
           value: media_text
           options:
             - label: 卡片
@@ -1147,20 +1153,20 @@ spec:
               value: magazine
             - label: 极简
               value: minimal
-        # 分类封面回退设置（支持上传图片作为默认封面）
+        # 封面回退设置
         - $formkit: group
           name: cover_fallback
-          label: 博客分类封面回退
-          help: 控制博客分类列表的封面替代策略（默认不启用）。
+          label: 文章封面回退
+          help: 控制分类列表的封面替代策略（默认不启用）。
           value:
             enable: false
             mode: missing_only
             default_image: ""
           children:
             - $formkit: radio
-              id: cover_fallback_enable
+              id: cat_cover_fallback_enable
               name: enable
-              key: cover_fallback_enable_field
+              key: cat_cover_fallback_enable_field
               label: 启用封面替代
               help: 开启后可在无封面或始终替代模式下使用指定图片。
               value: false
@@ -1170,10 +1176,10 @@ spec:
                 - label: 禁用
                   value: false
             - $formkit: select
-              id: cover_fallback_mode
+              id: cat_cover_fallback_mode
               name: mode
-              key: cover_fallback_mode_field
-              if: $get(cover_fallback_enable).value
+              key: cat_cover_fallback_mode_field
+              if: $get(cat_cover_fallback_enable).value
               label: 替代模式
               help: 选择替代策略（无封面时替代 或 始终使用指定图片）。
               value: missing_only
@@ -1183,10 +1189,101 @@ spec:
                 - label: 始终使用指定图片
                   value: always
             - $formkit: attachment
-              id: cover_fallback_default_image
+              id: cat_cover_fallback_default_image
               name: default_image
-              key: cover_fallback_default_image_field
-              if: $get(cover_fallback_enable).value
+              key: cat_cover_fallback_default_image_field
+              if: $get(cat_cover_fallback_enable).value
+              label: 默认封面图片
+              help: 上传或选择作为替代封面的图片（支持 jpeg/png/webp/gif）。
+              accepts:
+                - image/jpeg
+                - image/png
+                - image/webp
+                - image/gif
+    - group: tag_settings
+      label: 标签
+      formSchema:
+        # 侧边栏开关
+        - $formkit: radio
+          name: show_sidebar
+          label: 显示侧边栏
+          help: 控制标签页是否显示右侧侧边栏
+          value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
+        # 标签列表风格选择
+        - $formkit: select
+          name: list_style
+          label: 文章列表风格
+          help: 选择标签页的文章列表展示风格
+          value: media_text
+          options:
+            - label: 卡片
+              value: modern
+            - label: 列表
+              value: media_text
+            - label: 杂志
+              value: magazine
+            - label: 极简
+              value: minimal
+        # 标签切换块风格
+        - $formkit: select
+          name: tag_display_style
+          label: 标签切换块风格
+          help: 选择标签页顶部标签列表的展示风格
+          value: pills
+          options:
+            - label: 药丸风格
+              value: pills
+            - label: 芯片风格
+              value: chips
+            - label: 下划线风格
+              value: underline
+            - label: 玻璃拟态
+              value: glass
+        # 封面回退设置
+        - $formkit: group
+          name: cover_fallback
+          label: 文章封面回退
+          help: 控制标签列表的封面替代策略（默认不启用）。
+          value:
+            enable: false
+            mode: missing_only
+            default_image: ""
+          children:
+            - $formkit: radio
+              id: tag_cover_fallback_enable
+              name: enable
+              key: tag_cover_fallback_enable_field
+              label: 启用封面替代
+              help: 开启后可在无封面或始终替代模式下使用指定图片。
+              value: false
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+            - $formkit: select
+              id: tag_cover_fallback_mode
+              name: mode
+              key: tag_cover_fallback_mode_field
+              if: $get(tag_cover_fallback_enable).value
+              label: 替代模式
+              help: 选择替代策略（无封面时替代 或 始终使用指定图片）。
+              value: missing_only
+              options:
+                - label: 无封面时替代
+                  value: missing_only
+                - label: 始终使用指定图片
+                  value: always
+            - $formkit: attachment
+              id: tag_cover_fallback_default_image
+              name: default_image
+              key: tag_cover_fallback_default_image_field
+              if: $get(tag_cover_fallback_enable).value
               label: 默认封面图片
               help: 上传或选择作为替代封面的图片（支持 jpeg/png/webp/gif）。
               accepts:

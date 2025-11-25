@@ -41,7 +41,7 @@
                   <div class="dropdown dropdown-bottom dropdown-center dropdown-hover">
                     <!-- 父级菜单项 -->
                     <a tabindex="0" role="button"
-                      class="nav-menu-item flex items-center gap-1 px-4 py-2 text-sm font-medium text-base-content hover:text-base-content/90 rounded-lg hover:bg-base-200/50"
+                      class="nav-menu-item flex items-center gap-1 px-4 py-2 text-sm font-medium text-base-content/80 hover:text-base-content transition-colors duration-200"
                       th:text="${menuItem.status.displayName}">
                     </a>
                     <!-- 子菜单下拉列表 -->
@@ -61,7 +61,7 @@
                 <th:block th:unless="${menuItem.children != null and !menuItem.children.isEmpty()}">
                   <a th:href="@{${menuItem.status.href}}"
                     th:target="${menuItem.spec.target?.value}"
-                    class="nav-menu-item flex items-center gap-2 px-4 py-2 text-sm font-medium text-base-content hover:text-base-content/90 rounded-lg hover:bg-base-200/50">
+                    class="nav-menu-item flex items-center gap-2 px-4 py-2 text-sm font-medium text-base-content/80 hover:text-base-content transition-colors duration-200">
                     <!-- 菜单图标（如果有） -->
                     <span th:if="${menuItem.metadata?.annotations != null && menuItem.metadata.annotations['icon'] != null}"
                           th:utext="${menuItem.metadata.annotations['icon']}"
