@@ -20,6 +20,10 @@ spec:
     - name: "GPL-3.0"
       url: "https://github.com/sky121666/halo-theme-sky-blog-1/blob/main/LICENSE"
   customTemplates:
+    page:
+      - name: 关于
+        description: 展示个人/站点信息，集成 GitHub、技术栈、评论等
+        file: page_about.html
     category:
       - name: 强制卡片风格
         description: 忽略全局设置，此分类强制使用卡片风格

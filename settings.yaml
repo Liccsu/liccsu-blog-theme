@@ -1357,3 +1357,135 @@ spec:
               value: true
             - label: 禁用
               value: false
+    - group: about_settings
+      label: 关于
+      formSchema:
+        # ========== 基本信息 ==========
+        - $formkit: text
+          name: subtitle
+          label: 副标题
+          value: "一个热爱技术的开发者"
+          placeholder: "一句话介绍"
+        - $formkit: attachment
+          name: avatar
+          label: 头像
+          help: 留空则使用站点 Logo
+          accepts:
+            - image/jpeg
+            - image/png
+            - image/webp
+        - $formkit: text
+          name: nickname
+          label: 昵称
+          placeholder: "留空则使用站点名称"
+        - $formkit: text
+          name: role
+          label: 角色/职位
+          value: "全栈开发者"
+          placeholder: "如：全栈开发者"
+        - $formkit: textarea
+          name: bio
+          label: 个人简介
+          help: 支持 HTML 标签
+          rows: 3
+          placeholder: "简单介绍一下自己..."
+        
+        # ========== 社交链接 ==========
+        - $formkit: repeater
+          name: social_links
+          label: 社交链接
+          help: 添加社交平台链接
+          min: 0
+          max: 10
+          value: []
+          children:
+            - $formkit: text
+              name: name
+              label: 平台名称
+              placeholder: "如：GitHub"
+            - $formkit: text
+              name: url
+              label: 链接地址
+              placeholder: "https://..."
+            - $formkit: text
+              name: icon
+              label: 图标代码
+              help: 'Iconify 格式：<span class="icon-[mdi--github] w-5 h-5"></span>'
+        
+        # ========== 技术栈 ==========
+        - $formkit: repeater
+          name: tech_stack
+          label: 技术栈
+          help: 添加你掌握的技术
+          min: 0
+          max: 20
+          value: []
+          children:
+            - $formkit: text
+              name: name
+              label: 技术名称
+              placeholder: "如：Vue.js"
+            - $formkit: text
+              name: icon
+              label: 图标代码（可选）
+              help: '如：<span class="icon-[logos--vue] w-5 h-5"></span>'
+        
+        # ========== GitHub 设置 ==========
+        - $formkit: text
+          name: github_username
+          label: GitHub 用户名
+          help: 用于显示统计卡片和贡献日历
+          placeholder: "如：sky121666"
+        - $formkit: text
+          name: github_stats_host
+          label: Stats 服务地址
+          help: 自部署 github-readme-stats 地址，留空使用默认
+          placeholder: "https://github-readme-stats.vercel.app"
+        - $formkit: radio
+          name: show_github_stats
+          label: 显示 GitHub 统计卡片
+          value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
+        - $formkit: radio
+          name: show_github_calendar
+          label: 显示贡献日历
+          value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
+        
+        # ========== 功能开关 ==========
+        - $formkit: radio
+          name: show_page_content
+          label: 显示更多介绍
+          help: 显示页面编辑器中的内容
+          value: false
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
+        - $formkit: radio
+          name: show_site_stats
+          label: 显示站点统计
+          value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
+        - $formkit: radio
+          name: enable_comment
+          label: 启用评论
+          value: true
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false

@@ -1,0 +1,211 @@
+<!-- ========================================== -->
+<!--        关于页面内容                         -->
+<!-- 集成：社交链接、技术栈、爱好、游戏、评论      -->
+<!-- ========================================== -->
+<th:block th:fragment="content">
+
+  <!-- 
+    变量优先级说明：
+    1. 主题配置 (about_settings) - 在后台主题设置中配置
+    2. 页面参数 (singlePage) - 在后台编辑页面时设置
+    3. 站点全局 (site) - 站点默认信息
+    
+    singlePage 可用参数：
+    - singlePage.spec.title: 页面标题
+    - singlePage.spec.excerpt: 页面摘要
+    - singlePage.spec.cover: 页面封面图
+    - singlePage.content.content: 页面正文内容
+    - singlePage.spec.publishTime: 发布时间
+    - singlePage.status.lastModifyTime: 最后修改时间
+    - singlePage.stats.visit: 访问次数
+    - singlePage.spec.allowComment: 是否允许评论
+  -->
+  <th:block th:with="
+    cfg=${theme.config.about_settings},
+    pageTitle=${singlePage.spec.title ?: '关于'},
+    nickname=${theme.config.about_settings?.nickname ?: site.title},
+    subtitle=${theme.config.about_settings?.subtitle ?: (singlePage.spec.excerpt ?: '一个热爱技术的开发者')},
+    role=${theme.config.about_settings?.role ?: '全栈开发者'},
+    bio=${theme.config.about_settings?.bio ?: '热爱编程，喜欢探索新技术。在这里记录学习笔记和技术心得，希望能帮助到更多人。'},
+    avatar=${theme.config.about_settings?.avatar ?: singlePage.spec.cover},
+    socialLinks=${theme.config.about_settings?.social_links},
+    techStack=${theme.config.about_settings?.tech_stack},
+    githubUsername=${theme.config.about_settings?.github_username},
+    githubStatsHost=${theme.config.about_settings?.github_stats_host ?: 'https://github-readme-stats-sigma-five.vercel.app'},
+    showGithubStats=${theme.config.about_settings?.show_github_stats != false},
+    showGithubCalendar=${theme.config.about_settings?.show_github_calendar != false},
+    showPageContent=${theme.config.about_settings?.show_page_content == true},
+    showSiteStats=${theme.config.about_settings?.show_site_stats != false},
+    enableComment=${theme.config.about_settings?.enable_comment != false},
+    pageContent=${singlePage.content?.content}
+  ">
+
+    <div class="container mx-auto px-4 lg:px-8 max-w-6xl py-8 md:py-12">
+      
+      <!-- 页面标题区域 -->
+      <header class="text-center mb-12 md:mb-16">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-base-content mb-4"
+            th:text="${singlePage.spec.title ?: '关于'}">关于</h1>
+        <p class="text-base-content/60 text-lg max-w-2xl mx-auto"
+           th:text="${subtitle}">一个热爱技术的开发者</p>
+      </header>
+
+      <!-- 个人介绍卡片 -->
+      <section class="mb-12 md:mb-16">
+        <div class="card bg-base-200/50 backdrop-blur-sm border border-base-300/50">
+          <div class="card-body p-6 md:p-8">
+            <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
+              <!-- 头像：优先使用配置头像，否则使用站点 Logo -->
+              <div class="avatar">
+                <div class="w-32 h-32 md:w-40 md:h-40 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                  <img th:src="${avatar ?: site.logo}" 
+                       alt="头像"
+                       class="object-cover" />
+                </div>
+              </div>
+              <!-- 介绍内容 -->
+              <div class="flex-1 text-center md:text-left">
+                <h2 class="text-2xl md:text-3xl font-bold text-base-content mb-2"
+                    th:text="${nickname}">站长</h2>
+                <p class="text-primary font-medium mb-4"
+                   th:text="${role}">全栈开发者</p>
+                <div class="prose prose-sm md:prose-base max-w-none text-base-content/80"
+                     th:utext="${bio}">
+                  热爱编程，喜欢探索新技术。
+                </div>
+                <!-- 社交链接 -->
+                <div th:if="${socialLinks != null && !socialLinks.isEmpty()}" 
+                     class="flex flex-wrap gap-3 mt-6 justify-center md:justify-start">
+                  <a th:each="social : ${socialLinks}"
+                     th:if="${social.url != null && !social.url.isEmpty()}"
+                     th:href="${social.url}"
+                     th:title="${social.name}"
+                     target="_blank"
+                     rel="noopener"
+                     class="btn btn-sm btn-outline gap-2">
+                    <th:block th:utext="${social.icon}"></th:block>
+                    <span th:text="${social.name}">链接</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GitHub 统计区域 -->
+      <section th:if="${githubUsername != null && !githubUsername.isEmpty()}" class="mb-12 md:mb-16">
+        <h2 class="text-xl md:text-2xl font-bold text-base-content mb-6 flex items-center gap-2">
+          <span class="icon-[mdi--github] w-6 h-6"></span>
+          GitHub
+        </h2>
+        
+        <!-- GitHub Stats 卡片 -->
+        <div th:if="${showGithubStats}" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
+          <div class="card bg-base-200/50 border border-base-300/50 overflow-hidden github-stats-card">
+            <img th:src="${githubStatsHost + '/api?username=' + githubUsername + '&show_icons=true&theme=transparent&hide_border=true&title_color=6366f1&icon_color=6366f1&text_color=a1a1aa'}"
+                 alt="GitHub Stats"
+                 class="w-full" 
+                 loading="lazy"
+                 onerror="this.parentElement.style.display='none'" />
+          </div>
+          <div class="card bg-base-200/50 border border-base-300/50 overflow-hidden github-stats-card">
+            <img th:src="${githubStatsHost + '/api/top-langs/?username=' + githubUsername + '&layout=compact&theme=transparent&hide_border=true&title_color=6366f1&text_color=a1a1aa'}"
+                 alt="Top Languages"
+                 class="w-full"
+                 loading="lazy"
+                 onerror="this.parentElement.style.display='none'" />
+          </div>
+        </div>
+        
+        <!-- GitHub 贡献日历 -->
+        <div th:if="${showGithubCalendar}" class="card bg-base-200/50 border border-base-300/50 p-4 overflow-x-auto">
+          <img th:src="'https://ghchart.rshah.org/' + ${githubUsername}"
+               alt="GitHub Contribution Chart"
+               class="w-full min-w-[700px] github-chart"
+               loading="lazy" />
+        </div>
+      </section>
+
+      <!-- 技术栈区域 -->
+      <section th:if="${techStack != null && !techStack.isEmpty()}" class="mb-12 md:mb-16">
+        <h2 class="text-xl md:text-2xl font-bold text-base-content mb-6 flex items-center gap-2">
+          <span class="icon-[mdi--code-tags] w-6 h-6"></span>
+          技术栈
+        </h2>
+        <div class="card bg-base-200/50 border border-base-300/50">
+          <div class="card-body p-6">
+            <div class="flex flex-wrap gap-3">
+              <span th:each="tech : ${techStack}" class="tech-tag">
+                <th:block th:if="${tech.icon != null && !tech.icon.isEmpty()}" th:utext="${tech.icon}"></th:block>
+                <span th:text="${tech.name}">技术</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 页面正文内容（从 Halo 后台页面编辑器输入的内容） -->
+      <!-- 通过主题配置开关控制显示 -->
+      <section th:if="${showPageContent && pageContent != null}" class="mb-12 md:mb-16">
+        <h2 class="text-xl md:text-2xl font-bold text-base-content mb-6 flex items-center gap-2">
+          <span class="icon-[mdi--text-box-outline] w-6 h-6"></span>
+          更多介绍
+        </h2>
+        <div class="card bg-base-200/50 border border-base-300/50">
+          <div class="card-body p-6">
+            <div class="about-content" th:utext="${pageContent}"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 站点信息 - 使用 Halo siteStatsFinder 获取统计数据 -->
+      <section th:if="${showSiteStats}" class="mb-12 md:mb-16" th:with="siteStats=${siteStatsFinder.getStats()}">
+        <h2 class="text-xl md:text-2xl font-bold text-base-content mb-6 flex items-center gap-2">
+          <span class="icon-[mdi--information-outline] w-6 h-6"></span>
+          站点信息
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="stat bg-base-200/50 border border-base-300/50 rounded-box">
+            <div class="stat-title text-base-content/60">文章数</div>
+            <div class="stat-value text-primary text-2xl" 
+                 th:text="${siteStats?.post ?: 0}">0</div>
+          </div>
+          <div class="stat bg-base-200/50 border border-base-300/50 rounded-box">
+            <div class="stat-title text-base-content/60">分类数</div>
+            <div class="stat-value text-secondary text-2xl" 
+                 th:text="${siteStats?.category ?: 0}">0</div>
+          </div>
+          <div class="stat bg-base-200/50 border border-base-300/50 rounded-box">
+            <div class="stat-title text-base-content/60">评论数</div>
+            <div class="stat-value text-accent text-2xl" 
+                 th:text="${siteStats?.comment ?: 0}">0</div>
+          </div>
+          <div class="stat bg-base-200/50 border border-base-300/50 rounded-box">
+            <div class="stat-title text-base-content/60">总访问量</div>
+            <div class="stat-value text-info text-2xl" 
+                 th:text="${siteStats?.visit ?: 0}">0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 评论区域 -->
+      <section th:if="${enableComment && (singlePage.spec.allowComment == null || singlePage.spec.allowComment)}">
+        <h2 class="text-xl md:text-2xl font-bold text-base-content mb-6 flex items-center gap-2">
+          <span class="icon-[mdi--comment-text-outline] w-6 h-6"></span>
+          评论留言
+        </h2>
+        <div class="card bg-base-200/50 border border-base-300/50">
+          <div class="card-body p-4 md:p-6">
+            <halo:comment group="content.halo.run" 
+                         kind="SinglePage" 
+                         th:name="${singlePage.metadata.name}" 
+                         colorScheme="auto" />
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </th:block>
+
+</th:block>
