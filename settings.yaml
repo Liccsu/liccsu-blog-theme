@@ -1306,3 +1306,17 @@ spec:
                 - image/png
                 - image/webp
                 - image/gif
+    - group: archive_settings
+      label: 归档
+      formSchema:
+        # 侧边栏开关
+        - $formkit: radio
+          name: show_sidebar
+          label: 显示侧边栏
+          help: 控制归档页是否显示右侧侧边栏
+          value: true
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false

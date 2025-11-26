@@ -1,0 +1,1 @@
+document.addEventListener("alpine:init",()=>{Alpine.data("archiveScroll",()=>({currentMonth:{},init(){this.updateCurrentMonth()},updateCurrentMonth(){const t=document.querySelectorAll(".month-section");t.forEach(t=>{const e=t.getBoundingClientRect(),n=t.dataset.year,o=t.dataset.month;e.top<=150&&e.bottom>100&&(this.currentMonth[n]=o)})}}))});
