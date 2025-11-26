@@ -1153,6 +1153,21 @@ spec:
               value: magazine
             - label: 极简
               value: minimal
+        # 分类切换块风格
+        - $formkit: select
+          name: category_display_style
+          label: 分类切换块风格
+          help: 选择分类页顶部分类列表的展示风格
+          value: pills
+          options:
+            - label: 药丸风格
+              value: pills
+            - label: 芯片风格
+              value: chips
+            - label: 下划线风格
+              value: underline
+            - label: 玻璃拟态
+              value: glass
         # 封面回退设置
         - $formkit: group
           name: cover_fallback

@@ -40,16 +40,24 @@
       <!-- 左侧：分类按钮与全部文章前 N（后台配置），并提供更多链接 -->
       <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <th:block th:with="categories = ${categoryFinder.listAsTree()}">
-          <!-- 分类按钮循环（包含“全部”）：链接使用永久链接 -->
-          <div class="categories-switch flex flex-wrap gap-2 mb-6">
-            <a th:href="@{/categories}"
-               class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10 active"
-               aria-pressed="true">全部</a>
-            <a th:each="c : ${categories}"
-               th:href="@{${c.status.permalink}}"
-               class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-               th:text="${c.spec.displayName}"></a>
-          </div>
+          <!-- 分类切换块 - 根据后台设置渲染不同风格 -->
+          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+            <th:block th:case="'pills'">
+              <th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, null)}" />
+            </th:block>
+            <th:block th:case="'chips'">
+              <th:block th:replace="~{modules/categories/category-switch :: chips(${categories}, null)}" />
+            </th:block>
+            <th:block th:case="'underline'">
+              <th:block th:replace="~{modules/categories/category-switch :: underline(${categories}, null)}" />
+            </th:block>
+            <th:block th:case="'glass'">
+              <th:block th:replace="~{modules/categories/category-switch :: glass(${categories}, null)}" />
+            </th:block>
+            <th:block th:case="*">
+              <th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, null)}" />
+            </th:block>
+          </th:block>
 
           <!-- 无分类提示 -->
           <th:block th:if="${#lists.isEmpty(categories)}">
@@ -124,19 +132,26 @@
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
       <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
-        <!-- 分类按钮循环（包含“全部”，当前分类高亮） -->
-        <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
-          <a th:href="@{/categories}"
-             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-             th:classappend="${category != null} ? '' : ' active'"
-             th:attr="aria-pressed=${category == null}">全部</a>
-          <a th:each="c : ${categories}"
-             th:href="@{${c.status.permalink}}"
-             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-             th:classappend="${category != null and category.metadata.name == c.metadata.name} ? ' active' : ''"
-             th:attr="aria-pressed=${category != null and category.metadata.name == c.metadata.name}"
-             th:text="${c.spec.displayName}"></a>
-        </div>
+        <!-- 分类切换块 - 根据后台设置渲染不同风格 -->
+        <th:block th:with="categories=${categoryFinder.listAsTree()}">
+          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+            <th:block th:case="'pills'">
+              <th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" />
+            </th:block>
+            <th:block th:case="'chips'">
+              <th:block th:replace="~{modules/categories/category-switch :: chips(${categories}, ${category})}" />
+            </th:block>
+            <th:block th:case="'underline'">
+              <th:block th:replace="~{modules/categories/category-switch :: underline(${categories}, ${category})}" />
+            </th:block>
+            <th:block th:case="'glass'">
+              <th:block th:replace="~{modules/categories/category-switch :: glass(${categories}, ${category})}" />
+            </th:block>
+            <th:block th:case="*">
+              <th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" />
+            </th:block>
+          </th:block>
+        </th:block>
 
         <!-- 文章列表（当前分类）：使用后台默认设置 -->
         <th:block th:switch="${theme.config.category_settings.list_style}">
@@ -191,19 +206,16 @@
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
       <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
-        <!-- 分类按钮循环（包含"全部"，当前分类高亮） -->
-        <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
-          <a th:href="@{/categories}"
-             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-             th:classappend="${category != null} ? '' : ' active'"
-             th:attr="aria-pressed=${category == null}">全部</a>
-          <a th:each="c : ${categories}"
-             th:href="@{${c.status.permalink}}"
-             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-             th:classappend="${category != null and category.metadata.name == c.metadata.name} ? ' active' : ''"
-             th:attr="aria-pressed=${category != null and category.metadata.name == c.metadata.name}"
-             th:text="${c.spec.displayName}"></a>
-        </div>
+        <!-- 分类切换块 -->
+        <th:block th:with="categories=${categoryFinder.listAsTree()}">
+          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+            <th:block th:case="'pills'"><th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'chips'"><th:block th:replace="~{modules/categories/category-switch :: chips(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'underline'"><th:block th:replace="~{modules/categories/category-switch :: underline(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'glass'"><th:block th:replace="~{modules/categories/category-switch :: glass(${categories}, ${category})}" /></th:block>
+            <th:block th:case="*"><th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" /></th:block>
+          </th:block>
+        </th:block>
 
         <!-- 文章列表（当前分类）：强制使用卡片风格 -->
         <th:block th:replace="~{modules/categories/list-modern :: modern(${posts})}" />
@@ -241,19 +253,16 @@
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
       <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
-        <!-- 分类按钮循环（包含"全部"，当前分类高亮） -->
-        <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
-          <a th:href="@{/categories}"
-             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-             th:classappend="${category != null} ? '' : ' active'"
-             th:attr="aria-pressed=${category == null}">全部</a>
-          <a th:each="c : ${categories}"
-             th:href="@{${c.status.permalink}}"
-             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-             th:classappend="${category != null and category.metadata.name == c.metadata.name} ? ' active' : ''"
-             th:attr="aria-pressed=${category != null and category.metadata.name == c.metadata.name}"
-             th:text="${c.spec.displayName}"></a>
-        </div>
+        <!-- 分类切换块 -->
+        <th:block th:with="categories=${categoryFinder.listAsTree()}">
+          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+            <th:block th:case="'pills'"><th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'chips'"><th:block th:replace="~{modules/categories/category-switch :: chips(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'underline'"><th:block th:replace="~{modules/categories/category-switch :: underline(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'glass'"><th:block th:replace="~{modules/categories/category-switch :: glass(${categories}, ${category})}" /></th:block>
+            <th:block th:case="*"><th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" /></th:block>
+          </th:block>
+        </th:block>
 
         <!-- 文章列表（当前分类）：强制使用列表风格 -->
         <th:block th:replace="~{modules/categories/list-media :: media_text(${posts})}" />
@@ -291,19 +300,16 @@
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
       <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
-        <!-- 分类按钮循环（包含"全部"，当前分类高亮） -->
-        <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
-          <a th:href="@{/categories}"
-             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-             th:classappend="${category != null} ? '' : ' active'"
-             th:attr="aria-pressed=${category == null}">全部</a>
-          <a th:each="c : ${categories}"
-             th:href="@{${c.status.permalink}}"
-             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-             th:classappend="${category != null and category.metadata.name == c.metadata.name} ? ' active' : ''"
-             th:attr="aria-pressed=${category != null and category.metadata.name == c.metadata.name}"
-             th:text="${c.spec.displayName}"></a>
-        </div>
+        <!-- 分类切换块 -->
+        <th:block th:with="categories=${categoryFinder.listAsTree()}">
+          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+            <th:block th:case="'pills'"><th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'chips'"><th:block th:replace="~{modules/categories/category-switch :: chips(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'underline'"><th:block th:replace="~{modules/categories/category-switch :: underline(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'glass'"><th:block th:replace="~{modules/categories/category-switch :: glass(${categories}, ${category})}" /></th:block>
+            <th:block th:case="*"><th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" /></th:block>
+          </th:block>
+        </th:block>
 
         <!-- 文章列表（当前分类）：强制使用杂志风格 -->
         <th:block th:replace="~{modules/categories/list-magazine :: magazine(${posts})}" />
@@ -341,19 +347,16 @@
     <div class="flex gap-8">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
       <section class="flex-1" th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
-        <!-- 分类按钮循环（包含"全部"，当前分类高亮） -->
-        <div class="categories-switch flex flex-wrap gap-2 mb-6" th:with="categories=${categoryFinder.listAsTree()}">
-          <a th:href="@{/categories}"
-             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-             th:classappend="${category != null} ? '' : ' active'"
-             th:attr="aria-pressed=${category == null}">全部</a>
-          <a th:each="c : ${categories}"
-             th:href="@{${c.status.permalink}}"
-             class="btn btn-sm border-base-300 bg-base-100 hover:border-primary hover:bg-primary/10"
-             th:classappend="${category != null and category.metadata.name == c.metadata.name} ? ' active' : ''"
-             th:attr="aria-pressed=${category != null and category.metadata.name == c.metadata.name}"
-             th:text="${c.spec.displayName}"></a>
-        </div>
+        <!-- 分类切换块 -->
+        <th:block th:with="categories=${categoryFinder.listAsTree()}">
+          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+            <th:block th:case="'pills'"><th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'chips'"><th:block th:replace="~{modules/categories/category-switch :: chips(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'underline'"><th:block th:replace="~{modules/categories/category-switch :: underline(${categories}, ${category})}" /></th:block>
+            <th:block th:case="'glass'"><th:block th:replace="~{modules/categories/category-switch :: glass(${categories}, ${category})}" /></th:block>
+            <th:block th:case="*"><th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" /></th:block>
+          </th:block>
+        </th:block>
 
         <!-- 文章列表（当前分类）：强制使用极简风格 -->
         <th:block th:replace="~{modules/categories/list-minimal :: minimal(${posts})}" />
