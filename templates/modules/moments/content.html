@@ -1,0 +1,200 @@
+<!-- ========================================== -->
+<!--     瞬间列表页 - 朋友圈+苹果风格               -->
+<!-- ========================================== -->
+<th:block th:fragment="content">
+
+  <th:block th:with="
+    cfg=${theme.config.moments_settings},
+    pageTitle=${cfg?.page_title ?: '瞬间'},
+    enableComment=${cfg?.enable_comment != false},
+    showSidebar=${cfg?.enable_sidebar == true}
+  ">
+
+    <div class="max-w-7xl mx-auto px-4 py-6 md:py-10">
+      <div class="flex gap-8">
+        
+        <!-- 主内容区 -->
+        <section class="flex-1 min-w-0" th:classappend="${!showSidebar} ? 'max-w-xl mx-auto' : ''">
+
+          <!-- 标签筛选 -->
+          <div th:if="${tags != null && !tags.isEmpty()}" class="mb-6">
+            <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+              <a th:href="@{/moments}" 
+                 class="btn btn-sm rounded-full"
+                 th:classappend="${param.tag == null || #lists.isEmpty(param.tag)} ? 'btn-primary' : 'btn-ghost'">
+                全部
+              </a>
+              <th:block th:each="tag : ${tags}">
+                <a th:href="@{/moments(tag=${tag.name})}" 
+                   class="btn btn-sm rounded-full"
+                   th:classappend="${#lists.contains(param.tag, tag.name)} ? 'btn-primary' : 'btn-ghost'"
+                   th:text="${tag.name}">标签</a>
+              </th:block>
+            </div>
+          </div>
+
+          <!-- 瞬间列表 -->
+          <div id="moments-list" th:if="${moments != null && moments.total > 0}" class="space-y-4">
+          
+          <th:block th:each="moment : ${moments.items}" th:with="content=${moment.spec.content}">
+            
+            <article class="card bg-base-100 shadow-sm rounded-2xl overflow-hidden"
+                     x-data="{ showComment: false }">
+              <div class="p-4">
+                <!-- 头部：头像 + 用户名 + 时间 -->
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="avatar">
+                    <div class="w-11 h-11 rounded-xl bg-base-200">
+                      <img th:if="${moment.owner?.avatar != null}" 
+                           th:src="${moment.owner.avatar}" 
+                           th:alt="${moment.owner.displayName}" />
+                      <div th:if="${moment.owner?.avatar == null}" 
+                           class="w-full h-full flex items-center justify-center text-base-content/40 font-semibold"
+                           th:text="${moment.owner?.displayName != null ? #strings.substring(moment.owner.displayName, 0, 1) : 'U'}">U</div>
+                    </div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-semibold text-primary text-sm truncate" 
+                         th:text="${moment.owner?.displayName ?: '匿名用户'}">用户名</div>
+                    <div class="text-xs text-base-content/40"
+                         th:text="${#temporals.format(moment.spec.releaseTime, 'MM-dd HH:mm')}">11-27 14:00</div>
+                  </div>
+                </div>
+                
+                <!-- 文字内容 -->
+                <div th:if="${not #strings.isEmpty(content.html)}" 
+                     class="text-sm text-base-content leading-relaxed mb-3"
+                     th:utext="${content.html}">
+                  今天的天气真好...
+                </div>
+                
+                <!-- 媒体区域 -->
+                <div th:if="${content.medium != null && !content.medium.isEmpty()}" class="mb-3">
+                  <!-- 单图 -->
+                  <th:block th:if="${#lists.size(content.medium) == 1}">
+                    <th:block th:each="medium : ${content.medium}">
+                      <img th:if="${medium.type.name == 'PHOTO'}" 
+                           th:src="${medium.url}" 
+                           class="rounded-xl max-h-72 object-cover cursor-pointer"
+                           loading="lazy" />
+                      <video th:if="${medium.type.name == 'VIDEO'}" 
+                             th:src="${medium.url}" 
+                             controls preload="metadata"
+                             class="rounded-xl max-h-72 w-full">
+                      </video>
+                      <div th:if="${medium.type.name == 'AUDIO'}" class="bg-base-200 rounded-xl p-3">
+                        <audio th:src="${medium.url}" controls class="w-full"></audio>
+                      </div>
+                    </th:block>
+                  </th:block>
+                  
+                  <!-- 多图网格 -->
+                  <div th:if="${#lists.size(content.medium) > 1}" 
+                       class="grid gap-1 rounded-xl overflow-hidden"
+                       th:classappend="${#lists.size(content.medium) == 2 or #lists.size(content.medium) == 4} ? 'grid-cols-2' : 'grid-cols-3'">
+                    <th:block th:each="medium, stat : ${content.medium}">
+                      <div th:if="${medium.type.name == 'PHOTO' && stat.index < 9}" 
+                           class="aspect-square relative bg-base-200 overflow-hidden cursor-pointer">
+                        <img th:src="${medium.url}" 
+                             class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                             loading="lazy" />
+                        <div th:if="${stat.index == 8 && #lists.size(content.medium) > 9}" 
+                             class="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <span class="text-white font-semibold" 
+                                th:text="'+' + (${#lists.size(content.medium)} - 9)">+3</span>
+                        </div>
+                      </div>
+                    </th:block>
+                  </div>
+                </div>
+
+                <!-- 标签 -->
+                <div th:if="${moment.spec.tags != null && !moment.spec.tags.isEmpty()}" class="mb-3 flex flex-wrap gap-1.5">
+                  <a th:each="tag : ${moment.spec.tags}" 
+                     th:href="@{/moments(tag=${tag})}"
+                     class="badge badge-sm badge-ghost text-primary"
+                     th:text="'#' + ${tag}">#标签</a>
+                </div>
+
+                <!-- 互动操作 -->
+                <div class="flex items-center gap-4 pt-2 border-t border-base-200 text-sm text-base-content/50">
+                  <!-- 点赞按钮 -->
+                  <button class="inline-flex items-center gap-1.5 hover:text-error transition-colors"
+                          th:data-moment-name="${moment.metadata.name}"
+                          th:data-upvote-count="${moment.stats?.upvote ?: 0}"
+                          onclick="handleMomentUpvote(this)">
+                    <span class="icon-[heroicons--heart] size-5"></span>
+                    <span class="upvote-count" th:text="${moment.stats?.upvote ?: 0}">0</span>
+                  </button>
+                  <!-- 评论按钮 -->
+                  <button class="inline-flex items-center gap-1.5 hover:text-primary transition-colors"
+                          @click="showComment = !showComment">
+                    <span class="icon-[heroicons--chat-bubble-left] size-5"></span>
+                    <span th:text="${moment.stats?.totalComment ?: 0}">0</span>
+                  </button>
+                </div>
+                
+                <!-- 评论区 -->
+                <div x-show="showComment" x-transition class="mt-3 pt-3 border-t border-base-200">
+                  <halo:comment 
+                    group="moment.halo.run" 
+                    kind="Moment"
+                    th:attr="name=${moment.metadata.name}"
+                    colorScheme="system">
+                  </halo:comment>
+                </div>
+              </div>
+            </article>
+            
+          </th:block>
+        </div>
+
+          <!-- 分页 -->
+          <div th:if="${moments != null && (moments.hasPrevious() || moments.hasNext())}" 
+               class="mt-8 flex items-center justify-center gap-3">
+            <a th:if="${moments.hasPrevious()}"
+               th:href="@{${moments.prevUrl}}"
+               class="btn btn-ghost btn-sm btn-circle">
+              <span class="icon-[heroicons--chevron-left] size-5"></span>
+            </a>
+            <span th:unless="${moments.hasPrevious()}"
+               class="btn btn-ghost btn-sm btn-circle btn-disabled opacity-30">
+              <span class="icon-[heroicons--chevron-left] size-5"></span>
+            </span>
+            
+            <span class="text-sm text-base-content/50" th:text="${moments.page} + ' / ' + ${moments.totalPages}">1 / 3</span>
+            
+            <a th:if="${moments.hasNext()}"
+               th:href="@{${moments.nextUrl}}"
+               class="btn btn-ghost btn-sm btn-circle">
+              <span class="icon-[heroicons--chevron-right] size-5"></span>
+            </a>
+            <span th:unless="${moments.hasNext()}"
+               class="btn btn-ghost btn-sm btn-circle btn-disabled opacity-30">
+              <span class="icon-[heroicons--chevron-right] size-5"></span>
+            </span>
+          </div>
+
+          <!-- 空状态 -->
+          <div th:if="${moments == null || moments.total == 0}" 
+               class="card bg-base-100 shadow-sm rounded-2xl p-12 text-center">
+            <span class="icon-[heroicons--camera] size-16 text-base-content/10 mx-auto block mb-4"></span>
+            <p class="text-base-content/40">暂无瞬间</p>
+          </div>
+
+        </section>
+
+        <!-- 右侧边栏 -->
+        <aside th:if="${showSidebar}" class="w-80 space-y-6 hidden lg:block shrink-0">
+          <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
+          <th:block th:replace="~{modules/widgets/categories :: list}" />
+          <th:block th:replace="~{modules/widgets/tags :: cloud}" />
+          <th:block th:replace="~{modules/widgets/popular-posts :: list}" />
+        </aside>
+
+      </div>
+    </div>
+
+  </th:block>
+
+</th:block>

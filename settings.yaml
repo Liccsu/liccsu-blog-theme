@@ -1523,3 +1523,32 @@ spec:
               value: true
             - label: 禁用
               value: false
+
+    - group: moments_settings
+      label: 瞬间
+      formSchema:
+        - $formkit: text
+          name: page_title
+          label: 页面标题
+          value: "瞬间"
+          placeholder: "瞬间页面的标题"
+        - $formkit: radio
+          name: enable_sidebar
+          label: 显示侧边栏
+          help: 开启后显示通用侧边栏，页面变为左右布局
+          value: false
+          options:
+            - label: 开启
+              value: true
+            - label: 关闭
+              value: false
+        - $formkit: radio
+          name: enable_comment
+          label: 启用评论
+          help: 在每条瞬间下方显示评论区
+          value: false
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false

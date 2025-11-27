@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN" th:fragment="html (content)">
+
+<!-- ========================================== -->
+<!--     瞬间页面布局                             -->
+<!-- ========================================== -->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 防止主题闪烁 -->
+  <th:block th:replace="~{modules/theme-script :: inline-script}" />
+
+  <!-- 页面标题 -->
+  <title th:with="pageTitle=${theme.config.moments_settings?.page_title ?: '瞬间'}"
+         th:text="${pageTitle} + '-' + ${site.title}"></title>
+  
+  <!-- 字体 -->
+  <link rel="stylesheet" th:href="@{/assets/fonts/open-fonts.css?v={version}(version=${theme.spec.version})}" />
+  <!-- 主题样式 -->
+  <link rel="stylesheet" th:href="@{/assets/css/main.css?v={version}(version=${theme.spec.version})}" />
+  <link rel="stylesheet" th:href="@{/assets/css/moments.css?v={version}(version=${theme.spec.version})}" />
+</head>
+
+<body class="min-h-screen bg-base-200 flex flex-col">
+  
+  <!-- 导航栏 -->
+  <th:block th:replace="~{modules/nav :: navbar}" />
+
+  <!-- 主要内容 -->
+  <main class="flex-1">
+    <th:block th:replace="${content}" />
+  </main>
+
+  <!-- 页脚 -->
+  <th:block th:replace="~{modules/footer :: footer}" />
+
+  <!-- 悬浮 Dock -->
+  <th:block th:replace="~{modules/floating-dock :: dock}" />
+
+  <!-- JavaScript -->
+  <script th:src="@{/assets/js/main.js?v={version}(version=${theme.spec.version})}"></script>
+  <script th:src="@{/assets/js/moments.js?v={version}(version=${theme.spec.version})}"></script>
+</body>
+
+</html>
