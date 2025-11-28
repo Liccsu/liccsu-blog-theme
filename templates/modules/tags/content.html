@@ -12,7 +12,7 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8">
       <!-- 左侧：标签切换块与文章列表 -->
-      <section class="flex-1" th:classappend="${theme.config.tag_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+      <section class="flex-1" th:classappend="${theme.config.tag_settings.show_sidebar != true ? 'max-w-6xl mx-auto' : ''}">
         <th:block th:with="tags = ${tagFinder.listAll()}">
           
           <!-- 标签切换块 - 根据后台设置渲染不同风格 -->
@@ -86,7 +86,7 @@
       </section>
 
       <!-- 右侧：侧边栏 -->
-      <aside th:if="${theme.config.tag_settings.show_sidebar != false}" 
+      <aside th:if="${theme.config.tag_settings.show_sidebar == true}" 
              class="right-sidebar w-80 space-y-6 hidden lg:block">
         <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
         <th:block th:replace="~{modules/widgets/categories :: list}" />
@@ -103,7 +103,7 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8">
       <!-- 左侧：标签切换块与当前标签文章列表 -->
-      <section class="flex-1" th:classappend="${theme.config.tag_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+      <section class="flex-1" th:classappend="${theme.config.tag_settings.show_sidebar != true ? 'max-w-6xl mx-auto' : ''}">
         
         <!-- 标签切换块 -->
         <th:block th:with="tags = ${tagFinder.listAll()}">
@@ -158,7 +158,7 @@
       </section>
 
       <!-- 右侧：侧边栏 -->
-      <aside th:if="${theme.config.tag_settings.show_sidebar != false}" 
+      <aside th:if="${theme.config.tag_settings.show_sidebar == true}" 
              class="right-sidebar w-80 space-y-6 hidden lg:block">
         <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
         <th:block th:replace="~{modules/widgets/categories :: list}" />

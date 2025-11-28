@@ -11,7 +11,7 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8">
       <!-- 左侧：归档内容 -->
-      <section class="flex-1" th:classappend="${theme.config.archive_settings?.show_sidebar == false ? 'max-w-4xl mx-auto' : ''}">
+      <section class="flex-1" th:classappend="${theme.config.archive_settings?.show_sidebar != true ? 'max-w-4xl mx-auto' : ''}">
         
         <!-- 页面标题区 -->
         <div class="mb-8">
@@ -154,11 +154,21 @@
               hasNext=${archives.hasNext}
           )}" />
         </th:block>
+
+        <!-- 评论区 -->
+        <section class="mt-12" th:if="${theme.config.archive_settings?.enable_comment == true}">
+          <halo:comment 
+              group="content.halo.run" 
+              kind="SinglePage"
+              th:attr="name=${singlePage != null ? singlePage.metadata.name : 'archives'}"
+              colorScheme="system">
+          </halo:comment>
+        </section>
       </section>
 
       <!-- 右侧：侧边栏 -->
-      <aside th:if="${theme.config.archive_settings?.show_sidebar != false}" 
-             class="right-sidebar w-80 space-y-6 hidden lg:block">
+      <aside th:if="${theme.config.archive_settings?.show_sidebar == true}" 
+             class="right-sidebar w-80 space-y-6 hidden lg:block shrink-0">
         <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
         <th:block th:replace="~{modules/widgets/categories :: list}" />
         <th:block th:replace="~{modules/widgets/tags :: cloud}" />

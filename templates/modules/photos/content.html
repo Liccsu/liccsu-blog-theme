@@ -96,7 +96,7 @@
         <halo:comment 
           group="content.halo.run" 
           kind="SinglePage"
-          name="photos"
+          th:attr="name=${singlePage != null ? singlePage.metadata.name : 'photos'}"
           colorScheme="system">
         </halo:comment>
       </section>

@@ -1125,7 +1125,6 @@ spec:
     - group: category_settings
       label: 分类
       formSchema:
-        # 侧边栏开关
         - $formkit: radio
           name: show_sidebar
           label: 显示侧边栏
@@ -1136,14 +1135,13 @@ spec:
               value: true
             - label: 隐藏
               value: false
-        # 分类列表风格选择
         - $formkit: select
           name: list_style
           label: 文章列表风格
           help: |
             选择分类页的文章列表展示风格。
             • 分类页可通过「分类管理 → 自定义模板」单独覆盖
-          value: media_text
+          value: modern
           options:
             - label: 卡片
               value: modern
@@ -1153,12 +1151,11 @@ spec:
               value: magazine
             - label: 极简
               value: minimal
-        # 分类切换块风格
         - $formkit: select
           name: category_display_style
           label: 分类切换块风格
           help: 选择分类页顶部分类列表的展示风格
-          value: pills
+          value: chips
           options:
             - label: 药丸风格
               value: pills
@@ -1218,23 +1215,21 @@ spec:
     - group: tag_settings
       label: 标签
       formSchema:
-        # 侧边栏开关
         - $formkit: radio
           name: show_sidebar
           label: 显示侧边栏
           help: 控制标签页是否显示右侧侧边栏
-          value: true
+          value: false
           options:
             - label: 显示
               value: true
             - label: 隐藏
               value: false
-        # 标签列表风格选择
         - $formkit: select
           name: list_style
           label: 文章列表风格
           help: 选择标签页的文章列表展示风格
-          value: media_text
+          value: minimal
           options:
             - label: 卡片
               value: modern
@@ -1244,12 +1239,11 @@ spec:
               value: magazine
             - label: 极简
               value: minimal
-        # 标签切换块风格
         - $formkit: select
           name: tag_display_style
           label: 标签切换块风格
           help: 选择标签页顶部标签列表的展示风格
-          value: pills
+          value: underline
           options:
             - label: 药丸风格
               value: pills
@@ -1309,44 +1303,58 @@ spec:
     - group: archive_settings
       label: 归档
       formSchema:
-        # 侧边栏开关
         - $formkit: radio
           name: show_sidebar
           label: 显示侧边栏
           help: 控制归档页是否显示右侧侧边栏
-          value: true
+          value: false
           options:
             - label: 显示
               value: true
             - label: 隐藏
               value: false
+        - $formkit: radio
+          name: enable_comment
+          label: 启用评论
+          help: 在归档页面底部显示评论区
+          value: false
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false
     - group: links_settings
       label: 友链
       formSchema:
-        # 页面标题
         - $formkit: text
           name: page_title
           label: 页面标题
           value: "友情链接"
           placeholder: "友情链接"
-        # 页面描述
         - $formkit: textarea
           name: page_description
           label: 页面描述
           value: "感谢这些优秀的网站与博客，让互联网变得更加精彩"
           rows: 2
-        # 申请提示标题
         - $formkit: text
           name: apply_title
           label: 申请区标题
           value: "想要交换友链？"
-        # 申请提示描述
         - $formkit: textarea
           name: apply_description
           label: 申请区描述
           value: "如果你也有一个优质的网站或博客，欢迎与我交换友链。请确保你的网站内容健康、定期更新，并已添加本站链接。"
           rows: 2
-        # 启用评论
+        - $formkit: radio
+          name: show_sidebar
+          label: 显示侧边栏
+          help: 开启后显示通用侧边栏
+          value: false
+          options:
+            - label: 显示
+              value: true
+            - label: 隐藏
+              value: false
         - $formkit: radio
           name: enable_comment
           label: 启用评论
@@ -1360,37 +1368,77 @@ spec:
     - group: about_settings
       label: 关于
       formSchema:
-        # ========== 基本信息 ==========
         - $formkit: text
           name: subtitle
           label: 副标题
           value: "一个热爱技术的开发者"
-          placeholder: "一句话介绍"
-        - $formkit: attachment
-          name: avatar
-          label: 头像
-          help: 留空则使用站点 Logo
-          accepts:
-            - image/jpeg
-            - image/png
-            - image/webp
-        - $formkit: text
-          name: nickname
-          label: 昵称
-          placeholder: "留空则使用站点名称"
-        - $formkit: text
-          name: role
-          label: 角色/职位
-          value: "全栈开发者"
-          placeholder: "如：全栈开发者"
-        - $formkit: textarea
-          name: bio
-          label: 个人简介
-          help: 支持 HTML 标签
-          rows: 3
-          placeholder: "简单介绍一下自己..."
-        
-        # ========== 社交链接 ==========
+          placeholder: "页面顶部的一句话介绍"
+        - $formkit: group
+          name: profile
+          label: 个人信息
+          value:
+            avatar: ""
+            nickname: ""
+            role: "全栈开发者"
+            bio: ""
+          children:
+            - $formkit: attachment
+              name: avatar
+              label: 头像
+              help: 留空则使用站点 Logo
+              accepts:
+                - image/jpeg
+                - image/png
+                - image/webp
+            - $formkit: text
+              name: nickname
+              label: 昵称
+              placeholder: "留空则使用站点名称"
+            - $formkit: text
+              name: role
+              label: 角色/职位
+              placeholder: "如：全栈开发者"
+            - $formkit: textarea
+              name: bio
+              label: 个人简介
+              help: 支持 HTML 标签
+              rows: 3
+              placeholder: "简单介绍一下自己..."
+        - $formkit: group
+          name: github
+          label: GitHub 设置
+          value:
+            username: ""
+            stats_host: ""
+            show_stats: true
+            show_calendar: true
+          children:
+            - $formkit: text
+              name: username
+              label: 用户名
+              help: 用于显示统计卡片和贡献日历
+              placeholder: "如：sky121666"
+            - $formkit: text
+              name: stats_host
+              label: Stats 服务地址
+              help: 自部署 github-readme-stats 地址，留空使用默认
+              placeholder: "https://github-readme-stats.vercel.app"
+            - $formkit: radio
+              name: show_stats
+              label: 显示统计卡片
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: radio
+              name: show_calendar
+              label: 显示贡献日历
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
         - $formkit: repeater
           name: social_links
           label: 社交链接
@@ -1407,12 +1455,12 @@ spec:
               name: url
               label: 链接地址
               placeholder: "https://..."
-            - $formkit: text
+            - $formkit: code
               name: icon
-              label: 图标代码
-              help: 'Iconify 格式：<span class="icon-[mdi--github] w-5 h-5"></span>'
-        
-        # ========== 技术栈 ==========
+              label: 图标 SVG
+              help: '填入纯 SVG 代码，可从 https://icon-sets.iconify.design/ 复制'
+              language: html
+              height: 80
         - $formkit: repeater
           name: tech_stack
           label: 技术栈
@@ -1425,70 +1473,45 @@ spec:
               name: name
               label: 技术名称
               placeholder: "如：Vue.js"
-            - $formkit: text
+            - $formkit: code
               name: icon
-              label: 图标代码（可选）
-              help: '如：<span class="icon-[logos--vue] w-5 h-5"></span>'
-        
-        # ========== GitHub 设置 ==========
-        - $formkit: text
-          name: github_username
-          label: GitHub 用户名
-          help: 用于显示统计卡片和贡献日历
-          placeholder: "如：sky121666"
-        - $formkit: text
-          name: github_stats_host
-          label: Stats 服务地址
-          help: 自部署 github-readme-stats 地址，留空使用默认
-          placeholder: "https://github-readme-stats.vercel.app"
-        - $formkit: radio
-          name: show_github_stats
-          label: 显示 GitHub 统计卡片
-          value: true
-          options:
-            - label: 显示
-              value: true
-            - label: 隐藏
-              value: false
-        - $formkit: radio
-          name: show_github_calendar
-          label: 显示贡献日历
-          value: true
-          options:
-            - label: 显示
-              value: true
-            - label: 隐藏
-              value: false
-        
-        # ========== 功能开关 ==========
-        - $formkit: radio
-          name: show_page_content
-          label: 显示更多介绍
-          help: 显示页面编辑器中的内容
-          value: false
-          options:
-            - label: 显示
-              value: true
-            - label: 隐藏
-              value: false
-        - $formkit: radio
-          name: show_site_stats
-          label: 显示站点统计
-          value: true
-          options:
-            - label: 显示
-              value: true
-            - label: 隐藏
-              value: false
-        - $formkit: radio
-          name: enable_comment
-          label: 启用评论
-          value: true
-          options:
-            - label: 启用
-              value: true
-            - label: 禁用
-              value: false
+              label: 图标 SVG（可选）
+              help: '填入纯 SVG 代码，可从 https://icon-sets.iconify.design/ 复制'
+              language: html
+              height: 80
+        - $formkit: group
+          name: display
+          label: 显示设置
+          value:
+            show_page_content: false
+            show_site_stats: true
+            enable_comment: true
+          children:
+            - $formkit: radio
+              name: show_page_content
+              label: 显示更多介绍
+              help: 开启后显示单页面编辑器中的内容
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: radio
+              name: show_site_stats
+              label: 显示站点统计
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: radio
+              name: enable_comment
+              label: 启用评论
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
 
     - group: photos_settings
       label: 图库
@@ -1507,7 +1530,7 @@ spec:
           name: show_photo_info
           label: 显示图片信息
           help: 鼠标悬浮时显示标题和描述
-          value: true
+          value: false
           options:
             - label: 显示
               value: true
@@ -1517,7 +1540,7 @@ spec:
           name: enable_comment
           label: 启用评论
           help: 在图库页面底部显示评论区
-          value: false
+          value: true
           options:
             - label: 启用
               value: true
@@ -1543,10 +1566,20 @@ spec:
             - label: 关闭
               value: false
         - $formkit: radio
+          name: enable_upvote
+          label: 启用点赞
+          help: 在每条瞬间下方显示点赞按钮
+          value: true
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false
+        - $formkit: radio
           name: enable_comment
           label: 启用评论
           help: 在每条瞬间下方显示评论区
-          value: false
+          value: true
           options:
             - label: 启用
               value: true

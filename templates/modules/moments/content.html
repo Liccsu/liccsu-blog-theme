@@ -6,6 +6,7 @@
   <th:block th:with="
     cfg=${theme.config.moments_settings},
     pageTitle=${cfg?.page_title ?: '瞬间'},
+    enableUpvote=${cfg?.enable_upvote != false},
     enableComment=${cfg?.enable_comment != false},
     showSidebar=${cfg?.enable_sidebar == true}
   ">
@@ -119,7 +120,8 @@
                 <!-- 互动操作 -->
                 <div class="flex items-center gap-4 pt-2 border-t border-base-200 text-sm text-base-content/50">
                   <!-- 点赞按钮 -->
-                  <button class="inline-flex items-center gap-1.5 hover:text-error transition-colors"
+                  <button th:if="${enableUpvote}"
+                          class="inline-flex items-center gap-1.5 hover:text-error transition-colors"
                           th:data-moment-name="${moment.metadata.name}"
                           th:data-upvote-count="${moment.stats?.upvote ?: 0}"
                           onclick="handleMomentUpvote(this)">
@@ -127,7 +129,8 @@
                     <span class="upvote-count" th:text="${moment.stats?.upvote ?: 0}">0</span>
                   </button>
                   <!-- 评论按钮 -->
-                  <button class="inline-flex items-center gap-1.5 hover:text-primary transition-colors"
+                  <button th:if="${enableComment}"
+                          class="inline-flex items-center gap-1.5 hover:text-primary transition-colors"
                           @click="showComment = !showComment">
                     <span class="icon-[heroicons--chat-bubble-left] size-5"></span>
                     <span th:text="${moment.stats?.totalComment ?: 0}">0</span>
@@ -135,7 +138,7 @@
                 </div>
                 
                 <!-- 评论区 -->
-                <div x-show="showComment" x-transition class="mt-3 pt-3 border-t border-base-200">
+                <div th:if="${enableComment}" x-show="showComment" x-transition class="mt-3 pt-3 border-t border-base-200">
                   <halo:comment 
                     group="moment.halo.run" 
                     kind="Moment"

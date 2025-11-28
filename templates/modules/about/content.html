@@ -23,20 +23,20 @@
   <th:block th:with="
     cfg=${theme.config.about_settings},
     pageTitle=${singlePage.spec.title ?: '关于'},
-    nickname=${theme.config.about_settings?.nickname ?: site.title},
-    subtitle=${theme.config.about_settings?.subtitle ?: (singlePage.spec.excerpt ?: '一个热爱技术的开发者')},
-    role=${theme.config.about_settings?.role ?: '全栈开发者'},
-    bio=${theme.config.about_settings?.bio ?: '热爱编程，喜欢探索新技术。在这里记录学习笔记和技术心得，希望能帮助到更多人。'},
-    avatar=${theme.config.about_settings?.avatar ?: singlePage.spec.cover},
-    socialLinks=${theme.config.about_settings?.social_links},
-    techStack=${theme.config.about_settings?.tech_stack},
-    githubUsername=${theme.config.about_settings?.github_username},
-    githubStatsHost=${theme.config.about_settings?.github_stats_host ?: 'https://github-readme-stats-sigma-five.vercel.app'},
-    showGithubStats=${theme.config.about_settings?.show_github_stats != false},
-    showGithubCalendar=${theme.config.about_settings?.show_github_calendar != false},
-    showPageContent=${theme.config.about_settings?.show_page_content == true},
-    showSiteStats=${theme.config.about_settings?.show_site_stats != false},
-    enableComment=${theme.config.about_settings?.enable_comment != false},
+    nickname=${cfg?.profile?.nickname ?: site.title},
+    subtitle=${cfg?.subtitle ?: (singlePage.spec.excerpt ?: '一个热爱技术的开发者')},
+    role=${cfg?.profile?.role ?: '全栈开发者'},
+    bio=${cfg?.profile?.bio ?: '热爱编程，喜欢探索新技术。在这里记录学习笔记和技术心得，希望能帮助到更多人。'},
+    avatar=${cfg?.profile?.avatar ?: singlePage.spec.cover},
+    socialLinks=${cfg?.social_links},
+    techStack=${cfg?.tech_stack},
+    githubUsername=${cfg?.github?.username},
+    githubStatsHost=${cfg?.github?.stats_host ?: 'https://github-readme-stats-sigma-five.vercel.app'},
+    showGithubStats=${cfg?.github?.show_stats != false},
+    showGithubCalendar=${cfg?.github?.show_calendar != false},
+    showPageContent=${cfg?.display?.show_page_content == true},
+    showSiteStats=${cfg?.display?.show_site_stats != false},
+    enableComment=${cfg?.display?.enable_comment != false},
     pageContent=${singlePage.content?.content}
   ">
 
@@ -83,7 +83,9 @@
                      target="_blank"
                      rel="noopener"
                      class="btn btn-sm btn-outline gap-2">
-                    <th:block th:utext="${social.icon}"></th:block>
+                    <span th:if="${social.icon != null && !social.icon.isEmpty()}" 
+                          class="w-4 h-4 shrink-0 *:w-full *:h-full" 
+                          th:utext="${social.icon}"></span>
                     <span th:text="${social.name}">链接</span>
                   </a>
                 </div>
@@ -137,7 +139,9 @@
           <div class="card-body p-6">
             <div class="flex flex-wrap gap-3">
               <span th:each="tech : ${techStack}" class="tech-tag">
-                <th:block th:if="${tech.icon != null && !tech.icon.isEmpty()}" th:utext="${tech.icon}"></th:block>
+                <span th:if="${tech.icon != null && !tech.icon.isEmpty()}" 
+                      class="w-5 h-5 shrink-0 *:w-full *:h-full" 
+                      th:utext="${tech.icon}"></span>
                 <span th:text="${tech.name}">技术</span>
               </span>
             </div>

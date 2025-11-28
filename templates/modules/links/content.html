@@ -8,9 +8,12 @@
 
 <!-- 友链内容片段 -->
 <main class="relative" th:fragment="links-content">
-  <div class="max-w-6xl mx-auto px-4 py-8">
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex gap-8">
+      <!-- 主内容区 -->
+      <section class="flex-1 min-w-0" th:classappend="${theme.config.links_settings?.show_sidebar != true ? 'max-w-5xl mx-auto' : ''}">
     
-    <!-- 页面标题区 -->
+        <!-- 页面标题区 -->
     <div class="text-center mb-12">
       <h1 class="text-3xl md:text-4xl font-bold text-base-content mb-4">
         <span class="icon-[heroicons--link] w-8 h-8 md:w-10 md:h-10 mr-2 align-middle text-primary"></span>
@@ -79,88 +82,122 @@
     </div>
 
     <!-- 申请友链提示 -->
-    <div class="mt-16 p-6 rounded-2xl bg-base-200/50 border border-base-300" th:if="${pluginFinder.available('link-submit')}">
-      <div class="flex flex-col md:flex-row items-center gap-6">
-        <div class="shrink-0">
-          <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-            <span class="icon-[heroicons--hand-raised] w-8 h-8 text-primary"></span>
+    <div class="mt-16">
+      <div class="card bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
+        <div class="card-body">
+          <div class="flex flex-col md:flex-row items-center gap-6">
+            <div class="shrink-0">
+              <div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <span class="icon-[heroicons--hand-raised] w-8 h-8 text-primary"></span>
+              </div>
+            </div>
+            <div class="flex-1 text-center md:text-left">
+              <h3 class="text-lg font-bold text-base-content mb-2"
+                  th:text="${theme.config.links_settings?.apply_title ?: '想要交换友链？'}">想要交换友链？</h3>
+              <p class="text-base-content/60 text-sm"
+                 th:text="${theme.config.links_settings?.apply_description ?: '如果你也有一个优质的网站或博客，欢迎与我交换友链。请确保你的网站内容健康、定期更新，并已添加本站链接。'}">
+                如果你也有一个优质的网站或博客，欢迎与我交换友链。
+              </p>
+            </div>
+            <div class="shrink-0">
+              <!-- 有插件时显示弹窗按钮 -->
+              <button th:if="${pluginFinder.available('link-submit')}" 
+                      type="button" 
+                      class="btn btn-primary gap-2" 
+                      onclick="document.getElementById('link-submit-modal').showModal()">
+                <span class="icon-[heroicons--plus-circle] w-5 h-5"></span>
+                提交友链
+              </button>
+              <!-- 无插件时显示跳转链接 -->
+              <a th:unless="${pluginFinder.available('link-submit')}"
+                 href="https://github.com/chengzhongxue/link-submit"
+                 target="_blank"
+                 rel="noopener"
+                 class="btn btn-primary gap-2">
+                <span class="icon-[heroicons--arrow-top-right-on-square] w-5 h-5"></span>
+                提交友链
+              </a>
+            </div>
           </div>
-        </div>
-        <div class="flex-1 text-center md:text-left">
-          <h3 class="text-lg font-bold text-base-content mb-2"
-              th:text="${theme.config.links_settings?.apply_title ?: '想要交换友链？'}">想要交换友链？</h3>
-          <p class="text-base-content/60 text-sm"
-             th:text="${theme.config.links_settings?.apply_description ?: '如果你也有一个优质的网站或博客，欢迎与我交换友链。请确保你的网站内容健康、定期更新，并已添加本站链接。'}">
-            如果你也有一个优质的网站或博客，欢迎与我交换友链。请确保你的网站内容健康、定期更新，并已添加本站链接。
-          </p>
-        </div>
-        <div class="shrink-0">
-          <button type="button" class="btn btn-primary" onclick="document.getElementById('link-submit-modal').showModal()">
-            <span class="icon-[heroicons--plus-circle] w-5 h-5"></span>
-            提交友链
-          </button>
         </div>
       </div>
     </div>
 
     <!-- 友链提交弹窗 -->
-    <dialog id="link-submit-modal" class="modal" th:if="${pluginFinder.available('link-submit')}">
-      <div class="modal-box w-11/12 max-w-lg" x-data="linkSubmitForm()">
-        <form method="dialog">
-          <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-        </form>
+    <dialog id="link-submit-modal" class="modal modal-bottom sm:modal-middle" th:if="${pluginFinder.available('link-submit')}">
+      <div class="modal-box w-full max-w-lg" x-data="linkSubmitForm()">
+        <!-- 头部 -->
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-lg font-bold">提交友链申请</h3>
+          <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost">
+              <span class="icon-[heroicons--x-mark] w-5 h-5"></span>
+            </button>
+          </form>
+        </div>
         
-        <h3 class="text-lg font-bold mb-6">
-          <span class="icon-[heroicons--link] w-5 h-5 mr-2 align-middle text-primary"></span>
-          提交友链申请
-        </h3>
-        
+        <!-- 表单内容 -->
         <form @submit.prevent="submitLink" class="space-y-4">
-          <!-- 网站名称 -->
-          <div class="form-control">
-            <label class="label"><span class="label-text">网站名称 <span class="text-error">*</span></span></label>
-            <input type="text" x-model="form.displayName" required
-                   class="input input-bordered w-full" placeholder="例如：我的博客" />
+          <!-- 网站名称 + 邮箱 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text">网站名称 <span class="text-error">*</span></span>
+              </label>
+              <input type="text" x-model="form.displayName" required
+                     class="input input-bordered w-full" placeholder="我的博客" />
+            </div>
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text">联系邮箱 <span class="text-error">*</span></span>
+              </label>
+              <input type="email" x-model="form.email" required
+                     class="input input-bordered w-full" placeholder="your@email.com" />
+            </div>
           </div>
           
           <!-- 网站地址 -->
           <div class="form-control">
-            <label class="label"><span class="label-text">网站地址 <span class="text-error">*</span></span></label>
+            <label class="label py-1">
+              <span class="label-text">网站地址 <span class="text-error">*</span></span>
+            </label>
             <input type="url" x-model="form.url" required
                    class="input input-bordered w-full" placeholder="https://example.com" />
           </div>
           
-          <!-- Logo -->
-          <div class="form-control">
-            <label class="label"><span class="label-text">Logo 地址</span></label>
-            <input type="url" x-model="form.logo"
-                   class="input input-bordered w-full" placeholder="https://example.com/logo.png" />
-          </div>
-          
-          <!-- 邮箱 -->
-          <div class="form-control">
-            <label class="label"><span class="label-text">联系邮箱 <span class="text-error">*</span></span></label>
-            <input type="email" x-model="form.email" required
-                   class="input input-bordered w-full" placeholder="your@email.com" />
+          <!-- Logo + RSS -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text">Logo 地址</span>
+              </label>
+              <input type="url" x-model="form.logo"
+                     class="input input-bordered w-full" placeholder="https://..." />
+            </div>
+            <div class="form-control">
+              <label class="label py-1">
+                <span class="label-text">RSS 地址</span>
+              </label>
+              <input type="url" x-model="form.rssUrl"
+                     class="input input-bordered w-full" placeholder="https://.../rss.xml" />
+            </div>
           </div>
           
           <!-- 网站描述 -->
           <div class="form-control">
-            <label class="label"><span class="label-text">网站描述</span></label>
+            <label class="label py-1">
+              <span class="label-text">网站描述</span>
+            </label>
             <textarea x-model="form.description" rows="2"
-                      class="textarea textarea-bordered w-full" placeholder="一句话介绍你的网站"></textarea>
-          </div>
-          
-          <!-- RSS -->
-          <div class="form-control">
-            <label class="label"><span class="label-text">RSS 地址</span></label>
-            <input type="url" x-model="form.rssUrl"
-                   class="input input-bordered w-full" placeholder="https://example.com/rss.xml" />
+                      class="textarea textarea-bordered w-full" 
+                      placeholder="一句话介绍你的网站"></textarea>
           </div>
           
           <!-- 分组选择 -->
           <div class="form-control" x-show="groups.length > 0">
-            <label class="label"><span class="label-text">申请分组</span></label>
+            <label class="label py-1">
+              <span class="label-text">申请分组</span>
+            </label>
             <select x-model="form.groupName" class="select select-bordered w-full">
               <option value="">请选择分组</option>
               <template x-for="group in groups" :key="group.groupName">
@@ -169,44 +206,50 @@
             </select>
           </div>
           
-          <!-- 提交按钮 -->
-          <div class="modal-action">
-            <button type="button" class="btn btn-ghost" onclick="document.getElementById('link-submit-modal').close()">取消</button>
+          <!-- 提交结果提示 -->
+          <div x-show="result.show" x-transition>
+            <div class="alert" :class="result.success ? 'alert-success' : 'alert-error'">
+              <span x-text="result.message"></span>
+            </div>
+          </div>
+          
+          <!-- 按钮 -->
+          <div class="flex justify-end gap-3 pt-2">
+            <button type="button" class="btn btn-ghost" 
+                    onclick="document.getElementById('link-submit-modal').close()">取消</button>
             <button type="submit" class="btn btn-primary" :disabled="submitting">
               <span x-show="submitting" class="loading loading-spinner loading-sm"></span>
               <span x-text="submitting ? '提交中...' : '提交申请'"></span>
             </button>
           </div>
         </form>
-        
-        <!-- 提交结果提示 -->
-        <div x-show="result.show" x-transition class="mt-4">
-          <div class="alert" :class="result.success ? 'alert-success' : 'alert-error'">
-            <span x-text="result.message"></span>
-          </div>
-        </div>
       </div>
       <form method="dialog" class="modal-backdrop">
         <button>close</button>
       </form>
     </dialog>
 
-    <!-- 评论区 -->
-    <section class="mt-16" th:if="${theme.config.links_settings?.enable_comment != false}">
-      <div class="divider">
-        <span class="icon-[heroicons--chat-bubble-left-right] w-5 h-5 mr-2"></span>
-        留言交流
-      </div>
-      <div class="mt-8">
-        <halo:comment 
-          group="content.halo.run" 
-          kind="SinglePage"
-          name="links"
-          colorScheme="system">
-        </halo:comment>
-      </div>
-    </section>
+        <!-- 评论区 -->
+        <section class="mt-16" th:if="${theme.config.links_settings?.enable_comment != false}">
+          <halo:comment 
+            group="content.halo.run" 
+            kind="SinglePage"
+            th:attr="name=${singlePage != null ? singlePage.metadata.name : 'links'}"
+            colorScheme="system">
+          </halo:comment>
+        </section>
 
+      </section>
+
+      <!-- 右侧边栏 -->
+      <aside th:if="${theme.config.links_settings?.show_sidebar == true}" 
+             class="w-80 space-y-6 hidden lg:block shrink-0">
+        <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
+        <th:block th:replace="~{modules/widgets/categories :: list}" />
+        <th:block th:replace="~{modules/widgets/tags :: cloud}" />
+        <th:block th:replace="~{modules/widgets/popular-posts :: list}" />
+      </aside>
+    </div>
   </div>
 </main>
 
