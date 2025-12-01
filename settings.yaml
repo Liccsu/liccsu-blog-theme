@@ -11,11 +11,11 @@ spec:
           name: loading_screen
           label: 页面加载屏幕
           value:
-            enable_loading: false
+            enable_loading: true
             animation_type: css
-            css_style: spinner
-            loading_text: "加载中..."
-            min_duration: 500
+            css_style: bars
+            loading_text: "Loading..."
+            min_duration: 300
             custom_svg: ''
             custom_gif: ''
           children:
@@ -49,7 +49,7 @@ spec:
               if: $get(animation_type).value === 'css'
               label: CSS 动画样式
               help: 选择内置的 CSS 加载动画样式
-              value: spinner
+              value: bars
               options:
                 - label: 旋转圆环（Spinner）
                   value: spinner
@@ -81,14 +81,14 @@ spec:
               name: loading_text
               label: 加载文字
               help: 加载动画下方显示的文字提示
-              placeholder: "加载中..."
-              value: "加载中..."
+              placeholder: "Loading..."
+              value: "Loading..."
             - $formkit: number
               if: $get(enable_loading).value
               name: min_duration
               label: 最小显示时间（毫秒）
               help: 加载屏幕至少显示的时间，避免快速闪现，推荐 300-800 毫秒
-              value: 500
+              value: 300
               min: 0
               max: 3000
               step: 100
@@ -1007,7 +1007,7 @@ spec:
               name: enable_custom_sidebar
               if: $get(index_show_sidebar).value
               label: 定制侧边栏
-              help: 启用后可单独配置此页面的侧边栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
               value: false
               options:
                 - label: 使用全局配置
@@ -1114,7 +1114,7 @@ spec:
               id: index_cover_fallback_enable
               name: cover_fallback_enable
               label: 启用封面替代
-              help: 开启后无封面的文章将使用指定图片替代
+              help: 启用后无封面的文章将使用指定图片替代
               value: true
               options:
                 - label: 启用
@@ -1190,7 +1190,7 @@ spec:
               id: index_enable_custom_dock
               name: enable_custom_dock
               label: 定制悬浮控制栏
-              help: 启用后可单独配置此页面的悬浮控制栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的悬浮控制栏，禁用则使用全局配置
               value: false
               options:
                 - label: 使用全局配置
@@ -1294,7 +1294,7 @@ spec:
               name: enable_custom_sidebar
               if: $get(post_show_sidebar).value
               label: 定制侧边栏
-              help: 启用后可单独配置此页面的侧边栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
               value: false
               options:
                 - label: 使用全局配置
@@ -1488,7 +1488,7 @@ spec:
           name: enable_custom_sidebar
           if: $get(cat_show_sidebar).value
           label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，关闭则使用全局配置
+          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
           value: false
           options:
             - label: 使用全局配置
@@ -1580,7 +1580,7 @@ spec:
               name: enable
               key: cat_cover_fallback_enable_field
               label: 启用封面替代
-              help: 开启后可在无封面或始终替代模式下使用指定图片。
+              help: 启用后可在无封面或始终替代模式下使用指定图片。
               value: false
               options:
                 - label: 启用
@@ -1625,7 +1625,7 @@ spec:
               id: category_enable_custom_dock
               name: enable_custom_dock
               label: 定制悬浮控制栏
-              help: 启用后可单独配置此页面的悬浮控制栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的悬浮控制栏，禁用则使用全局配置
               value: false
               options:
                 - label: 使用全局配置
@@ -1667,7 +1667,7 @@ spec:
           name: enable_custom_sidebar
           if: $get(tag_show_sidebar).value
           label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，关闭则使用全局配置
+          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
           value: false
           options:
             - label: 使用全局配置
@@ -1757,7 +1757,7 @@ spec:
               name: enable
               key: tag_cover_fallback_enable_field
               label: 启用封面替代
-              help: 开启后可在无封面或始终替代模式下使用指定图片。
+              help: 启用后可在无封面或始终替代模式下使用指定图片。
               value: false
               options:
                 - label: 启用
@@ -1802,7 +1802,7 @@ spec:
               id: tag_enable_custom_dock
               name: enable_custom_dock
               label: 定制悬浮控制栏
-              help: 启用后可单独配置此页面的悬浮控制栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的悬浮控制栏，禁用则使用全局配置
               value: false
               options:
                 - label: 使用全局配置
@@ -1844,7 +1844,7 @@ spec:
           name: enable_custom_sidebar
           if: $get(archive_show_sidebar).value
           label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，关闭则使用全局配置
+          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
           value: false
           options:
             - label: 使用全局配置
@@ -1915,7 +1915,7 @@ spec:
               id: archive_enable_custom_dock
               name: enable_custom_dock
               label: 定制悬浮控制栏
-              help: 启用后可单独配置此页面的悬浮控制栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的悬浮控制栏，禁用则使用全局配置
               value: false
               options:
                 - label: 使用全局配置
@@ -1975,7 +1975,7 @@ spec:
           id: links_show_sidebar
           name: show_sidebar
           label: 显示侧边栏
-          help: 开启后显示侧边栏
+          help: 启用后显示侧边栏
           value: false
           options:
             - label: 显示
@@ -1987,7 +1987,7 @@ spec:
           name: enable_custom_sidebar
           if: $get(links_show_sidebar).value
           label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，关闭则使用全局配置
+          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
           value: false
           options:
             - label: 使用全局配置
@@ -2058,7 +2058,7 @@ spec:
               id: links_enable_custom_dock
               name: enable_custom_dock
               label: 定制悬浮控制栏
-              help: 启用后可单独配置此页面的悬浮控制栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的悬浮控制栏，禁用则使用全局配置
               value: false
               options:
                 - label: 使用全局配置
@@ -2243,7 +2243,7 @@ spec:
             - $formkit: radio
               name: show_page_content
               label: 显示更多介绍
-              help: 开启后显示单页面编辑器中的内容
+              help: 启用后显示单页面编辑器中的内容
               options:
                 - label: 显示
                   value: true
@@ -2279,7 +2279,7 @@ spec:
               id: about_enable_custom_dock
               name: enable_custom_dock
               label: 定制悬浮控制栏
-              help: 启用后可单独配置此页面的悬浮控制栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的悬浮控制栏，禁用则使用全局配置
               value: false
               options:
                 - label: 使用全局配置
@@ -2360,7 +2360,7 @@ spec:
               id: photos_enable_custom_dock
               name: enable_custom_dock
               label: 定制悬浮控制栏
-              help: 启用后可单独配置此页面的悬浮控制栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的悬浮控制栏，禁用则使用全局配置
               value: false
               options:
                 - label: 使用全局配置
@@ -2406,25 +2406,25 @@ spec:
           id: moments_enable_sidebar
           name: enable_sidebar
           label: 显示侧边栏
-          help: 开启后显示侧边栏，页面变为左右布局
+          help: 启用后显示侧边栏，页面变为左右布局
           value: false
           options:
-            - label: 开启
+            - label: 启用
               value: true
-            - label: 关闭
+            - label: 禁用
               value: false
         - $formkit: radio
           id: moments_enable_custom_sidebar
           name: enable_custom_sidebar
           if: $get(moments_enable_sidebar).value
           label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，关闭则使用全局配置
+          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
           value: false
           options:
-            - label: 使用全局配置
-              value: false
-            - label: 启用定制
+            - label: 启用
               value: true
+            - label: 禁用
+              value: false
         - $formkit: radio
           name: sidebar_position
           if: $get(moments_enable_custom_sidebar).value
@@ -2508,13 +2508,13 @@ spec:
               id: moments_enable_custom_dock
               name: enable_custom_dock
               label: 定制悬浮控制栏
-              help: 启用后可单独配置此页面的悬浮控制栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的悬浮控制栏，禁用则使用全局配置
               value: false
               options:
-                - label: 使用全局配置
-                  value: false
-                - label: 启用定制
+                - label: 启用
                   value: true
+                - label: 禁用
+                  value: false
             - $formkit: menuRadio
               name: dock_menu
               label: Dock 菜单
@@ -2559,19 +2559,19 @@ spec:
           id: friends_page_enable_sidebar
           name: enable_sidebar
           label: 显示侧边栏
-          help: 开启后显示侧边栏，页面变为左右布局
+          help: 启用后显示侧边栏，页面变为左右布局
           value: false
           options:
-            - label: 开启
+            - label: 启用
               value: true
-            - label: 关闭
+            - label: 禁用
               value: false
         - $formkit: radio
           id: friends_page_enable_custom_sidebar
           name: enable_custom_sidebar
           if: $get(friends_page_enable_sidebar).value
           label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，关闭则使用全局配置
+          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
           value: false
           options:
             - label: 使用全局配置
@@ -2631,7 +2631,7 @@ spec:
               id: friends_page_enable_custom_dock
               name: enable_custom_dock
               label: 定制悬浮控制栏
-              help: 启用后可单独配置此页面的悬浮控制栏，关闭则使用全局配置
+              help: 启用后可单独配置此页面的悬浮控制栏，禁用则使用全局配置
               value: false
               options:
                 - label: 使用全局配置
