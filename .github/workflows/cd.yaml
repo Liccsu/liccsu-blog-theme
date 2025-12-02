@@ -11,6 +11,7 @@ jobs:
     permissions:
       contents: write
     with:
-      skip-appstore-release: true
+      app-id: app-squauk4h
+      skip-appstore-release: false
       node-version: 22
       pnpm-version: 9
