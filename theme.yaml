@@ -9,13 +9,13 @@ spec:
     website: https://github.com/sky121666
   description: 基于Vite、Tailwind CSS、DaisyUI和Alpine.js的现代化Halo主题
   logo: /themes/theme-sky-blog-1/assets/images/heihei.png
-  homepage: https://github.com/sky121666/halo-theme-sky-blog-1#readme
+  homepage: https://www.halo.run/store/apps/app-squauk4h
   repo: https://github.com/sky121666/halo-theme-sky-blog-1
   issues: https://github.com/sky121666/halo-theme-sky-blog-1/issues
   settingName: "theme-sky-blog-1-setting"
   configMapName: "theme-sky-blog-1-configMap"
-  version: "1.0.6"
-  requires: "2.21.10"
+  version: "1.0.7"
+  requires: "2.21.0"
   license:
     - name: "GPL-3.0"
       url: "https://github.com/sky121666/halo-theme-sky-blog-1/blob/main/LICENSE"
