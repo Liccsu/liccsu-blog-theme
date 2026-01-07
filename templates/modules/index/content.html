@@ -18,7 +18,7 @@
                    useCustomSidebar = ${contentSettings.enable_custom_sidebar == true},
                    sidebarPosition = ${useCustomSidebar ? (contentSettings.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8 lg:pt-24 lg:pb-12">
+  <div th:class="${theme.config.index.header_settings?.enable_header != false} ? 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8 lg:pt-24 lg:pb-12' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-8 lg:pt-8 lg:pb-12'">
 
     <!-- 主内容区：内容 + 侧边栏 -->
     <div class="flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">

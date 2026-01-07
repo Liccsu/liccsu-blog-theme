@@ -689,8 +689,21 @@ spec:
       label: 首页
       formSchema:
         - $formkit: group
+          name: header_settings
+          label: 首页头部区域
+          value:
+            enable_header: true
+          children:
+            - $formkit: switch
+              id: enable_header
+              name: enable_header
+              label: 启用首页头部
+              help: 关闭后将隐藏整个首页头部区域（包含背景、标题、副标题、瞬间、过渡动画）
+              value: true
+        - $formkit: group
           name: background_settings
           label: 头部背景设置
+          if: $get(enable_header).value
           value:
             background_type: effect
             background_image: "https://www.dmoe.cc/random.php"
@@ -740,6 +753,7 @@ spec:
         - $formkit: group
           name: title_settings
           label: 主标题设置
+          if: $get(enable_header).value
           value:
             show_title: true
             custom_title: "sky blog"
@@ -831,6 +845,7 @@ spec:
         - $formkit: group
           name: subtitle_settings
           label: 副标题设置
+          if: $get(enable_header).value
           value:
             show_subtitle: true
             subtitle_text: "记录生活，分享思考，探索无限可能"
@@ -904,6 +919,7 @@ spec:
         - $formkit: group
           name: wave_transition_settings
           label: 底部过渡设置
+          if: $get(enable_header).value
           value:
             show_wave_transition: true
             wave_color: "var(--sky-container)"
@@ -923,6 +939,7 @@ spec:
         - $formkit: group
           name: moment_settings
           label: 瞬间说说设置
+          if: $get(enable_header).value
           value:
             show_moment: true
             moment_title: "瞬间"

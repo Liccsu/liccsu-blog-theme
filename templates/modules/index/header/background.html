@@ -3,7 +3,8 @@
 <!-- ========================================== -->
 
 <!-- 背景层：图片/视频背景 -->
-<div class="absolute inset-0 z-0" th:if="${theme.config.index.background_settings.background_type == 'image'}"
+<div class="absolute inset-0 z-0" 
+     th:if="${theme.config.index.background_settings.background_type == 'image'}"
      th:with="bgSrc=${theme.config.index.background_settings.background_image},
               isVideo=${#strings.endsWith(bgSrc, '.mp4') or #strings.endsWith(bgSrc, '.webm') or #strings.endsWith(bgSrc, '.ogg')}">
     <!-- 原始媒体背景（视频优先，其次图片） -->
@@ -23,7 +24,8 @@
 </div>
 
 <!-- 背景层：CSS 特效（4种优化特效） -->
-<div class="absolute inset-0 z-0 overflow-hidden" th:if="${theme.config.index.background_settings.background_type == 'effect'}">
+<div class="absolute inset-0 z-0 overflow-hidden" 
+     th:if="${theme.config.index.background_settings.background_type == 'effect'}">
     
     <!-- 特效 1：流体渐变 - 优化加强版 -->
     <div class="effect-fluid-gradient" th:if="${theme.config.index.background_settings.effect_style == 'fluid-gradient'}">
