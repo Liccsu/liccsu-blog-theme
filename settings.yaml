@@ -2400,6 +2400,11 @@ spec:
     - group: friends_page_settings
       label: 朋友圈
       formSchema:
+        - $formkit: group
+          name: plugin_tips
+          label: 📦 插件配置提示
+          help: 每页显示数量等参数请在「后台 → 插件 → 朋友圈 → 基本设置」中配置
+          children: []
         - $formkit: text
           name: page_title
           label: 页面标题
