@@ -38,11 +38,12 @@
   <th:block th:replace="~{modules/nav :: navbar}" />
 
   <!-- 主要内容区域 -->
-  <main class="flex-1 ">
-    <div class="max-w-7xl mx-auto px-4 py-6 md:py-10">
+  <main class="flex-1 " th:with="listStyle=${cfg?.list_style ?: 'single_column'},
+                                   maxWidth=${listStyle == 'single_column' ? (showSidebar ? 'max-w-5xl' : 'max-w-3xl') : (showSidebar ? 'max-w-6xl' : 'max-w-5xl')}">
+    <div class="mx-auto px-4 py-6 md:py-10" th:classappend="${maxWidth}">
       <div class="flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">
         <!-- 主内容 -->
-        <div class="flex-1 min-w-0" th:classappend="${!showSidebar} ? 'max-w-5xl mx-auto' : ''">
+        <div class="flex-1 min-w-0">
           <th:block th:replace="${content}" />
         </div>
         <!-- 侧边栏 -->
