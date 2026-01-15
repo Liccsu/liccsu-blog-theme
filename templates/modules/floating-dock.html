@@ -2,15 +2,15 @@
 <html xmlns:th="https://www.thymeleaf.org">
 
 <!-- ========================================== -->
-<!--           悬浮 Dock 控制栏组件              -->
+<!--             悬浮控制栏组件                  -->
 <!-- ========================================== -->
 
 <!-- 
   参数说明：
-  - pageCfg: 页面悬浮控制栏配置（可选），包含 floating_dock 子配置
+  - pageCfg: 页面配置（可选），包含 floating_dock 子配置
   - pageType: 页面类型 - basic(基础) | comment(支持评论)
-  - 如果 pageCfg.floating_dock.enable_custom_dock == true，使用页面配置
-  - 否则使用全局 general.floating_dock
+  - 如果 pageCfg.floating_dock.enable_custom_dock == true，使用页面自定义配置
+  - 否则使用全局 general.floating_dock 配置
 -->
 
 <!-- 通用悬浮 Dock 片段（保持向后兼容） -->
@@ -26,8 +26,7 @@
                    cfg = ${useCustom ? pageCfg.floating_dock : globalCfg},
                    enableDock = ${cfg?.enable_dock != false},
                    dockMenuName = ${cfg?.dock_menu ?: 'primary'},
-                   enableBackToTop = ${cfg?.enable_back_to_top != false},
-                   enableComment = ${pageType == 'comment' and useCustom and cfg?.enable_comment == true}">
+                   enableBackToTop = ${cfg?.enable_back_to_top != false}">
   <!-- 底部居中样式 -->
   <th:block th:if="${enableDock and dockStyle != 'side'}" th:insert="~{:: bottomDockInner}" />
   <!-- 右侧可折叠样式 -->
@@ -77,21 +76,7 @@
           </th:block>
           
           <!-- 分隔线（当有后续功能时显示） -->
-          <div class="w-px h-6" th:if="${enableComment or enableBackToTop}"></div>
-          
-          <!-- 评论按钮（仅评论页面且启用评论按钮时显示，启用即为抽屉式） -->
-          <button th:if="${enableComment}"
-                  @click="$dispatch('toggle-page-comment-drawer')"
-                  class="dock-item dock-btn group relative"
-                  title="评论">
-            <span class="icon-[heroicons--chat-bubble-left-right] w-4 h-4 transition-transform duration-200 group-hover:scale-110"></span>
-            <span class="dock-tooltip absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-base-content text-base-100 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
-              评论
-            </span>
-          </button>
-          
-          <!-- 分隔线（评论和返回顶部之间） -->
-          <div class="w-px h-6" th:if="${enableComment and enableBackToTop}"></div>
+          <div class="w-px h-6" th:if="${enableBackToTop}"></div>
           
           <!-- 返回顶部按钮 -->
           <button th:if="${enableBackToTop}"
@@ -151,14 +136,6 @@
         </th:block>
       </th:block>
       
-      <!-- 评论按钮 -->
-      <div th:if="${enableComment}">
-        <span class="text-sm whitespace-nowrap hidden sm:block">评论</span>
-        <button class="btn btn-circle" @click="$dispatch('toggle-page-comment-drawer')">
-          <span class="icon-[heroicons--chat-bubble-left-right] w-5 h-5"></span>
-        </button>
-      </div>
-      
       <!-- 返回顶部按钮 -->
       <div th:if="${enableBackToTop}">
         <span class="text-sm whitespace-nowrap hidden sm:block">返回顶部</span>
@@ -170,67 +147,6 @@
     
   </div>
 </th:block>
-
-<!-- ========================================== -->
-<!--           通用评论抽屉组件                   -->
-<!-- ========================================== -->
-
-<!-- 
-  通用评论抽屉（用于非文章页面）
-  参数：
-  - resourceType: 资源类型 (SinglePage, etc.)
-  - resourceName: 资源名称
--->
-<div th:fragment="commentDrawer(resourceType, resourceName)"
-     x-data="{ isOpen: false }"
-     @toggle-page-comment-drawer.window="isOpen = !isOpen">
-  
-  <!-- 抽屉容器 -->
-  <div class="drawer drawer-end z-9999">
-    <input id="page-comment-drawer" 
-           type="checkbox" 
-           class="drawer-toggle"
-           x-model="isOpen" />
-    
-    <!-- 抽屉侧边栏 -->
-    <div class="drawer-side">
-      <!-- 遮罩层 -->
-      <div aria-label="关闭评论"
-           class="drawer-overlay"
-           @click="isOpen = false">
-      </div>
-      
-      <!-- 评论内容区 -->
-      <div class="bg-base-100/95 backdrop-blur-xl w-full sm:w-[420px] md:w-[540px] lg:w-[600px] min-h-full shadow-2xl flex flex-col border-l border-base-300/30">
-        
-        <!-- 标题栏（固定） -->
-        <div class="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-base-300/50 bg-base-100/95 backdrop-blur-xl">
-          <h3 class="text-lg font-semibold flex items-center gap-2 truncate">
-            <span class="icon-[heroicons--chat-bubble-left-right] w-5 h-5 text-primary shrink-0"></span>
-            <span class="truncate">评论</span>
-          </h3>
-          <button @click="isOpen = false" 
-                  class="btn btn-ghost btn-circle btn-sm shrink-0">
-            <span class="icon-[heroicons--x-mark] w-5 h-5"></span>
-          </button>
-        </div>
-        
-        <!-- 评论组件容器 -->
-        <div class="flex-1 overflow-y-auto p-4">
-          <!-- 集成 Halo 评论组件 -->
-          <halo:comment 
-            group="content.halo.run" 
-            kind="SinglePage"
-            th:attr="name=${resourceName}"
-            colorScheme="system">
-          </halo:comment>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-  
-</div>
 
 </html>
 

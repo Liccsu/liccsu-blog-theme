@@ -9,7 +9,7 @@
     enableUpvote=${cfg?.enable_upvote != false},
     enableComment=${cfg?.enable_comment != false},
     enablePublish=${cfg?.enable_publish != false},
-    showSidebar=${cfg?.enable_sidebar == true},
+    showSidebar=${cfg?.show_sidebar == true},
     globalSidebarCfg = ${theme.config.general.sidebar_settings},
     useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
     sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}

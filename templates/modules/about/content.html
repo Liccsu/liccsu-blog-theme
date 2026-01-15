@@ -366,7 +366,7 @@
 
       <!-- ========== 评论 ========== -->
       <section id="sf-comments"
-               th:if="${enableComment && (singlePage.spec.allowComment == null || singlePage.spec.allowComment) and !(cfg?.floating_dock?.enable_custom_dock == true and cfg?.floating_dock?.enable_comment == true)}"
+               th:if="${enableComment && (singlePage.spec.allowComment == null || singlePage.spec.allowComment)}"
                class="sf-section">
         <div class="sf-container">
           <div class="sf-section-header" data-reveal="fade-up">
@@ -395,12 +395,6 @@
         theme: /*[[${#strings.isEmpty(githubTheme) ? '' : githubTheme}]]*/ ''
       };
     </script>
-
-    <!-- 评论抽屉 -->
-    <th:block th:if="${cfg?.floating_dock?.enable_custom_dock == true 
-                       and cfg?.floating_dock?.enable_comment == true}">
-      <th:block th:replace="~{modules/floating-dock :: commentDrawer('SinglePage', ${singlePage.metadata.name})}" />
-    </th:block>
     
   </th:block>
 

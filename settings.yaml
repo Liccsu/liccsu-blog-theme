@@ -129,7 +129,7 @@ spec:
               id: fd_general_enable_dock
               name: enable_dock
               label: 启用悬浮 Dock
-              help: 是否显示底部悬浮控制栏（通用页面）
+              help: 是否显示悬浮控制栏（通用页面）
               value: true
             - $formkit: toggle
               name: dock_style
@@ -150,7 +150,7 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(fd_general_enable_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单。菜单项的图标通过【元数据】中的 icon 字段设置（填入 SVG 代码）
+              help: 选择要在悬浮控制栏中显示的菜单。菜单项的图标通过【元数据】中的 icon 字段设置（填入 SVG 代码）
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
@@ -1140,14 +1140,19 @@ spec:
               label: 瞬间标题
               help: 瞬间说说模块的标题文字
               value: "瞬间"
+        # 侧边栏设置
         - $formkit: group
-          name: content_settings
-          label: 首页基础设置
+          name: sidebar_settings
+          label: 侧边栏设置
           value:
             show_sidebar: true
-            show_heatmap: true
-            heatmap_type: github
-            tab_style: chips
+            enable_custom_sidebar: false
+            sidebar_position: right
+            sidebar_widgets:
+              - widget: welcome_card
+              - widget: author_card
+              - widget: blog_stats
+              - widget: recent_posts
           children:
             - $formkit: switch
               id: index_show_sidebar
@@ -1186,11 +1191,10 @@ spec:
                 - type: text
                   label: $value.widget
               value:
+                - widget: welcome_card
                 - widget: author_card
                 - widget: blog_stats
-                - widget: categories
-                - widget: tags
-                - widget: popular_posts
+                - widget: recent_posts
               children:
                 - $formkit: select
                   name: widget
@@ -1210,6 +1214,15 @@ spec:
                       value: popular_posts
                     - label: 最新文章
                       value: recent_posts
+        # 内容设置
+        - $formkit: group
+          name: content_settings
+          label: 首页内容设置
+          value:
+            show_heatmap: true
+            heatmap_type: github
+            tab_style: chips
+          children:
             - $formkit: switch
               id: index_show_heatmap
               name: show_heatmap
@@ -1459,7 +1472,7 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(index_enable_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
@@ -1873,7 +1886,7 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(category_enable_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
@@ -2042,7 +2055,7 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(tag_enable_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
@@ -2125,7 +2138,6 @@ spec:
             enable_custom_dock: false
             dock_menu: primary
             enable_back_to_top: true
-            enable_comment: false
           children:
             - $formkit: switch
               id: archive_enable_custom_dock
@@ -2138,18 +2150,12 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(archive_enable_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
               if: $get(archive_enable_custom_dock).value
               value: true
-            - $formkit: switch
-              name: enable_comment
-              label: 评论按钮（抽屉式）
-              if: $get(archive_enable_custom_dock).value
-              help: 启用后在悬浮栏显示评论按钮，使用抽屉式评论替代页面底部内嵌评论
-              value: false
     - group: author_settings
       label: 作者
       formSchema:
@@ -2291,7 +2297,7 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(author_enable_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
@@ -2393,7 +2399,6 @@ spec:
             enable_custom_dock: false
             dock_menu: primary
             enable_back_to_top: true
-            enable_comment: false
           children:
             - $formkit: switch
               id: links_enable_custom_dock
@@ -2406,18 +2411,12 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(links_enable_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
               if: $get(links_enable_custom_dock).value
               value: true
-            - $formkit: switch
-              name: enable_comment
-              label: 评论按钮（抽屉式）
-              if: $get(links_enable_custom_dock).value
-              help: 启用后在悬浮栏显示评论按钮，使用抽屉式评论替代页面底部内嵌评论
-              value: false
     - group: about_settings
       label: 关于
       formSchema:
@@ -2798,7 +2797,6 @@ spec:
             enable_custom_dock: false
             dock_menu: primary
             enable_back_to_top: true
-            enable_comment: false
           children:
             - $formkit: switch
               id: about_enable_custom_dock
@@ -2811,18 +2809,12 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(about_enable_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
               if: $get(about_enable_custom_dock).value
               value: true
-            - $formkit: switch
-              name: enable_comment
-              label: 评论按钮（抽屉式）
-              if: $get(about_enable_custom_dock).value
-              help: 启用后在悬浮栏显示评论按钮，使用抽屉式评论替代页面底部内嵌评论
-              value: false
     - group: photos_settings
       label: 图库
       formSchema:
@@ -2854,7 +2846,6 @@ spec:
             enable_custom_dock: false
             dock_menu: primary
             enable_back_to_top: true
-            enable_comment: false
           children:
             - $formkit: switch
               id: photos_enable_custom_dock
@@ -2867,18 +2858,12 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(photos_enable_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
               if: $get(photos_enable_custom_dock).value
               value: true
-            - $formkit: switch
-              name: enable_comment
-              label: 评论按钮（抽屉式）
-              if: $get(photos_enable_custom_dock).value
-              help: 启用后在悬浮栏显示评论按钮，使用抽屉式评论替代页面底部内嵌评论
-              value: false
     - group: moments_settings
       label: 瞬间
       formSchema:
@@ -2888,15 +2873,15 @@ spec:
           value: "瞬间"
           placeholder: "瞬间页面的标题"
         - $formkit: switch
-          id: moments_enable_sidebar
-          name: enable_sidebar
+          id: moments_show_sidebar
+          name: show_sidebar
           label: 显示侧边栏
           help: 启用后显示侧边栏，页面变为左右布局
           value: false
         - $formkit: switch
           id: moments_enable_custom_sidebar
           name: enable_custom_sidebar
-          if: $get(moments_enable_sidebar).value
+          if: $get(moments_show_sidebar).value
           label: 定制侧边栏
           help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
           value: false
@@ -3030,7 +3015,7 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(moments_enable_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
@@ -3069,15 +3054,15 @@ spec:
             - label: 双列
               value: two_columns
         - $formkit: switch
-          id: friends_page_enable_sidebar
-          name: enable_sidebar
+          id: friends_page_show_sidebar
+          name: show_sidebar
           label: 显示侧边栏
           help: 启用后显示侧边栏，页面变为左右布局
           value: false
         - $formkit: switch
           id: friends_page_enable_custom_sidebar
           name: enable_custom_sidebar
-          if: $get(friends_page_enable_sidebar).value
+          if: $get(friends_page_show_sidebar).value
           label: 定制侧边栏
           help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
           value: false
@@ -3149,7 +3134,7 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(friends_page_enable_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
@@ -3252,7 +3237,7 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(docsme_doc_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
@@ -3262,13 +3247,13 @@ spec:
               id: docsme_doc_enable_toc
               name: enable_toc_drawer
               label: 启用目录抽屉
-              help: 当屏幕较小目录隐藏时，可从悬浮栏打开目录
+              help: 当屏幕较小目录隐藏时，可从悬浮控制栏打开目录
               value: true
             - $formkit: switch
               id: docsme_doc_enable_sidebar
               name: enable_sidebar_drawer
               label: 启用菜单抽屉
-              help: 当屏幕较小左侧文档树隐藏时，可从悬浮栏打开菜单
+              help: 当屏幕较小左侧文档树隐藏时，可从悬浮控制栏打开菜单
               value: true
         # 文档列表页设置 (docs.html)
         - $formkit: group
@@ -3305,7 +3290,7 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(docsme_docs_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
@@ -3346,7 +3331,7 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(docsme_catalog_custom_dock).value
-              help: 选择要在悬浮 Dock 中显示的菜单
+              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
@@ -3355,6 +3340,6 @@ spec:
             - $formkit: switch
               name: enable_sidebar_drawer
               label: 启用菜单抽屉
-              help: 当屏幕较小左侧文档树隐藏时，可从悬浮栏打开菜单
+              help: 当屏幕较小左侧文档树隐藏时，可从悬浮控制栏打开菜单
               value: true
 

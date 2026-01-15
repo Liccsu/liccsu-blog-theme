@@ -257,7 +257,7 @@
 
         <!-- 评论区 -->
         <section class="mt-12"
-          th:if="${theme.config.links_settings?.enable_comment != false and !(cfg?.floating_dock?.enable_custom_dock == true and cfg?.floating_dock?.enable_comment == true)}">
+          th:if="${theme.config.links_settings?.enable_comment != false}">
           <div class="flex items-center gap-3 mb-5">
             <div
               class="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
@@ -280,13 +280,6 @@
       </aside>
     </div>
   </div>
-
-  <!-- 评论抽屉 -->
-  <th:block th:if="${cfg?.floating_dock?.enable_custom_dock == true 
-                     and cfg?.floating_dock?.enable_comment == true}">
-    <th:block
-      th:replace="~{modules/floating-dock :: commentDrawer('SinglePage', ${singlePage != null ? singlePage.metadata.name : 'links'})}" />
-  </th:block>
 </main>
 
 </html>

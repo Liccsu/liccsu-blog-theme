@@ -4,7 +4,7 @@
 
 [![Halo](https://img.shields.io/badge/Halo-2.22.9+-blue)](https://halo.run)
 [![License](https://img.shields.io/badge/License-GPL--3.0-green)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-2.0.2-orange)](https://github.com/sky121666/halo-theme-sky-blog-1/releases)
+[![Version](https://img.shields.io/badge/Version-2.0.3-orange)](https://github.com/sky121666/halo-theme-sky-blog-1/releases)
 
 ## 🌐 预览
 
@@ -23,7 +23,7 @@
 | 🌓 明暗切换 | 浅色/深色主题独立配置 |
 | 📱 响应式 | 完美适配移动端和桌面端 |
 | ⚡ 加载动画 | 多种动画样式，避免闪烁 |
-| 🎯 悬浮 Dock | 多种样式可选 |
+| 🎯 悬浮控制栏 | 多种样式可选 |
 | 📝 列表风格 | 卡片/列表/杂志/极简 |
 | 🌐 背景定制 | 网格背景效果 |
 | 📊 GitHub 热力图 | 贡献统计展示 |

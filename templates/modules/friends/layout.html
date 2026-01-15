@@ -38,7 +38,7 @@
   
   <div class="relative z-10">
     <th:block th:with="cfg=${theme.config.friends_page_settings}, 
-               showSidebar=${cfg?.enable_sidebar == true},
+               showSidebar=${cfg?.show_sidebar == true},
                globalSidebarCfg = ${theme.config.general.sidebar_settings},
                useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
                sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
@@ -70,7 +70,7 @@
     </th:block>
   </div>
 
-  <!-- 悬浮 Dock 控制栏 -->
+  <!-- 悬浮控制栏 -->
   <th:block th:replace="~{modules/floating-dock :: dockWithConfig(${theme.config.friends_page_settings}, 'basic')}" />
 
   <!-- JavaScript -->
