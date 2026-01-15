@@ -1941,6 +1941,143 @@ spec:
               if: $get(archive_enable_custom_dock).value
               help: 启用后在悬浮栏显示评论按钮，使用抽屉式评论替代页面底部内嵌评论
               value: false
+    - group: author_settings
+      label: 作者
+      formSchema:
+        - $formkit: switch
+          id: author_show_sidebar
+          name: show_sidebar
+          label: 显示侧边栏
+          help: 控制作者页是否显示侧边栏
+          value: true
+        - $formkit: switch
+          id: author_enable_custom_sidebar
+          name: enable_custom_sidebar
+          if: $get(author_show_sidebar).value
+          label: 定制侧边栏
+          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
+          value: false
+        - $formkit: radio
+          name: sidebar_position
+          if: $get(author_enable_custom_sidebar).value
+          label: 侧边栏位置
+          value: right
+          options:
+            - label: 左侧
+              value: left
+            - label: 右侧
+              value: right
+        - $formkit: array
+          name: sidebar_widgets
+          if: $get(author_enable_custom_sidebar).value
+          label: 小工具列表
+          addLabel: 添加小工具
+          min: 0
+          max: 10
+          itemLabels:
+            - type: text
+              label: $value.widget
+          value:
+            - widget: welcome_card
+            - widget: blog_stats
+            - widget: categories
+            - widget: tags
+          children:
+            - $formkit: select
+              name: widget
+              label: 小工具类型
+              options:
+                - label: 欢迎卡片（天气）
+                  value: welcome_card
+                - label: 博客统计
+                  value: blog_stats
+                - label: 文章分类
+                  value: categories
+                - label: 标签云
+                  value: tags
+                - label: 热门文章
+                  value: popular_posts
+                - label: 最新文章
+                  value: recent_posts
+        # 内容显示设置
+        - $formkit: group
+          name: content_settings
+          label: 内容显示
+          value:
+            page_size: 10
+            show_moments: true
+            moments_count: 6
+            default_tab: posts
+          children:
+            - $formkit: number
+              name: page_size
+              label: 文章每页数量
+              help: 设置作者页文章列表每页显示的数量
+              value: 10
+              min: 5
+              max: 50
+              step: 5
+            - $formkit: switch
+              id: author_show_moments
+              name: show_moments
+              label: 显示瞬间
+              help: 在作者页面显示该作者发布的瞬间
+              value: true
+            - $formkit: number
+              name: moments_count
+              if: $get(author_show_moments).value
+              label: 瞬间显示数量
+              help: 设置瞬间区块最多显示的条数
+              value: 6
+              min: 3
+              max: 20
+            - $formkit: radio
+              name: default_tab
+              label: 默认显示
+              help: 选择作者页默认显示的内容标签
+              value: posts
+              options:
+                - label: 文章
+                  value: posts
+                - label: 瞬间
+                  value: moments
+        # 悬浮控制栏设置
+        - $formkit: group
+          name: floating_dock
+          label: 悬浮控制栏
+          value:
+            enable_custom_dock: false
+            dock_style: side
+            dock_menu: primary
+            enable_back_to_top: true
+          children:
+            - $formkit: switch
+              id: author_enable_custom_dock
+              name: enable_custom_dock
+              label: 定制悬浮控制栏
+              help: 启用后可单独配置此页面的悬浮控制栏，禁用则使用全局配置
+              value: false
+            - $formkit: radio
+              name: dock_style
+              label: Dock 样式
+              help: 选择悬浮控制栏的展示样式
+              if: $get(author_enable_custom_dock).value
+              options:
+                - label: 底部居中
+                  value: bottom
+                - label: 右侧可折叠
+                  value: side
+            - $formkit: menuRadio
+              name: dock_menu
+              label: Dock 菜单
+              value: primary
+              if: $get(author_enable_custom_dock).value
+              help: 选择要在悬浮 Dock 中显示的菜单
+            - $formkit: switch
+              name: enable_back_to_top
+              label: 返回顶部按钮
+              if: $get(author_enable_custom_dock).value
+              value: true
     - group: links_settings
       label: 友链
       formSchema:
