@@ -610,6 +610,48 @@ function welcomeWeatherCard() {
       this.currentDate = `${now.getMonth() + 1}月${now.getDate()}日 ${weekdays[now.getDay()]}`;
     },
 
+    /**
+     * 获取浏览器地理位置
+     * @returns {Promise<{latitude: number, longitude: number}>}
+     */
+    getBrowserLocation() {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(new Error('浏览器不支持地理位置'));
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            });
+          },
+          (error) => {
+            let message = '定位失败';
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                message = '用户拒绝位置权限';
+                break;
+              case error.POSITION_UNAVAILABLE:
+                message = '位置信息不可用';
+                break;
+              case error.TIMEOUT:
+                message = '定位请求超时';
+                break;
+            }
+            reject(new Error(message));
+          },
+          {
+            enableHighAccuracy: false, // 不需要高精度（省电）
+            timeout: 5000,             // 5秒超时
+            maximumAge: 300000         // 5分钟内的缓存位置可用
+          }
+        );
+      });
+    },
+
     // 从缓存加载或请求新数据
     async loadWeather() {
       try {
@@ -691,17 +733,42 @@ function welcomeWeatherCard() {
 
     async fetchWeather() {
       try {
-        // 1. 使用 ipapi.co 获取经纬度
-        const ipRes = await fetch('https://ipapi.co/json/');
-        const ipData = await ipRes.json();
+        let latitude, longitude;
+        
+        // 1. 优先使用浏览器地理位置 API（更精确）
+        try {
+          const position = await this.getBrowserLocation();
+          latitude = position.latitude.toFixed(2);
+          longitude = position.longitude.toFixed(2);
+          
+          // 使用 Nominatim 反向地理编码获取城市名
+          try {
+            const geoRes = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=zh-CN`
+            );
+            const geoData = await geoRes.json();
+            this.location = geoData.address?.city || 
+                          geoData.address?.town || 
+                          geoData.address?.county || 
+                          geoData.address?.state || 
+                          '当前位置';
+          } catch {
+            this.location = '当前位置';
+          }
+        } catch (geoError) {
+          // 2. 降级方案：使用 IP 定位
+          console.log('浏览器定位失败，使用 IP 定位:', geoError.message);
+          const ipRes = await fetch('https://ipapi.co/json/');
+          const ipData = await ipRes.json();
 
-        if (!ipData.latitude || !ipData.longitude) {
-          throw new Error('无法获取位置');
+          if (!ipData.latitude || !ipData.longitude) {
+            throw new Error('无法获取位置');
+          }
+
+          this.location = ipData.city || ipData.region || '未知位置';
+          latitude = ipData.latitude.toFixed(2);
+          longitude = ipData.longitude.toFixed(2);
         }
-
-        this.location = ipData.city || ipData.region || '未知位置';
-        const latitude = ipData.latitude.toFixed(2);
-        const longitude = ipData.longitude.toFixed(2);
 
         // 2. 使用 Open-Meteo API（完全免费，无需 API Key）
         const weatherRes = await fetch(
