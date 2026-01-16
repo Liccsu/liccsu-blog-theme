@@ -559,14 +559,15 @@ function createSideFloatingDock() {
  * 模板使用：templates/modules/widgets/welcome-card.html
  */
 function welcomeWeatherCard() {
-  // 缓存配置（v10 版本 - 先显示默认值，浏览器定位优先，IP 定位降级）
-  const CACHE_KEY = 'sky_weather_cache_v10';
+  // 缓存配置（v12 版本 - 心知天气 Seniverse 支持）
+  const CACHE_KEY = 'sky_weather_cache_v12';
   const CACHE_DURATION = 30 * 60 * 1000; // 30 分钟缓存
 
   // 清除旧版本缓存
   try {
     const oldKeys = ['sky_weather_cache', 'sky_weather_cache_v2', 'sky_weather_cache_v3', 'sky_weather_cache_v4',
-      'sky_weather_cache_v5', 'sky_weather_cache_v6', 'sky_weather_cache_v7', 'sky_weather_cache_v8', 'sky_weather_cache_v9'];
+      'sky_weather_cache_v5', 'sky_weather_cache_v6', 'sky_weather_cache_v7', 'sky_weather_cache_v8', 'sky_weather_cache_v9',
+      'sky_weather_cache_v10', 'sky_weather_cache_v11'];
     oldKeys.forEach(key => {
       if (localStorage.getItem(key)) {
         localStorage.removeItem(key);
@@ -626,6 +627,8 @@ function welcomeWeatherCard() {
 
     // 从缓存加载或请求新数据
     async loadWeather() {
+      console.log('[天气卡片] 开始加载...');
+
       // 1. 优先使用缓存
       const cached = this.getCache();
       if (cached) {
@@ -634,34 +637,32 @@ function welcomeWeatherCard() {
         return;
       }
 
-      // 2. 无缓存时，立即显示默认数据并开始获取真实位置
+      // 2. 无缓存时，立即显示默认数据
       this.applyWeatherData(this.getDefaultWeather());
       this.loading = false;
 
-      // 3. 后台获取真实天气
+      // 3. 后台获取真实天气（纯 IP 定位，不用浏览器定位）
       try {
-        await this.fetchWeatherWithGeolocation();
-      } catch (e) { /* keep default */ }
+        await this.fetchWeatherByIP();
+      } catch (e) {
+        // Silent fail
+      }
     },
 
-    // 尝试浏览器定位（5秒超时），失败则用 IP 定位
-    async fetchWeatherWithGeolocation() {
-      let latitude, longitude, cityName;
+    // 通过 IP 获取城市名，然后查询天气
+    async fetchWeatherByIP() {
+      console.log('[天气卡片] 开始 IP 定位...');
 
-      try {
-        const position = await this.getBrowserLocation(5000);
-        latitude = position.coords.latitude;
-        longitude = position.coords.longitude;
-        cityName = await this.getCityFromCoords(latitude, longitude);
-      } catch (e) {
-        // 降级到 IP 定位
-        const locationData = await this.getLocationFromIP();
-        latitude = locationData.latitude;
-        longitude = locationData.longitude;
-        cityName = locationData.city;
+      // Step 1: 获取城市名
+      const locationData = await this.getLocationFromIP();
+      const cityName = locationData.city;
+
+      if (!cityName || cityName === '未知') {
+        throw new Error('无法获取城市名');
       }
 
-      await this.fetchWeatherByCoords(latitude, longitude, cityName);
+      // Step 2: 用城市名查询天气
+      await this.fetchWeatherByCity(cityName);
     },
 
     // 浏览器定位（带超时）
@@ -703,17 +704,73 @@ function welcomeWeatherCard() {
       return '未知';
     },
 
-    // IP 定位
+    // IP 定位 (Pconline JSONP -> ipapi.co)
     async getLocationFromIP() {
-      const ipRes = await fetch('https://api.ipify.cn/?format=json');
-      const ipData = await ipRes.json();
-      const locationRes = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
-      const locationData = await locationRes.json();
-      return {
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
-        city: this.translateCity(locationData.city || locationData.region || '未知')
-      };
+      // 1. 尝试 Pconline JSONP (国内精准，无需 Key，绕过 CORS)
+      try {
+        const data = await this.pconlineJsonp();
+
+        const rawCity = data.city || data.addr || '';
+        const city = rawCity.replace('市', '').trim() || '未知';
+        console.log('[天气卡片] Pconline 定位成功:', city);
+
+        return { latitude: null, longitude: null, city };
+      } catch (e) {
+        console.warn('[天气卡片] Pconline 失败, 降级到 ipapi.co:', e.message);
+
+        // 2. 失败降级到 ipapi.co (国外/通用)
+        try {
+          const ipRes = await fetch('https://api.ipify.cn/?format=json');
+          const ipData = await ipRes.json();
+          console.log('[天气卡片] 获取 IP:', ipData.ip);
+
+          const locationRes = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+          const locationData = await locationRes.json();
+          const city = this.translateCity(locationData.city || locationData.region || '未知');
+          console.log('[天气卡片] ipapi.co 定位成功:', city);
+
+          return { latitude: locationData.latitude, longitude: locationData.longitude, city };
+        } catch (e2) {
+          return { latitude: null, longitude: null, city: '未知' };
+        }
+      }
+    },
+
+    // Pconline JSONP 调用 (绕过 CORS)
+    pconlineJsonp() {
+      return new Promise((resolve, reject) => {
+        const callbackName = 'pconlineCallback_' + Date.now();
+        const script = document.createElement('script');
+
+        // 超时处理
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error('JSONP timeout'));
+        }, 5000);
+
+        // 清理函数
+        const cleanup = () => {
+          clearTimeout(timeout);
+          delete window[callbackName];
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+        };
+
+        // 全局回调函数
+        window[callbackName] = (data) => {
+          cleanup();
+          resolve(data);
+        };
+
+        script.src = `https://whois.pconline.com.cn/ipJson.jsp?callback=${callbackName}`;
+        script.onerror = () => {
+          cleanup();
+          reject(new Error('JSONP script error'));
+        };
+
+        document.head.appendChild(script);
+      });
     },
 
     // 城市名英中映射
@@ -736,34 +793,147 @@ function welcomeWeatherCard() {
       return cityMap[cityName] || cityName.replace('市', '');
     },
 
-    // 根据坐标获取天气
-    async fetchWeatherByCoords(latitude, longitude, cityName) {
-      const res = await fetch(`https://wttr.in/~${latitude},${longitude}?format=j1&lang=zh`, { headers: { 'Accept': 'application/json' } });
-      if (!res.ok) throw new Error('wttr.in error');
+    // 根据城市名获取天气
+    async fetchWeatherByCity(cityName) {
+      const SENIVERSE_KEY = 'SWMR1Zeyn0TCbArs1';
 
-      const data = await res.json();
-      const current = data.current_condition?.[0];
-      if (!current) throw new Error('No weather data');
+      // 1. 尝试心知天气 (基础数据：温度、天气描述)
+      try {
+        const url = `https://api.seniverse.com/v3/weather/now.json?key=${SENIVERSE_KEY}&location=${encodeURIComponent(cityName)}&language=zh-Hans&unit=c`;
 
-      const weatherCode = parseInt(current.weatherCode);
-      const weatherData = {
-        location: cityName,
-        weather: {
-          temp: parseFloat(current.temp_C),
-          feels_like: parseFloat(current.FeelsLikeC),
-          humidity: parseInt(current.humidity),
-          description: current.lang_zh?.[0]?.value || current.weatherDesc?.[0]?.value || '未知',
-          wind: parseFloat(current.windspeedKmph)
-        },
-        weatherIcon: this.getWeatherIconFromWttr(weatherCode),
-        weatherBg: this.getWeatherBgFromWttr(weatherCode)
-      };
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Seniverse API error: ${res.status}`);
 
-      await this.loadSvgIcon(weatherData.weatherIcon);
-      weatherData.weatherIconSvg = this.weatherIconSvg;
+        const data = await res.json();
+        console.log('[天气卡片] 心知天气响应:', data);
 
-      this.applyWeatherData(weatherData);
-      this.setCache(weatherData);
+        const now = data.results?.[0]?.now;
+        const location = data.results?.[0]?.location;
+        if (!now) throw new Error('No weather data');
+
+        const code = parseInt(now.code);
+        const weatherData = {
+          location: location?.name || cityName,
+          weather: {
+            temp: parseFloat(now.temperature),
+            feels_like: parseFloat(now.temperature),
+            humidity: 0,
+            description: now.text,
+            wind: 0
+          },
+          weatherIcon: this.getWeatherIconFromSeniverse(code),
+          weatherBg: this.getWeatherBgFromSeniverse(code)
+        };
+
+        await this.loadSvgIcon(weatherData.weatherIcon);
+        weatherData.weatherIconSvg = this.weatherIconSvg;
+
+        // 2. 并行请求 wttr.in 补充湿度和风速 (不阻塞主流程)
+        this.fetchExtraWeatherData(cityName);
+
+        this.applyWeatherData(weatherData);
+        this.setCache(weatherData);
+        return;
+      } catch (e) {
+        // Fallback to wttr.in
+      }
+
+      // 2. 降级到 wttr.in
+      try {
+        const url = `https://wttr.in/${encodeURIComponent(cityName)}?format=j1&lang=zh`;
+        console.log('[天气卡片] 请求 wttr.in:', url);
+
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) throw new Error('wttr.in error');
+
+        const data = await res.json();
+        const current = data.current_condition?.[0];
+        if (!current) throw new Error('No weather data');
+
+        const weatherCode = parseInt(current.weatherCode);
+        const weatherData = {
+          location: cityName,
+          weather: {
+            temp: parseFloat(current.temp_C),
+            feels_like: parseFloat(current.FeelsLikeC),
+            humidity: parseInt(current.humidity),
+            description: current.lang_zh?.[0]?.value || current.weatherDesc?.[0]?.value || '未知',
+            wind: parseFloat(current.windspeedKmph)
+          },
+          weatherIcon: this.getWeatherIconFromWttr(weatherCode),
+          weatherBg: this.getWeatherBgFromWttr(weatherCode)
+        };
+
+        await this.loadSvgIcon(weatherData.weatherIcon);
+        weatherData.weatherIconSvg = this.weatherIconSvg;
+
+        this.applyWeatherData(weatherData);
+        this.setCache(weatherData);
+      } catch (e) {
+        // Silent fail
+      }
+    },
+
+    // 补充获取湿度和风速 (从 wttr.in，不阻塞主流程)
+    async fetchExtraWeatherData(cityName) {
+      try {
+        const res = await fetch(`https://wttr.in/${encodeURIComponent(cityName)}?format=j1&lang=zh`, {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const current = data.current_condition?.[0];
+        if (!current) return;
+
+        // 直接更新 Alpine 响应式属性
+        this.weather.humidity = parseInt(current.humidity || 0);
+        this.weather.wind = parseFloat(current.windspeedKmph || 0);
+        this.weather.feels_like = parseFloat(current.FeelsLikeC || this.weather.temp);
+
+        console.log('[天气卡片] 额外数据获取成功: 湿度', this.weather.humidity + '%', '风速', this.weather.wind + 'km/h');
+
+        // 更新缓存
+        this.setCache({
+          location: this.location,
+          weather: this.weather,
+          weatherIcon: this.weatherIcon,
+          weatherBg: this.weatherBg,
+          weatherIconSvg: this.weatherIconSvg
+        });
+      } catch (e) {
+        // Silent fail
+      }
+    },
+
+    // 心知天气代码映射图标 (返回完整 URL)
+    getWeatherIconFromSeniverse(code) {
+      const baseUrl = 'https://basmilius.github.io/weather-icons/production/fill/all/';
+      const hour = new Date().getHours();
+      const isNight = hour >= 18 || hour < 6;
+
+      // https://seniverse.yuque.com/hyper_data/api_2018/yev2c3
+      let icon = 'not-available';
+      if (code === 0 || code === 38) icon = isNight ? 'clear-night' : 'clear-day';  // 晴/热
+      else if (code >= 1 && code <= 3) icon = isNight ? 'partly-cloudy-night' : 'partly-cloudy-day';  // 晴间多云
+      else if (code >= 4 && code <= 9) icon = 'cloudy';  // 多云/阴
+      else if (code >= 10 && code <= 19) icon = 'rain';  // 各种雨
+      else if (code >= 20 && code <= 25) icon = 'snow';  // 各种雪
+      else if (code >= 26 && code <= 31) icon = 'fog';  // 雾/霾
+      else if (code >= 32 && code <= 36) icon = 'wind';  // 风
+      else if (code === 37) icon = 'snow';  // 冷
+      else icon = isNight ? 'partly-cloudy-night' : 'partly-cloudy-day';
+
+      return `${baseUrl}${icon}.svg`;
+    },
+
+    // 心知天气代码映射背景
+    getWeatherBgFromSeniverse(code) {
+      if (code === 0 || code === 38) return 'sunny';
+      if (code >= 10 && code <= 19) return 'rain';
+      if (code >= 20 && code <= 25) return 'snow';
+      if (code >= 26 && code <= 31) return 'fog';
+      return 'cloudy';
     },
 
     // 获取缓存
