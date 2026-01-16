@@ -23,6 +23,7 @@ import './css/nav-enhancements.css'; // 导航栏增强样式
 import './css/base.css';             // 全局基础样式和变量
 import './css/floating-dock.css';    // 悬浮控制栏样式
 import './css/loading-screen.css';   // 页面加载屏幕
+import './css/toc.css';              // TOC 目录导航公共样式
 
 /* ===================================================
  * 脚本文件导入

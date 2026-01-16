@@ -12,20 +12,7 @@
 @import '../../static/css/article-content.css';
 
 /* ===================================================
- * 1. CSS 变量定义
- * ==================================================*/
-:root {
-  /* 目录导航变量 */
-  --toc-indent-unit: 16px;
-  --toc-base-padding: 8px;
-  --toc-link-height: 32px;
-  --toc-hover-bg: color-mix(in srgb, var(--color-primary) 7%, transparent);
-  --toc-active-bg: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  --toc-border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
-}
-
-/* ===================================================
- * 2. 文章容器 - 统一布局控制
+ * 1. 文章容器 - 统一布局控制
  * ==================================================*/
 .article-container {
   padding: 1rem 1.5rem;
@@ -107,83 +94,8 @@ html[data-color-scheme="dark"] ai-summary-widget {
 }
 
 /* ===================================================
- * 6. 目录导航系统
- * ==================================================*/
-.toc-container {
-  max-height: min(70vh, 600px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-base-300) transparent;
-}
-
-.toc-container::-webkit-scrollbar {
-  width: 4px;
-}
-
-.toc-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.toc-container::-webkit-scrollbar-thumb {
-  background: var(--color-base-300);
-  border-radius: 2px;
-}
-
-.toc-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.toc-item-wrapper {
-  margin: 0;
-  padding: 0;
-  padding-left: calc(var(--toc-indent-multiplier, 0) * var(--toc-indent-unit));
-}
-
-.toc-link {
-  display: flex;
-  align-items: center;
-  padding: 6px var(--toc-base-padding);
-  margin: 2px 0;
-  min-height: var(--toc-link-height);
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.4;
-  color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
-  text-decoration: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  border-radius: 4px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.toc-link:hover {
-  background: var(--toc-hover-bg);
-  color: var(--color-base-content);
-}
-
-.toc-link.active {
-  background: var(--toc-active-bg);
-  color: var(--color-primary);
-  font-weight: 600;
-}
-
-.toc-link[data-relative-level="0"] {
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-.toc-item-wrapper .toc-list {
-  border-left: 1px solid color-mix(in srgb, var(--color-base-content) 10%, transparent);
-  margin-left: 8px;
-  padding-left: 0;
-}
-
-/* ===================================================
- * 7. 目录抽屉（移动端）
+ * 6. 目录抽屉（移动端）
+ * TOC 基础样式已在 main.css 中导入
  * ==================================================*/
 .post-toc-overlay {
   position: fixed;
@@ -222,7 +134,7 @@ html[data-color-scheme="dark"] ai-summary-widget {
 }
 
 /* ===================================================
- * 8. 阅读进度条
+ * 7. 阅读进度条
  * ==================================================*/
 #reading-progress {
   position: fixed;
@@ -236,7 +148,7 @@ html[data-color-scheme="dark"] ai-summary-widget {
 }
 
 /* ===================================================
- * 9. 响应式优化
+ * 8. 响应式优化
  * ==================================================*/
 @media (max-width: 1023px) {
   article.flex-1 {

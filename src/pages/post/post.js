@@ -11,6 +11,14 @@ import './post.css';
 // 导入公共文章内容脚本
 import '../../static/js/article-content.js';
 
+// 导入 TOC 公共工具函数
+import { 
+  buildDynamicTocTree, 
+  createDynamicTocHTML, 
+  smoothScrollToHeading,
+  analyzeHeadingHierarchy 
+} from '../../common/js/toc-utils.js';
+
 /**
  * 文章页 Alpine.js 组件
  * 使用 alpine:init 事件动态注册，避免加载顺序问题
@@ -402,7 +410,7 @@ document.addEventListener('alpine:init', () => {
             }
 
             // 动态识别层级结构 - 自动检测最高级标题
-            const hierarchyInfo = this.analyzeHeadingHierarchy(headingElements);
+            const hierarchyInfo = analyzeHeadingHierarchy(headingElements);
             if (hierarchyInfo.filteredHeadings.length === 0) {
                 if (tocCard) tocCard.style.display = 'none';
                 return;
@@ -412,8 +420,11 @@ document.addEventListener('alpine:init', () => {
             if (tocCard) tocCard.style.display = 'block';
 
             // 构建动态目录树结构
-            const tocTree = this.buildDynamicTocTree(hierarchyInfo.filteredHeadings, hierarchyInfo.minLevel);
-            const tocList = this.createDynamicTocHTML(tocTree);
+            const tocTree = buildDynamicTocTree(hierarchyInfo.filteredHeadings, hierarchyInfo.minLevel);
+            const tocList = createDynamicTocHTML(tocTree, {
+                addTooltip: true,
+                onClick: (element) => smoothScrollToHeading(element, 80)
+            });
 
             // 清空现有内容并生成HTML结构
             tocNavigation.innerHTML = '';
@@ -424,132 +435,6 @@ document.addEventListener('alpine:init', () => {
 
             // 初始化自适应布局监听
             this.initAdaptiveLayout();
-        },
-
-        /**
-         * 动态分析标题层级结构
-         * @param {NodeList} headingElements - 所有标题元素
-         * @returns {Object} 层级分析结果
-         */
-        analyzeHeadingHierarchy(headingElements) {
-            const headingArray = Array.from(headingElements);
-
-            // 获取所有标题的级别
-            const levels = headingArray.map(heading => parseInt(heading.tagName.charAt(1)));
-
-            // 找到最小级别（最高级标题）
-            const minLevel = Math.min(...levels);
-
-            // 计算最大显示层级（最多显示3级）
-            const maxDisplayLevel = minLevel + 2;
-
-            // 过滤标题：只保留前3个相对层级
-            const filteredHeadings = headingArray.filter(heading => {
-                const level = parseInt(heading.tagName.charAt(1));
-                return level <= maxDisplayLevel;
-            });
-
-            return {
-                filteredHeadings,
-                minLevel,
-                maxDisplayLevel,
-                totalLevels: levels.length > 0 ? Math.max(...levels) - minLevel + 1 : 0
-            };
-        },
-
-        /**
-         * 构建动态目录树结构 - 基于相对层级
-         * @param {Array} headingElements - 过滤后的标题元素列表
-         * @param {number} minLevel - 最小层级（基准层级）
-         * @returns {Array} 目录树数据
-         */
-        buildDynamicTocTree(headingElements, minLevel) {
-            const tocTree = [];
-            const stack = [];
-
-            headingElements.forEach((headingElement, headingIndex) => {
-                // 为标题添加ID（如果没有的话）
-                if (!headingElement.id) {
-                    headingElement.id = `heading-${headingIndex}`;
-                }
-
-                const absoluteLevel = parseInt(headingElement.tagName.charAt(1));
-                const relativeLevel = absoluteLevel - minLevel; // 计算相对层级
-
-                const tocItem = {
-                    id: headingElement.id,
-                    text: headingElement.textContent.trim(),
-                    absoluteLevel: absoluteLevel,
-                    relativeLevel: relativeLevel,
-                    element: headingElement,
-                    children: []
-                };
-
-                // 清理栈，移除比当前级别高或相等的节点
-                while (stack.length > 0 && stack[stack.length - 1].relativeLevel >= relativeLevel) {
-                    stack.pop();
-                }
-
-                // 添加到父节点或根节点
-                if (stack.length === 0) {
-                    tocTree.push(tocItem);
-                } else {
-                    stack[stack.length - 1].children.push(tocItem);
-                }
-
-                stack.push(tocItem);
-            });
-
-            return tocTree;
-        },
-
-        /**
-         * 创建动态目录HTML结构 - 统一样式系统
-         * @param {Array} tocTree - 树形结构数据
-         * @returns {HTMLElement} 生成的ol元素
-         */
-        createDynamicTocHTML(tocTree) {
-            const ol = document.createElement('ol');
-            ol.className = 'toc-list';
-
-            tocTree.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'toc-item-wrapper';
-
-                // 设置动态缩进级别
-                const indentLevel = item.relativeLevel;
-                li.style.setProperty('--toc-indent-multiplier', indentLevel.toString());
-
-                // 创建目录链接
-                const linkElement = document.createElement('a');
-                linkElement.href = `#${item.id}`;
-                linkElement.textContent = item.text;
-                linkElement.className = 'toc-link tooltip tooltip-right';
-
-                // 设置相对层级属性（用于CSS样式）
-                linkElement.setAttribute('data-relative-level', item.relativeLevel.toString());
-                linkElement.setAttribute('data-absolute-level', item.absoluteLevel.toString());
-                linkElement.setAttribute('data-heading-id', item.id);
-                linkElement.setAttribute('data-tip', item.text); // DaisyUI tooltip属性
-
-                // 添加点击事件监听器
-                linkElement.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    this.smoothScrollToHeading(item.element);
-                });
-
-                li.appendChild(linkElement);
-
-                // 递归创建子节点
-                if (item.children.length > 0) {
-                    const childrenOl = this.createDynamicTocHTML(item.children);
-                    li.appendChild(childrenOl);
-                }
-
-                ol.appendChild(li);
-            });
-
-            return ol;
         },
 
         /**
@@ -604,40 +489,6 @@ document.addEventListener('alpine:init', () => {
 
 
 
-        /**
-         * 平滑滚动到指定标题
-         * @param {HTMLElement} headingElement - 目标标题元素
-         */
-        smoothScrollToHeading(headingElement) {
-            if (!headingElement) return;
-
-            // 计算导航栏高度偏移
-            const navbarHeight = 80; // 导航栏大约高度
-            const targetPosition = headingElement.offsetTop - navbarHeight;
-
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-        },
-
-        /**
-         * 获取文章中最小的标题层级
-         * @param {NodeList} headingElements - 标题元素列表
-         * @returns {number} 最小标题层级
-         */
-        getMinHeadingLevel(headingElements) {
-            let minLevel = 6; // 初始化为最大可能值
-
-            headingElements.forEach(heading => {
-                const level = parseInt(heading.tagName.charAt(1));
-                if (level < minLevel) {
-                    minLevel = level;
-                }
-            });
-
-            return minLevel;
-        },
 
         /**
          * 初始化目录滚动高亮功能

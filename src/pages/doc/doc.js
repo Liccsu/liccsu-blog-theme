@@ -8,93 +8,17 @@ import './doc.css';
 // 导入公共文章内容脚本
 import '../../static/js/article-content.js';
 
+// 导入 TOC 公共工具函数
+import { 
+  buildDynamicTocTree, 
+  createDynamicTocHTML,
+  smoothScrollToHeading
+} from '../../common/js/toc-utils.js';
+
 /**
  * 图片懒加载由 article-content.js 统一处理
- * 这里不再重复实现
+ * TOC 函数已从 toc-utils.js 导入
  */
-
-/**
- * 构建动态目录树结构 - 基于相对层级
- * @param {Array} headingElements - 过滤后的标题元素列表
- * @param {number} minLevel - 最小层级（基准层级）
- * @returns {Array} 目录树数据
- */
-function buildDynamicTocTree(headingElements, minLevel) {
-  const tocTree = [];
-  const stack = [];
-
-  headingElements.forEach((headingElement, headingIndex) => {
-    // 为标题添加ID（如果没有的话）
-    if (!headingElement.id) {
-      headingElement.id = `heading-${headingIndex}`;
-    }
-
-    const absoluteLevel = parseInt(headingElement.tagName.charAt(1));
-    const relativeLevel = absoluteLevel - minLevel;
-
-    const tocItem = {
-      id: headingElement.id,
-      text: headingElement.textContent.trim(),
-      absoluteLevel: absoluteLevel,
-      relativeLevel: relativeLevel,
-      element: headingElement,
-      children: [],
-    };
-
-    // 清理栈，移除比当前级别高或相等的节点
-    while (stack.length > 0 && stack[stack.length - 1].relativeLevel >= relativeLevel) {
-      stack.pop();
-    }
-
-    // 添加到父节点或根节点
-    if (stack.length === 0) {
-      tocTree.push(tocItem);
-    } else {
-      stack[stack.length - 1].children.push(tocItem);
-    }
-
-    stack.push(tocItem);
-  });
-
-  return tocTree;
-}
-
-/**
- * 递归创建动态目录HTML结构 - 树形嵌套
- * @param {Array} tocTree - 树形结构数据
- * @returns {HTMLElement} 生成的ol元素
- */
-function createDynamicTocHTML(tocTree) {
-  const ol = document.createElement('ol');
-  ol.className = 'toc-list';
-
-  tocTree.forEach((item) => {
-    const li = document.createElement('li');
-    li.className = 'toc-item-wrapper';
-
-    // 创建目录链接
-    const linkElement = document.createElement('a');
-    linkElement.href = `#${item.id}`;
-    linkElement.textContent = item.text;
-    linkElement.className = 'toc-link';
-
-    // 设置相对层级属性（用于CSS样式）
-    linkElement.setAttribute('data-relative-level', item.relativeLevel.toString());
-    linkElement.setAttribute('data-heading-id', item.id);
-
-    li.appendChild(linkElement);
-
-    // 递归创建子节点
-    if (item.children.length > 0) {
-      const childrenOl = createDynamicTocHTML(item.children);
-      li.appendChild(childrenOl);
-    }
-
-    ol.appendChild(li);
-  });
-
-  return ol;
-}
 
 // 目录生成 (使用 Intersection Observer 优化)
 function initTOC() {
@@ -123,26 +47,15 @@ function initTOC() {
 
   // 构建树形目录结构
   const tocTree = buildDynamicTocTree(headings, minLevel);
-  const tocList = createDynamicTocHTML(tocTree);
+  const tocList = createDynamicTocHTML(tocTree, {
+    onClick: (element) => smoothScrollToHeading(element, 80)
+  });
 
   // 清空现有内容并生成HTML结构
   tocNav.innerHTML = '';
   tocNav.appendChild(tocList);
 
-  // 平滑滚动（事件委托）
-  tocNav.addEventListener('click', (e) => {
-    const link = e.target.closest('.toc-link');
-    if (!link) return;
-    e.preventDefault();
-    const id = link.getAttribute('href').slice(1);
-    const target = document.getElementById(id);
-    if (target) {
-      window.scrollTo({
-        top: target.offsetTop - 80,
-        behavior: 'smooth',
-      });
-    }
-  });
+  // 点击事件已在 createDynamicTocHTML 中处理
 
   // 滚动高亮 (Intersection Observer)
   const links = tocNav.querySelectorAll('.toc-link');
@@ -318,10 +231,7 @@ function bindTocDrawerEvents(container) {
       if (heading) {
         window.closeDocTocDrawer();
         setTimeout(() => {
-          window.scrollTo({
-            top: heading.offsetTop - 80,
-            behavior: 'smooth'
-          });
+          smoothScrollToHeading(heading, 80);
         }, 100);
       }
     });
