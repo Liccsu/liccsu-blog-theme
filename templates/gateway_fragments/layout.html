@@ -1,0 +1,226 @@
+<!doctype html>
+<html th:lang="${#locale.toLanguageTag}" th:fragment="layout (title,head,body)" th:with="authLayout = ${theme.config.auth?.auth_settings?.auth_layout ?: 'split'},
+               brandStyle = ${theme.config.auth?.auth_settings?.brand_style ?: 'simple'},
+               cardEffect = ${theme.config.auth?.auth_settings?.card_effect ?: 'none'},
+               brandSlogan = ${theme.config.auth?.auth_settings?.brand_slogan ?: '探索、记录、分享'},
+               featuresWelcome = ${theme.config.auth?.auth_settings?.features_welcome ?: '欢迎来到'},
+
+               featuresWelcome = ${theme.config.auth?.auth_settings?.style_features?.features_welcome ?: '欢迎来到'},
+               feature1Title = ${theme.config.auth?.auth_settings?.style_features?.feature_1_title ?: '安全可靠'},
+               feature1Desc = ${theme.config.auth?.auth_settings?.style_features?.feature_1_desc ?: '基于 Spring Security 的账户保护'},
+               feature1Icon = ${theme.config.auth?.auth_settings?.style_features?.feature_1_icon ?: 'icon-[heroicons--shield-check]'},
+               feature2Title = ${theme.config.auth?.auth_settings?.style_features?.feature_2_title ?: '内容推荐'},
+               feature2Desc = ${theme.config.auth?.auth_settings?.style_features?.feature_2_desc ?: '为您量身定制的阅读体验'},
+               feature2Icon = ${theme.config.auth?.auth_settings?.style_features?.feature_2_icon ?: 'icon-[heroicons--sparkles]'},
+               feature3Title = ${theme.config.auth?.auth_settings?.style_features?.feature_3_title ?: '多端同步'},
+               feature3Desc = ${theme.config.auth?.auth_settings?.style_features?.feature_3_desc ?: '随时随地访问您的创作'},
+               feature3Icon = ${theme.config.auth?.auth_settings?.style_features?.feature_3_icon ?: 'icon-[heroicons--device-phone-mobile]'},
+               authSideImage = ${theme.config.auth?.auth_settings?.style_features?.auth_side_image},
+               authLogo = ${theme.config.auth?.auth_settings?.style_features?.auth_logo},
+               authSiteTitle = ${theme.config.auth?.auth_settings?.style_features?.auth_site_title},
+               authSiteTitleSimple = ${theme.config.auth?.auth_settings?.auth_site_title_simple}">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+    <title th:text="${title}">Auth</title>
+
+    <th:block th:replace="~{modules/theme-script :: inline-script}" />
+    <link rel="stylesheet" th:href="@{/assets/css/main.css?v={version}(version=${theme.spec.version})}" />
+
+    <!-- Auth 布局 CSS -->
+    <link th:if="${authLayout != 'default'}" rel="stylesheet"
+        th:href="@{'/assets/css/auth-' + ${authLayout} + '.css?v=' + ${theme.spec.version}}" />
+
+    <th:block th:replace="~{gateway_fragments/common::basicStaticResources}"></th:block>
+
+    <th:block th:if="${head != null}">
+        <th:block th:replace="${head}" />
+    </th:block>
+</head>
+
+<body class="font-sans text-base-content antialiased selection:bg-primary selection:text-primary-content">
+
+    <!-- ======================== -->
+    <!-- 布局 1: 系统默认          -->
+    <!-- ======================== -->
+    <th:block th:if="${authLayout == 'default'}">
+        <div class="gateway-wrapper">
+            <th:block th:replace="${body}" />
+        </div>
+    </th:block>
+
+    <!-- ======================== -->
+    <!-- 布局 2: 分屏布局          -->
+    <!-- ======================== -->
+    <th:block th:if="${authLayout == 'split'}">
+        <div class="auth-page-split">
+            <!-- 品牌区 - 简约风格 -->
+            <div th:if="${brandStyle == 'simple'}" class="auth-brand">
+                <div class="grid-overlay"></div>
+                <div class="floating-shape floating-shape-1"></div>
+                <div class="floating-shape floating-shape-2"></div>
+                <div class="floating-shape floating-shape-3"></div>
+                <div class="brand-text">
+                    <h1 th:text="${not #strings.isEmpty(authSiteTitleSimple) ? authSiteTitleSimple : site.title}">Sky
+                        Blog</h1>
+                    <p th:text="${brandSlogan}">探索、记录、分享</p>
+                </div>
+            </div>
+
+            <!-- 品牌区 - 功能特性风格 -->
+            <div th:if="${brandStyle == 'features'}" class="auth-brand auth-brand-features"
+                th:style="${authSideImage != null ? 'background-image: url(' + authSideImage + ');' : ''}"
+                th:data-has-image="${authSideImage != null}">
+                <!-- 图片遮罩 -->
+                <div th:if="${authSideImage}" class="auth-brand-overlay"></div>
+                <div class="features-content">
+                    <div class="features-logo">
+                        <img th:if="${not #strings.isEmpty(authLogo)} or ${site.logo}"
+                            th:src="${not #strings.isEmpty(authLogo) ? authLogo : site.logo}" />
+                        <h2 th:text="${not #strings.isEmpty(authSiteTitle) ? authSiteTitle : site.title}">Site</h2>
+                    </div>
+                    <h1 class="features-title" th:text="${featuresWelcome}">欢迎来到</h1>
+                    <p class="features-slogan" th:text="${brandSlogan}">探索、记录、分享</p>
+                    <ul class="features-list">
+                        <li>
+                            <span class="feature-icon"><span
+                                    class="icon-[heroicons--shield-check] w-5 h-5"></span></span>
+                            <div class="feature-text">
+                                <h3 th:text="${feature1Title}">安全可靠</h3>
+                                <p th:text="${feature1Desc}">基于 Spring Security 的账户保护</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="feature-icon"><span class="icon-[heroicons--sparkles] w-5 h-5"></span></span>
+                            <div class="feature-text">
+                                <h3 th:text="${feature2Title}">内容推荐</h3>
+                                <p th:text="${feature2Desc}">为您量身定制的阅读体验</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="feature-icon"><span
+                                    class="icon-[heroicons--device-phone-mobile] w-5 h-5"></span></span>
+                            <div class="feature-text">
+                                <h3 th:text="${feature3Title}">多端同步</h3>
+                                <p th:text="${feature3Desc}">随时随地访问您的创作</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="auth-form-section-split">
+                <div class="auth-form-container">
+                    <th:block th:replace="${body}" />
+                </div>
+                <div class="absolute bottom-6 left-0 right-0 auth-copyright">
+                    <span>©</span><a href="/" class="ml-1" th:text="${site.title}">Site</a>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- ======================== -->
+    <!-- 布局 3: 居中卡片          -->
+    <!-- ======================== -->
+    <th:block th:if="${authLayout == 'centered'}">
+        <!-- 3D 效果脚本 -->
+        <script th:if="${cardEffect == '3d'}" th:inline="none">
+            document.addEventListener('DOMContentLoaded', function () {
+                var card = document.querySelector('.auth-card-3d');
+                if (card) {
+                    card.addEventListener('mousemove', function (e) {
+                        var rect = card.getBoundingClientRect();
+                        var x = e.clientX - rect.left;
+                        var y = e.clientY - rect.top;
+                        var rotateX = (y - rect.height / 2) / 25;
+                        var rotateY = (rect.width / 2 - x) / 25;
+                        card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateZ(10px)';
+                    });
+                    card.addEventListener('mouseleave', function () {
+                        card.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
+                    });
+                }
+            });
+        </script>
+
+        <!-- 聚光灯效果脚本 -->
+        <script th:if="${cardEffect == 'spotlight'}" th:inline="none">
+            document.addEventListener('DOMContentLoaded', function () {
+                var pageGlow = document.querySelector('.spotlight-page-glow');
+                var cardGlow = document.querySelector('.spotlight-card-glow');
+                var card = document.querySelector('.auth-card-spotlight');
+
+                if (pageGlow) {
+                    document.addEventListener('mousemove', function (e) {
+                        pageGlow.style.left = e.clientX + 'px';
+                        pageGlow.style.top = e.clientY + 'px';
+                    });
+                }
+
+                if (card && cardGlow) {
+                    card.addEventListener('mouseenter', function () { cardGlow.style.opacity = '1'; });
+                    card.addEventListener('mouseleave', function () { cardGlow.style.opacity = '0'; });
+                    card.addEventListener('mousemove', function (e) {
+                        var rect = card.getBoundingClientRect();
+                        cardGlow.style.left = (e.clientX - rect.left) + 'px';
+                        cardGlow.style.top = (e.clientY - rect.top) + 'px';
+                    });
+                }
+            });
+        </script>
+
+        <div class="auth-page-centered">
+            <!-- 聚光灯页面光晕 -->
+            <div th:if="${cardEffect == 'spotlight'}" class="spotlight-page-glow"></div>
+
+            <!-- 卡片 -->
+            <div
+                th:class="${cardEffect == '3d' ? 'auth-card auth-card-3d' : (cardEffect == 'spotlight' ? 'auth-card auth-card-spotlight' : 'auth-card')}">
+
+                <!-- 聚光灯卡片光晕 -->
+                <th:block th:if="${cardEffect == 'spotlight'}">
+                    <div class="spotlight-glow-container">
+                        <div class="spotlight-card-glow"></div>
+                    </div>
+                </th:block>
+                <div class="relative z-10">
+                    <th:block th:replace="${body}" />
+                </div>
+            </div>
+            <div class="mt-6 auth-copyright">
+                <span>©</span><a href="/" class="ml-1" th:text="${site.title}">Site</a>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- ======================== -->
+    <!-- 布局 4: 极客终端          -->
+    <!-- ======================== -->
+    <th:block th:if="${authLayout == 'terminal'}">
+        <div class="auth-page-terminal">
+            <div class="auth-card-terminal">
+                <!-- Terminal 头部 -->
+                <div class="terminal-header">
+                    <div class="terminal-controls">
+                        <span class="control close"></span>
+                        <span class="control minimize"></span>
+                        <span class="control maximize"></span>
+                    </div>
+                    <div class="terminal-title">root@auth-server:~</div>
+                </div>
+                <div class="auth-form-container">
+                    <th:block th:replace="${body}" />
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- Auth 布局 JS -->
+    <script th:if="${authLayout != 'default'}" type="module"
+        th:src="@{'/assets/js/auth-' + ${authLayout} + '.js?v=' + ${theme.spec.version}}"></script>
+</body>
+
+</html>

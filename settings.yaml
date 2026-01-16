@@ -3343,3 +3343,151 @@ spec:
               help: 当屏幕较小左侧文档树隐藏时，可从悬浮控制栏打开菜单
               value: true
 
+    # ========================================
+    # 认证页面设置
+    # ========================================
+    - group: auth
+      label: 认证页面
+      formSchema:
+        - $formkit: group
+          name: auth_settings
+          label: 认证页面样式
+          value:
+            auth_layout: split
+            brand_style: simple
+            card_effect: none
+            brand_slogan: "探索、记录、分享"
+            show_brand_area: true
+          children:
+            - $formkit: toggle
+              id: auth_layout
+              name: auth_layout
+              label: 页面布局
+              help: 选择登录、注册等认证页面的整体布局方式
+              render-type: text
+              size: 100
+              gap: 10
+              value: split
+              options:
+                - label: 系统默认
+                  value: default
+                - label: 分屏布局
+                  value: split
+                - label: 居中卡片
+                  value: centered
+                - label: 极客终端
+                  value: terminal
+            - $formkit: toggle
+              id: brand_style
+              name: brand_style
+              label: 品牌区样式
+              help: 分屏布局左侧的展示风格
+              render-type: text
+              size: 100
+              gap: 10
+              value: simple
+              if: $get(auth_layout).value === 'split'
+              options:
+                - label: 简约品牌
+                  value: simple
+                - label: 功能特性
+                  value: features
+            - $formkit: toggle
+              id: card_effect
+              name: card_effect
+              label: 卡片效果
+              help: 为居中卡片布局选择交互效果
+              render-type: text
+              size: 100
+              gap: 10
+              value: none
+              if: $get(auth_layout).value === 'centered'
+              options:
+                - label: 无
+                  value: none
+                - label: 3D 倾斜
+                  value: 3d
+                - label: 聚光灯
+                  value: spotlight
+            - $formkit: text
+              name: auth_site_title_simple
+              label: 站点标题
+              help: 简约风格下的站点标题，留空则使用站点默认标题
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'simple'
+              placeholder: "留空使用站点标题"
+            - $formkit: text
+              name: brand_slogan
+              label: 品牌标语
+              help: 在品牌展示区显示的标语文字
+              if: $get(auth_layout).value === 'split'
+              placeholder: "探索、记录、分享"
+              value: "探索、记录、分享"
+            - $formkit: group
+              name: style_features
+              label: 功能特性风格配置
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              children:
+                - $formkit: attachment
+                  name: auth_logo
+                  label: Logo
+                  help: 留空则使用站点默认 Logo
+                  accepts: ['image/*']
+                - $formkit: text
+                  name: auth_site_title
+                  label: 标题
+                  help: 留空则使用站点默认标题
+                  placeholder: "留空使用站点标题"
+                - $formkit: attachment
+                  name: auth_side_image
+                  label: 侧边栏背景图
+                  help: 自定义侧边栏的背景图片，上传后将覆盖默认的渐变背景
+                  accepts: ['image/*']
+                - $formkit: text
+                  name: features_welcome
+                  label: 欢迎语
+                  placeholder: "欢迎来到"
+                  value: "欢迎来到"
+                
+                # 特性 1
+                - $formkit: icon
+                  name: feature_1_icon
+                  label: 特性 1 图标
+                  value: "icon-[heroicons--shield-check]"
+                - $formkit: text
+                  name: feature_1_title
+                  label: 特性 1 标题
+                  value: "安全可靠"
+                - $formkit: text
+                  name: feature_1_desc
+                  label: 特性 1 描述
+                  value: "基于 Spring Security 的账户保护"
+
+                # 特性 2
+                - $formkit: icon
+                  name: feature_2_icon
+                  label: 特性 2 图标
+                  value: "icon-[heroicons--sparkles]"
+                - $formkit: text
+                  name: feature_2_title
+                  label: 特性 2 标题
+                  value: "内容推荐"
+                - $formkit: text
+                  name: feature_2_desc
+                  label: 特性 2 描述
+                  value: "为您量身定制的阅读体验"
+
+                # 特性 3
+                - $formkit: icon
+                  name: feature_3_icon
+                  label: 特性 3 图标
+                  value: "icon-[heroicons--device-phone-mobile]"
+                - $formkit: text
+                  name: feature_3_title
+                  label: 特性 3 标题
+                  value: "多端同步"
+                - $formkit: text
+                  name: feature_3_desc
+                  label: 特性 3 描述
+                  value: "随时随地访问您的创作"
+
+

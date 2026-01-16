@@ -4,7 +4,7 @@
 
 [![Halo](https://img.shields.io/badge/Halo-2.22.9+-blue)](https://halo.run)
 [![License](https://img.shields.io/badge/License-GPL--3.0-green)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-2.0.10-orange)](https://github.com/sky121666/halo-theme-sky-blog-1/releases)
+[![Version](https://img.shields.io/badge/Version-2.1.0-orange)](https://github.com/sky121666/halo-theme-sky-blog-1/releases)
 
 ## 🌐 预览
 
@@ -60,6 +60,8 @@
 
 ## ✨ 功能特性
 
+## ✨ 功能特性
+
 | 功能 | 说明 |
 |------|------|
 | 🎨 35+ 主题 | DaisyUI 预设主题，可视化预览选择 |
@@ -71,7 +73,11 @@
 | 🌐 背景定制 | 网格背景效果 |
 | 📊 GitHub 热力图 | 贡献统计展示 |
 | 🖼️ 图库灯箱 | lightgallery 效果 |
-| 👤 作者主页 | 独立模板 |
+| 👤 作者主页 | 独立模板，支持文章/瞬间/动态展示 |
+| 💻 极客终端 | 独家终端风格认证界面 |
+| 🧊 玻璃拟态 | 全局磨砂质感设计 |
+| 🏷️ 丰富短代码 | 提示块/折叠/标签页/时间轴等 |
+| 🔍 全局搜索 | 支持文章/页面/瞬间/分类搜索 |
 
 ---
 
@@ -82,7 +88,7 @@
 | 模板 | 文件 | 说明 |
 |------|------|------|
 | 首页 | `index.html` | 文章列表、瞬间、朋友动态 Tab 切换 |
-| 文章 | `post.html` | 文章详情、目录、评论 |
+| 文章 | `post.html` | 文章详情、目录、评论、SEO 优化 |
 | 页面 | `page.html` | 独立页面 |
 | 作者 | `author.html` | 作者主页、文章/瞬间列表 |
 | 归档 | `archives.html` | 按年月归档 |
@@ -109,17 +115,18 @@
 | 朋友圈 | `friends.html` | 朋友圈插件 |
 | 文档 | `docs.html` / `doc.html` / `doc-catalog.html` | Docsme 文档 |
 
-### 侧边栏组件
+### 侧边栏小工具
 
 | 组件 | 说明 |
 |------|------|
-| 作者卡片 | 头像、名称、简介、链接 |
-| 欢迎卡片 | 天气信息、问候语 |
-| 最新文章 | 最新发布的文章 |
-| 热门文章 | 访问量最高的文章 |
-| 分类列表 | 文章分类 |
-| 标签云 | 文章标签 |
-| 博客统计 | 文章数、分类数、标签数 |
+| 作者卡片 | 头像、名称、简介、社交链接 |
+| 欢迎卡片 | 天气信息、问候语、日期显示 |
+| 最新文章 | 最新发布的文章列表 |
+| 热门文章 | 访问量最高的文章列表 |
+| 分类列表 | 文章分类导航 |
+| 标签云 | 文章标签聚合 |
+| 博客统计 | 文章数、分类数、标签数、最后更新 |
+| 广告位 | 自定义图片链接 |
 
 ---
 
@@ -131,6 +138,7 @@
 | Tailwind CSS | 4.x | 原子化 CSS |
 | DaisyUI | 5.x | UI 组件库 |
 | Alpine.js | 3.x | 响应式框架 |
+| Thymeleaf | 3.x | 模板引擎 |
 | TypeScript | 5.x | 类型安全 |
 
 ---
@@ -139,24 +147,24 @@
 
 ### 功能类
 
-| 插件 | 链接 |
-|------|------|
-| 瞬间 | [应用市场](https://www.halo.run/store/apps/app-SnwWD) |
-| 朋友圈 | [应用市场](https://www.halo.run/store/apps/app-yISsV) |
-| Docsme 文档 | [应用市场](https://www.halo.run/store/apps/app-yffxw) |
-| 友链提交 | [应用市场](https://www.halo.run/store/apps/app-glejqzwk) |
-| 图库管理 | [应用市场](https://www.halo.run/store/apps/app-BmQJW) |
-| 链接管理 | [应用市场](https://www.halo.run/store/apps/app-hfbQg) |
+| 插件 | 链接 | 备注 |
+|------|------|------|
+| 瞬间 | [应用市场](https://www.halo.run/store/apps/app-SnwWD) | 朋友圈风格短博文 |
+| 朋友圈 | [应用市场](https://www.halo.run/store/apps/app-yISsV) | 聚合友链文章 |
+| Docsme 文档 | [应用市场](https://www.halo.run/store/apps/app-yffxw) | 知识库文档展示 |
+| 友链提交 | [应用市场](https://www.halo.run/store/apps/app-glejqzwk) | 自助申请友链 |
+| 图库管理 | [应用市场](https://www.halo.run/store/apps/app-BmQJW) | 瀑布流相册 |
+| 链接管理 | [应用市场](https://www.halo.run/store/apps/app-hfbQg) | 友链/书签管理 |
 
 ### 工具类
 
-| 插件 | 链接 |
-|------|------|
-| Shiki 代码高亮 | [应用市场](https://www.halo.run/store/apps/app-kzloktzn) |
-| 搜索组件 | [应用市场](https://www.halo.run/store/apps/app-DlacW) |
-| 评论组件 | [应用市场](https://www.halo.run/store/apps/app-YXyaD) |
-| 文本绘图 | [应用市场](https://www.halo.run/store/apps/app-ahBRi) |
-| lightgallery 灯箱 | [应用市场](https://www.halo.run/store/apps/app-OoggD) |
+| 插件 | 链接 | 备注 |
+|------|------|------|
+| Shiki 代码高亮 | [应用市场](https://www.halo.run/store/apps/app-kzloktzn) | 美观的代码块渲染 |
+| 搜索组件 | [应用市场](https://www.halo.run/store/apps/app-DlacW) | 强大的站内搜索 |
+| 评论组件 | [应用市场](https://www.halo.run/store/apps/app-YXyaD) | 现代化评论系统 |
+| 文本绘图 | [应用市场](https://www.halo.run/store/apps/app-ahBRi) | Mermaid/PlantUML 支持 |
+| lightgallery 灯箱 | [应用市场](https://www.halo.run/store/apps/app-OoggD) | 图片查看器 |
 
 ---
 

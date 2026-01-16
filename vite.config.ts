@@ -78,6 +78,16 @@ function generateEntries() {
     }
   });
 
+  // Auth 布局入口
+  const authLayouts = ['split', 'centered', 'terminal'];
+  authLayouts.forEach((layout) => {
+    const jsFile = `src/pages/auth/themes/${layout}.js`;
+    if (existsSync(jsFile)) {
+      entries[`auth-${layout}`] = jsFile;
+      console.log(`🔐 auth-${layout}: ${jsFile}`);
+    }
+  });
+
   console.log(`✅ 生成 ${Object.keys(entries).length} 个入口点`);
   return entries;
 }

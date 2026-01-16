@@ -55,18 +55,20 @@
                   <!-- 头部：头像 + 用户名 + 时间 -->
                   <div class="flex items-center gap-3 mb-3">
                     <div class="avatar">
-                      <div class="w-11 h-11 rounded-xl bg-base-200">
+                      <a th:href="@{/authors/{name}(name=${moment.owner.name})}"
+                        class="w-11 h-11 rounded-xl bg-base-200 block transition-transform active:scale-95">
                         <img th:if="${moment.owner?.avatar != null}" th:src="${moment.owner.avatar}"
                           th:alt="${moment.owner.displayName}" />
                         <div th:if="${moment.owner?.avatar == null}"
                           class="w-full h-full flex items-center justify-center text-base-content/40 font-semibold"
                           th:text="${moment.owner?.displayName != null ? #strings.substring(moment.owner.displayName, 0, 1) : 'U'}">
                           U</div>
-                      </div>
+                      </a>
                     </div>
                     <div class="flex-1 min-w-0">
-                      <div class="font-semibold text-primary text-sm truncate"
-                        th:text="${moment.owner?.displayName ?: '匿名用户'}">用户名</div>
+                      <a th:href="@{/authors/{name}(name=${moment.owner.name})}"
+                        class="font-semibold text-primary text-sm truncate hover:underline"
+                        th:text="${moment.owner?.displayName ?: '匿名用户'}">用户名</a>
                       <div class="text-xs text-base-content/40"
                         th:text="${#temporals.format(moment.spec.releaseTime, 'MM-dd HH:mm')}">11-27 14:00</div>
                     </div>
