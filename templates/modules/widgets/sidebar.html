@@ -33,6 +33,9 @@
     <th:block th:if="${item.widget eq 'author_card'}">
       <th:block th:replace="~{modules/widgets/author-card :: card}" />
     </th:block>
+    <th:block th:if="${item.widget eq 'steam_card'}">
+      <th:block th:replace="~{modules/widgets/steam-card :: card}" />
+    </th:block>
     <th:block th:if="${item.widget eq 'blog_stats'}">
       <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
     </th:block>

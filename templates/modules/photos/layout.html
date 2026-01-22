@@ -57,8 +57,8 @@
   <th:block th:replace="~{modules/floating-dock :: dockWithConfig(${theme.config.photos_settings}, 'comment')}" />
 
   <!-- JavaScript -->
-  <script th:src="@{/assets/js/photos.js?v={version}(version=${theme.spec.version})}"></script>
-  <script th:src="@{/assets/js/main.js?v={version}(version=${theme.spec.version})}" defer></script>
+  <script type="module" th:src="@{/assets/js/photos.js?v={version}(version=${theme.spec.version})}"></script>
+  <script type="module" th:src="@{/assets/js/main.js?v={version}(version=${theme.spec.version})}"></script>
 </body>
 
 </html>

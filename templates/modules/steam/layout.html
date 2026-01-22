@@ -33,8 +33,19 @@
 <body th:with="bgConfig = ${theme.config.general.global_background},
                  enableCustomBg = ${bgConfig?.enable_custom == true},
                  bgStyle = ${bgConfig?.background_style ?: 'base-200'},
-                 bgClass = ${enableCustomBg ? (bgStyle == 'grid' ? 'bg-base-100' : 'bg-' + bgStyle) : 'bg-base-200'}"
+                 bgClass = ${enableCustomBg ? (bgStyle == 'grid' ? 'bg-base-100' : 'bg-' + bgStyle) : 'bg-base-200'},
+                 steamProfile = ${steamFinder?.getProfile()}"
   th:class="'min-h-screen text-base-content relative ' + ${bgClass}">
+
+  <!-- 动态游戏背景 (正在游玩时显示) -->
+  <div th:if="${steamProfile != null && steamProfile.playing && steamProfile.summary.gameId != null}"
+    class="fixed inset-0 z-0 pointer-events-none">
+    <img
+      th:src="@{'https://cdn.akamai.steamstatic.com/steam/apps/' + ${steamProfile.summary.gameId} + '/library_hero.jpg'}"
+      class="w-full h-full object-cover opacity-20"
+      onerror="this.src=this.src.replace('library_hero.jpg', 'header.jpg');" />
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-base-100/80 to-base-100"></div>
+  </div>
 
   <!-- 网格背景（仅当选择 grid 样式时显示） -->
   <div th:if="${enableCustomBg and bgStyle == 'grid'}" class="fixed inset-0 pointer-events-none bg-grid-pattern z-[1]">
@@ -60,8 +71,8 @@
   <th:block th:replace="~{modules/floating-dock :: dock}" />
 
   <!-- JavaScript -->
-  <script th:src="@{/assets/js/steam.js?v={version}(version=${theme.spec.version})}"></script>
-  <script th:src="@{/assets/js/main.js?v={version}(version=${theme.spec.version})}" defer></script>
+  <script type="module" th:src="@{/assets/js/steam.js?v={version}(version=${theme.spec.version})}"></script>
+  <script type="module" th:src="@{/assets/js/main.js?v={version}(version=${theme.spec.version})}"></script>
 </body>
 
 </html>

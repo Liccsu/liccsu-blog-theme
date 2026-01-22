@@ -214,6 +214,8 @@ spec:
                       value: popular_posts
                     - label: 最新文章
                       value: recent_posts
+                    - label: Steam 卡片
+                      value: steam_card
             - $formkit: number
               name: popular_posts_count
               label: 热门文章数量
@@ -1280,6 +1282,8 @@ spec:
                       value: popular_posts
                     - label: 最新文章
                       value: recent_posts
+                    - label: Steam 卡片
+                      value: steam_card
         # 内容设置
         - $formkit: group
           name: content_settings
@@ -1673,6 +1677,8 @@ spec:
                       value: popular_posts
                     - label: 最新文章
                       value: recent_posts
+                    - label: Steam 卡片
+                      value: steam_card
         - $formkit: group
           name: post_interaction
           label: 文章底部交互

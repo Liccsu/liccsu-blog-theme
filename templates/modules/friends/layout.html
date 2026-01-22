@@ -76,7 +76,7 @@
   <th:block th:replace="~{modules/floating-dock :: dockWithConfig(${theme.config.friends_page_settings}, 'basic')}" />
 
   <!-- JavaScript -->
-  <script th:src="@{/assets/js/main.js?v={version}(version=${theme.spec.version})}" defer></script>
+  <script type="module" th:src="@{/assets/js/main.js?v={version}(version=${theme.spec.version})}"></script>
 </body>
 
 </html>
