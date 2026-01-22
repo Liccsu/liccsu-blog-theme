@@ -190,6 +190,7 @@ spec:
                   label: $value.widget
               value:
                 - widget: author_card
+                - widget: steam_card
                 - widget: blog_stats
                 - widget: categories
                 - widget: tags
@@ -199,7 +200,7 @@ spec:
                 - $formkit: select
                   name: widget
                   label: 小工具类型
-                  options:
+                  options: &widget_options
                     - label: 欢迎卡片（天气）
                       value: welcome_card
                     - label: 作者卡片
@@ -1216,11 +1217,11 @@ spec:
             show_sidebar: true
             enable_custom_sidebar: false
             sidebar_position: right
-            sidebar_widgets:
-              - widget: welcome_card
-              - widget: author_card
-              - widget: blog_stats
-              - widget: recent_posts
+            enabled_widgets:
+              - welcome_card
+              - author_card
+              - blog_stats
+              - recent_posts
           children:
             - $formkit: switch
               id: index_show_sidebar
@@ -1267,23 +1268,7 @@ spec:
                 - $formkit: select
                   name: widget
                   label: 小工具类型
-                  options:
-                    - label: 欢迎卡片（天气）
-                      value: welcome_card
-                    - label: 作者卡片
-                      value: author_card
-                    - label: 博客统计
-                      value: blog_stats
-                    - label: 文章分类
-                      value: categories
-                    - label: 标签云
-                      value: tags
-                    - label: 热门文章
-                      value: popular_posts
-                    - label: 最新文章
-                      value: recent_posts
-                    - label: Steam 卡片
-                      value: steam_card
+                  options: *widget_options
         # 内容设置
         - $formkit: group
           name: content_settings
@@ -1842,21 +1827,7 @@ spec:
             - $formkit: select
               name: widget
               label: 小工具类型
-              options:
-                - label: 欢迎卡片（天气）
-                  value: welcome_card
-                - label: 作者卡片
-                  value: author_card
-                - label: 博客统计
-                  value: blog_stats
-                - label: 文章分类
-                  value: categories
-                - label: 标签云
-                  value: tags
-                - label: 热门文章
-                  value: popular_posts
-                - label: 最新文章
-                  value: recent_posts
+              options: *widget_options
         - $formkit: toggle
           name: list_style
           label: 文章列表风格
@@ -2013,21 +1984,7 @@ spec:
             - $formkit: select
               name: widget
               label: 小工具类型
-              options:
-                - label: 欢迎卡片（天气）
-                  value: welcome_card
-                - label: 作者卡片
-                  value: author_card
-                - label: 博客统计
-                  value: blog_stats
-                - label: 文章分类
-                  value: categories
-                - label: 标签云
-                  value: tags
-                - label: 热门文章
-                  value: popular_posts
-                - label: 最新文章
-                  value: recent_posts
+              options: *widget_options
         - $formkit: toggle
           name: list_style
           label: 文章列表风格
@@ -2182,21 +2139,7 @@ spec:
             - $formkit: select
               name: widget
               label: 小工具类型
-              options:
-                - label: 欢迎卡片（天气）
-                  value: welcome_card
-                - label: 作者卡片
-                  value: author_card
-                - label: 博客统计
-                  value: blog_stats
-                - label: 文章分类
-                  value: categories
-                - label: 标签云
-                  value: tags
-                - label: 热门文章
-                  value: popular_posts
-                - label: 最新文章
-                  value: recent_posts
+              options: *widget_options
         - $formkit: switch
           name: enable_comment
           label: 启用评论
@@ -2276,19 +2219,7 @@ spec:
             - $formkit: select
               name: widget
               label: 小工具类型
-              options:
-                - label: 欢迎卡片（天气）
-                  value: welcome_card
-                - label: 博客统计
-                  value: blog_stats
-                - label: 文章分类
-                  value: categories
-                - label: 标签云
-                  value: tags
-                - label: 热门文章
-                  value: popular_posts
-                - label: 最新文章
-                  value: recent_posts
+              options: *widget_options
         # 内容显示设置
         - $formkit: group
           name: content_settings
@@ -2413,21 +2344,7 @@ spec:
             - $formkit: select
               name: widget
               label: 小工具类型
-              options:
-                - label: 欢迎卡片（天气）
-                  value: welcome_card
-                - label: 作者卡片
-                  value: author_card
-                - label: 博客统计
-                  value: blog_stats
-                - label: 文章分类
-                  value: categories
-                - label: 标签云
-                  value: tags
-                - label: 热门文章
-                  value: popular_posts
-                - label: 最新文章
-                  value: recent_posts
+              options: *widget_options
         - $formkit: switch
           name: enable_comment
           label: 启用评论
@@ -2960,21 +2877,7 @@ spec:
             - $formkit: select
               name: widget
               label: 小工具类型
-              options:
-                - label: 欢迎卡片（天气）
-                  value: welcome_card
-                - label: 作者卡片
-                  value: author_card
-                - label: 博客统计
-                  value: blog_stats
-                - label: 文章分类
-                  value: categories
-                - label: 标签云
-                  value: tags
-                - label: 热门文章
-                  value: popular_posts
-                - label: 最新文章
-                  value: recent_posts
+              options: *widget_options
         - $formkit: switch
           name: enable_upvote
           label: 启用点赞
@@ -3141,21 +3044,7 @@ spec:
             - $formkit: select
               name: widget
               label: 小工具类型
-              options:
-                - label: 欢迎卡片（天气）
-                  value: welcome_card
-                - label: 作者卡片
-                  value: author_card
-                - label: 博客统计
-                  value: blog_stats
-                - label: 文章分类
-                  value: categories
-                - label: 标签云
-                  value: tags
-                - label: 热门文章
-                  value: popular_posts
-                - label: 最新文章
-                  value: recent_posts
+              options: *widget_options
         # 悬浮控制栏设置
         - $formkit: group
           name: floating_dock

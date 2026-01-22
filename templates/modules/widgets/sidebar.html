@@ -8,51 +8,73 @@
 
 <!-- 
   参数说明：
-  - pageCfg: 页面侧边栏配置（可选），包含 enable_custom_sidebar, sidebar_position, sidebar_widgets
+  - pageCfg: 页面侧边栏配置（可选）
   - 如果 pageCfg.enable_custom_sidebar == true，使用页面配置
   - 否则使用全局 sidebar_settings
+  
+  支持两种配置格式：
+  1. 旧格式: sidebar_widgets 数组 [{widget: 'xxx'}, ...]
+  2. 新格式: enabled_widgets 字符串数组 ['xxx', 'yyy', ...]
 -->
-<th:block th:fragment="dynamic(pageCfg)"
-  th:with="globalCfg = ${theme.config.general.sidebar_settings},
-                   useCustom = ${pageCfg?.enable_custom_sidebar == true},
-                   configWidgets = ${useCustom ? pageCfg?.sidebar_widgets : globalCfg?.widgets},
-                   defaultWidgets = ${ {
-                     {widget: 'author_card'},
-                     {widget: 'blog_stats'},
-                     {widget: 'categories'},
-                     {widget: 'tags'},
-                     {widget: 'popular_posts'}
-                   } },
-                   widgets = ${configWidgets != null && !#lists.isEmpty(configWidgets) ? configWidgets : defaultWidgets}">
+<th:block th:fragment="dynamic(pageCfg)" th:with="globalCfg = ${theme.config.general.sidebar_settings},
+           useCustom = ${pageCfg?.enable_custom_sidebar == true},
+           enabledWidgets = ${useCustom ? pageCfg?.enabled_widgets : null},
+           customWidgets = ${useCustom ? pageCfg?.sidebar_widgets : null},
+           globalWidgets = ${globalCfg?.widgets},
+           defaultWidgets = ${ {
+             {widget: 'author_card'},
+             {widget: 'blog_stats'},
+             {widget: 'categories'},
+             {widget: 'tags'},
+             {widget: 'popular_posts'}
+           } },
+           baseWidgets = ${globalWidgets != null && !#lists.isEmpty(globalWidgets) ? globalWidgets : defaultWidgets}">
 
-  <!-- 遍历配置的小工具 -->
-  <th:block th:each="item : ${widgets}">
-    <th:block th:if="${item.widget eq 'welcome_card'}">
-      <th:block th:replace="~{modules/widgets/welcome-card :: card}" />
-    </th:block>
-    <th:block th:if="${item.widget eq 'author_card'}">
-      <th:block th:replace="~{modules/widgets/author-card :: card}" />
-    </th:block>
-    <th:block th:if="${item.widget eq 'steam_card'}">
-      <th:block th:replace="~{modules/widgets/steam-card :: card}" />
-    </th:block>
-    <th:block th:if="${item.widget eq 'blog_stats'}">
-      <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
-    </th:block>
-    <th:block th:if="${item.widget eq 'categories'}">
-      <th:block th:replace="~{modules/widgets/categories :: list}" />
-    </th:block>
-    <th:block th:if="${item.widget eq 'tags'}">
-      <th:block th:replace="~{modules/widgets/tags :: cloud}" />
-    </th:block>
-    <th:block th:if="${item.widget eq 'popular_posts'}">
-      <th:block th:replace="~{modules/widgets/popular-posts :: list}" />
-    </th:block>
-    <th:block th:if="${item.widget eq 'recent_posts'}">
-      <th:block th:replace="~{modules/widgets/recent-posts :: list}" />
-    </th:block>
-    <th:block th:if="${item.widget eq 'toc'}">
-      <th:block th:replace="~{modules/post/toc :: widget}" />
+  <!-- 确定要渲染的组件列表 -->
+  <th:block
+    th:with="renderList = ${useCustom ? (enabledWidgets != null ? enabledWidgets : (customWidgets != null ? customWidgets : baseWidgets)) : baseWidgets}">
+
+    <th:block th:each="item : ${renderList}">
+      <!-- 解析小工具类型：支持对象格式 {widget: 'name'} 和字符串格式 'name' -->
+      <th:block th:with="widgetType = ${item instanceof T(java.lang.String) ? item : item.widget}">
+
+        <th:block th:if="${widgetType eq 'welcome_card'}">
+          <th:block th:replace="~{modules/widgets/welcome-card :: card}" />
+        </th:block>
+
+        <th:block th:if="${widgetType eq 'author_card'}">
+          <th:block th:replace="~{modules/widgets/author-card :: card}" />
+        </th:block>
+
+        <th:block th:if="${widgetType eq 'steam_card'}">
+          <th:block th:replace="~{modules/widgets/steam-card :: card}" />
+        </th:block>
+
+        <th:block th:if="${widgetType eq 'blog_stats'}">
+          <th:block th:replace="~{modules/widgets/blog-stats :: stats}" />
+        </th:block>
+
+        <th:block th:if="${widgetType eq 'categories'}">
+          <th:block th:replace="~{modules/widgets/categories :: list}" />
+        </th:block>
+
+        <th:block th:if="${widgetType eq 'tags'}">
+          <th:block th:replace="~{modules/widgets/tags :: cloud}" />
+        </th:block>
+
+        <th:block th:if="${widgetType eq 'popular_posts'}">
+          <th:block th:replace="~{modules/widgets/popular-posts :: list}" />
+        </th:block>
+
+        <th:block th:if="${widgetType eq 'recent_posts'}">
+          <th:block th:replace="~{modules/widgets/recent-posts :: list}" />
+        </th:block>
+
+        <th:block th:if="${widgetType eq 'toc'}">
+          <th:block th:replace="~{modules/post/toc :: widget}" />
+        </th:block>
+
+      </th:block>
     </th:block>
   </th:block>
 
