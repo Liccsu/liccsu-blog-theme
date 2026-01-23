@@ -129,12 +129,9 @@ async function initHeatmap() {
     // 兼容两种属性命名
     const apiUrl = gridEl.dataset.apiUrl || gridEl.closest('.steam-heatmap-inline')?.querySelector('[data-api-url]')?.dataset.apiUrl;
 
-    console.log('[Steam Debug] Init Heatmap:', { heatmapDays, apiUrl, gridElId: gridEl.id });
-
     // 如果服务端已经渲染了热力图（有 .steam-heatmap-cell 子元素），跳过 API 请求
     const existingCells = gridEl.querySelectorAll('.steam-heatmap-cell:not(.invisible)');
     if (existingCells.length > 0 && !apiUrl) {
-      console.log('[Steam Debug] Server-rendered heatmap detected, skipping API fetch');
       if (loadingEl) loadingEl.style.display = 'none';
       // 为已有的 cell 添加 tooltip 交互
       addTooltipToExistingCells(gridEl, tooltipEl);
@@ -142,24 +139,18 @@ async function initHeatmap() {
     }
 
     if (!apiUrl) {
-      console.log('[Steam Debug] No API URL and no server-rendered data, showing empty state');
       if (loadingEl) loadingEl.style.display = 'none';
       if (emptyEl) emptyEl.style.display = 'flex';
       return;
     }
 
     const data = await fetchHeatmapData(apiUrl, heatmapDays);
-    console.log('[Steam Debug] Data Received:', data);
 
     if (loadingEl) {
       loadingEl.style.display = 'none';
-      console.log('[Steam Debug] Loading element hidden');
-    } else {
-      console.warn('[Steam Debug] Loading element NOT FOUND!');
     }
 
     if (!data || !data.items || data.items.length === 0) {
-      console.warn('[Steam Debug] No items in heatmap data');
       if (emptyEl) emptyEl.style.display = 'flex';
       return;
     }
@@ -169,11 +160,9 @@ async function initHeatmap() {
     data.items.forEach(item => {
       dateMap.set(item.spec.date, item.spec.playtimeMinutes || 0);
     });
-    console.log('[Steam Debug] DateMap:', Object.fromEntries(dateMap));
 
     // 渲染网格
     renderCustomHeatmap(gridEl, dateMap, heatmapDays, tooltipEl);
-    console.log('[Steam Debug] Heatmap rendered successfully');
 
   } catch (error) {
     console.error('Failed to render heatmap:', error);
@@ -205,11 +194,8 @@ async function fetchHeatmapData(baseUrl, days) {
   url.searchParams.set('page', '1');
   url.searchParams.set('size', days);
 
-  console.log('[Steam Debug] Fetching URL:', url.toString());
-
   const response = await fetch(url.toString());
   if (!response.ok) {
-    console.error('[Steam Debug] Fetch Failed:', response.status);
     throw new Error('Failed to fetch heatmap data');
   }
   return await response.json();
@@ -292,5 +278,4 @@ function renderCustomHeatmap(container, dateMap, days, tooltip) {
     current.setDate(current.getDate() + 1);
     cellCount++;
   }
-  console.log('[Steam Debug] Rendered cells:', cellCount);
 }

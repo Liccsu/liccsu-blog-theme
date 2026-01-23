@@ -621,7 +621,6 @@ function welcomeWeatherCard() {
 
     // 从缓存加载或请求新数据
     async loadWeather() {
-
       // 1. 优先使用缓存
       const cached = this.getCache();
       if (cached) {
@@ -644,7 +643,6 @@ function welcomeWeatherCard() {
 
     // 通过 IP 获取城市名，然后查询天气
     async fetchWeatherByIP() {
-
       // Step 1: 获取城市名
       const locationData = await this.getLocationFromIP();
       const cityName = locationData.city;
@@ -696,69 +694,60 @@ function welcomeWeatherCard() {
       return '未知';
     },
 
-    // IP 定位 (Pconline JSONP -> ipapi.co)
+    // IP 定位 (两个 API 同时请求，谁快用谁，pconline 优先级最高)
     async getLocationFromIP() {
-      // 1. 尝试 Pconline JSONP (国内精准，无需 Key，绕过 CORS)
-      try {
-        const data = await this.pconlineJsonp();
-
+      let usedSource = null;
+      
+      // pconline 请求
+      const pconlinePromise = this.pconlineJsonp().then(data => {
         const rawCity = data.city || data.addr || '';
         const city = rawCity.replace('市', '').trim() || '未知';
+        return { latitude: null, longitude: null, city, source: 'pconline' };
+      }).catch(() => null);
 
-        return { latitude: null, longitude: null, city };
-      } catch (e) {
-
-        // 2. 失败降级到 ipapi.co (国外/通用)
+      // ipapi 备用请求
+      const ipapiPromise = (async () => {
         try {
           const ipRes = await fetch('https://api.ipify.cn/?format=json');
           const ipData = await ipRes.json();
-
           const locationRes = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
           const locationData = await locationRes.json();
           const city = this.translateCity(locationData.city || locationData.region || '未知');
-
-          return { latitude: locationData.latitude, longitude: locationData.longitude, city };
-        } catch (e2) {
-          return { latitude: null, longitude: null, city: '未知' };
+          return { latitude: locationData.latitude, longitude: locationData.longitude, city, source: 'ipapi' };
+        } catch (e) {
+          return null;
         }
+      })();
+
+      // 谁先成功用谁
+      const firstResult = await Promise.race([
+        pconlinePromise.then(r => r ? r : new Promise(() => {})),
+        ipapiPromise.then(r => r ? r : new Promise(() => {}))
+      ].map(p => p.catch(() => null))).catch(() => null);
+
+      if (firstResult) {
+        usedSource = firstResult.source;
+        
+        // 如果先用的是 ipapi，继续等 pconline，成功后覆盖更新
+        if (usedSource === 'ipapi') {
+          pconlinePromise.then(async (pconlineResult) => {
+            if (pconlineResult && pconlineResult.city && pconlineResult.city !== '未知') {
+              await this.fetchWeatherByCity(pconlineResult.city);
+            }
+          });
+        }
+        
+        return firstResult;
       }
+
+      // 都失败了
+      return { latitude: null, longitude: null, city: '未知' };
     },
 
-    // Pconline JSONP 调用 (绕过 CORS)
+    // Pconline 调用 (通过 CF Worker 代理)
     pconlineJsonp() {
-      return new Promise((resolve, reject) => {
-        const callbackName = 'pconlineCallback_' + Date.now();
-        const script = document.createElement('script');
-
-        // 超时处理
-        const timeout = setTimeout(() => {
-          cleanup();
-          reject(new Error('JSONP timeout'));
-        }, 5000);
-
-        // 清理函数
-        const cleanup = () => {
-          clearTimeout(timeout);
-          delete window[callbackName];
-          if (script.parentNode) {
-            script.parentNode.removeChild(script);
-          }
-        };
-
-        // 全局回调函数
-        window[callbackName] = (data) => {
-          cleanup();
-          resolve(data);
-        };
-
-        script.src = `https://whois.pconline.com.cn/ipJson.jsp?callback=${callbackName}`;
-        script.onerror = () => {
-          cleanup();
-          reject(new Error('JSONP script error'));
-        };
-
-        document.head.appendChild(script);
-      });
+      return fetch('https://pconline.xoku.cn/')
+        .then(res => res.json());
     },
 
     // 城市名英中映射
