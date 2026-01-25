@@ -77,11 +77,8 @@
             </th:block>
           </div>
 
-          <!-- 顶部标签 -->
-          <div class="absolute top-3 left-3 right-3 flex items-center justify-between z-20">
-            <span class="px-2.5 py-1 rounded-full bg-primary text-primary-content text-xs font-medium shadow">
-              <span th:text="${statusLabels[status]}">在看</span> · <span th:text="${bangumiList.total}">0</span>部
-            </span>
+          <!-- 顶部标签 - 仅显示轮播进度 -->
+          <div class="absolute top-3 right-3 z-20">
             <span class="px-2 py-1 rounded-full bg-black/60 text-white text-xs backdrop-blur-sm">
               <span x-text="current + 1">1</span>/<span th:text="${#lists.size(bangumiList.items)}">1</span>
             </span>
@@ -104,7 +101,7 @@
         <!-- 统计栏 -->
         <div class="flex items-center justify-around mt-3 py-2.5 rounded-xl bg-base-200/60 text-xs">
           <div class="text-center">
-            <div class="text-base-content/50 text-[10px]" th:text="${typeLabels[typeNum]}">追番</div>
+            <div class="text-base-content/50 text-[10px]">总数</div>
             <div class="font-bold" th:text="${allStats?.total ?: 0}">0</div>
           </div>
           <div class="w-px h-5 bg-base-content/10"></div>
@@ -115,7 +112,7 @@
           <div class="w-px h-5 bg-base-content/10"></div>
           <div class="text-center">
             <div class="text-base-content/50 text-[10px]">类型</div>
-            <div class="font-bold" th:text="${typeNum == 1 ? '追番' : '追剧'}">追番</div>
+            <div class="font-bold" th:text="${typeNum == 1 ? '番剧' : '剧集'}">番剧</div>
           </div>
         </div>
       </div>

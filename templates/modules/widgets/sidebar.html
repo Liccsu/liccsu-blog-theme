@@ -18,8 +18,7 @@
 -->
 <th:block th:fragment="dynamic(pageCfg)" th:with="globalCfg = ${theme.config.general.sidebar_settings},
            useCustom = ${pageCfg?.enable_custom_sidebar == true},
-           enabledWidgets = ${useCustom ? pageCfg?.enabled_widgets : null},
-           customWidgets = ${useCustom ? pageCfg?.sidebar_widgets : null},
+           customWidgets = ${pageCfg?.sidebar_widgets},
            globalWidgets = ${globalCfg?.widgets},
            defaultWidgets = ${ {
              {widget: 'author_card'},
@@ -31,8 +30,9 @@
            baseWidgets = ${globalWidgets != null && !#lists.isEmpty(globalWidgets) ? globalWidgets : defaultWidgets}">
 
   <!-- 确定要渲染的组件列表 -->
+  <!-- 优先级: 启用定制 -> sidebar_widgets -> 全局配置 -->
   <th:block
-    th:with="renderList = ${useCustom ? (enabledWidgets != null ? enabledWidgets : (customWidgets != null ? customWidgets : baseWidgets)) : baseWidgets}">
+    th:with="renderList = ${useCustom && customWidgets != null && !#lists.isEmpty(customWidgets) ? customWidgets : baseWidgets}">
 
     <th:block th:each="item : ${renderList}">
       <!-- 解析小工具类型：支持对象格式 {widget: 'name'} 和字符串格式 'name' -->
