@@ -2884,11 +2884,40 @@ spec:
           label: 启用评论
           help: 在每条瞬间下方显示评论区
           value: true
-        - $formkit: switch
-          name: enable_publish
-          label: 前端发布
-          help: 允许登录用户在前端发布瞬间
-          value: true
+        - $formkit: group
+          name: publish_settings
+          label: 前端发布设置
+          help: 控制用户的前端发布权限和媒体上传功能
+          value:
+            enable_publish: true
+            enable_image_upload: true
+            enable_video_upload: true
+            enable_audio_upload: true
+          children:
+            - $formkit: switch
+              id: moments_enable_publish
+              name: enable_publish
+              label: 启用前端发布
+              help: 允许登录用户在前端发布瞬间（关闭后隐藏所有发布功能）
+              value: true
+            - $formkit: switch
+              name: enable_image_upload
+              if: $get(moments_enable_publish).value
+              label: 启用图片上传
+              help: 允许用户上传图片（需要配置存储策略）
+              value: true
+            - $formkit: switch
+              name: enable_video_upload
+              if: $get(moments_enable_publish).value
+              label: 启用视频上传
+              help: 允许用户上传视频（需要配置存储策略）
+              value: true
+            - $formkit: switch
+              name: enable_audio_upload
+              if: $get(moments_enable_publish).value
+              label: 启用音频上传
+              help: 允许用户上传音频（需要配置存储策略）
+              value: true
         - $formkit: switch
           id: moments_enable_share
           name: enable_share
