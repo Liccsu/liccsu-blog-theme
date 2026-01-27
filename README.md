@@ -1,61 +1,30 @@
 # Sky Blog Theme
 
-> 基于现代前端技术栈的 Halo 2.0 博客主题
+> 基于 Vite + Tailwind CSS v4 + DaisyUI + Alpine.js 构建的现代化 Halo 2.0 博客主题
 
 [![Halo](https://img.shields.io/badge/Halo-2.22.9+-blue)](https://halo.run)
 [![License](https://img.shields.io/badge/License-GPL--3.0-green)](LICENSE)
+[![Node](https://img.shields.io/badge/Node-20+-brightgreen)](https://nodejs.org)
 
-## 🌐 预览
+## 📖 简介
+
+Sky Blog Theme 是一款功能丰富、高度可定制的 Halo 2.0 主题，采用现代前端技术栈开发。
+
+**核心特点**：
+- 🎨 35+ DaisyUI 主题，可视化预览切换
+- 📱 完美的响应式设计
+- ⚡ 极致的性能优化
+- 🔧 灵活的后台配置
+- 🧩 丰富的插件适配
+
+## 🌐 演示
 
 | 链接 | 说明 |
 |------|------|
-| [5ee 博客](https://5ee.net) | 在线演示 |
-| [主题文档](https://5ee.net/docs/halo-theme-sky-blog-1/jianjie) | 使用说明 |
+| [在线演示](https://5ee.net) | 5ee 博客 |
+| [完整文档](https://5ee.net/docs/halo-theme-sky-blog-1/jianjie) | 配置指南和使用说明 |
+| [应用市场](https://www.halo.run/store/apps/app-squauk4h) | Halo 官方应用市场 |
 
-### 📸 界面预览
-
-<div align="center">
-
-**首页展示**
-
-<img src="https://5ee.net/upload/%E9%A6%96%E9%A1%B5%E5%A4%A7%E5%B1%8F.png" width="49%" /> <img src="https://5ee.net/upload/%E9%A6%96%E9%A1%B5%E8%AF%A6%E6%83%85.png" width="49%" />
-
-**文章与文档**
-
-<img src="https://5ee.net/upload/%E6%96%87%E7%AB%A0%E9%A1%B5.png" width="49%" /> <img src="https://5ee.net/upload/%E6%96%87%E6%A1%A3%E4%B8%AD%E5%BF%83.png" width="49%" />
-
-**功能展示**
-
-<img src="https://5ee.net/upload/%E5%85%B3%E4%BA%8E%E7%95%8C%E9%9D%A2.png" width="49%" /> <img src="https://5ee.net/upload/%E5%9B%BE%E5%BA%93.png" width="49%" />
-
-<img src="https://5ee.net/upload/%E7%9E%AC%E9%97%B4%E5%88%97%E8%A1%A8.png" width="49%" /> <img src="https://5ee.net/upload/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5.png" width="49%" />
-
-<details>
-<summary>🖼️ 查看更多截图</summary>
-
-<br>
-
-<img src="https://5ee.net/upload/%E9%A6%96%E9%A1%B5%E5%9B%BE2.png" width="49%" /> <img src="https://5ee.net/upload/tag-%E5%88%97%E8%A1%A8.png" width="49%" />
-
-<img src="https://5ee.net/upload/pc%E5%88%86%E4%BA%AB.png" width="49%" /> <img src="https://5ee.net/upload/%E6%89%8B%E6%9C%BA%E5%88%86%E4%BA%AB.png" width="49%" />
-
-<img src="https://5ee.net/upload/%E6%96%87%E6%A1%A3%E5%86%85%E5%AE%B9.png" width="49%" /> <img src="https://5ee.net/upload/%E6%90%9C%E7%B4%A2.png" width="49%" />
-
-<img src="https://5ee.net/upload/%E7%9E%AC%E9%97%B4%E8%AF%A6%E6%83%85.png" width="49%" /> <img src="https://5ee.net/upload/%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5%E6%8F%90%E4%BA%A4.png" width="49%" />
-
-<img src="https://5ee.net/upload/%E5%88%86%E7%B1%BB-%E5%8D%A1%E7%89%87.png" width="49%" /> <img src="https://5ee.net/upload/%E5%BD%92%E6%A1%A3.png" width="49%" />
-
-<img src="https://5ee.net/upload/%E6%9C%8B%E5%8F%8B%E5%9C%88.png" width="49%" /> <img src="https://5ee.net/upload/%E9%BB%98%E8%AE%A4%E5%8D%95%E9%A1%B5.png" width="49%" />
-
-**页脚展示**
-
-<img src="https://5ee.net/upload/%E9%A1%B5%E8%84%9A1.png" width="98%" />
-
-</details>
-
-</div>
-
----
 ## ✨ 功能特性
 
 | 功能 | 说明 |
@@ -105,26 +74,30 @@
 
 ### 插件模板
 
-| 模板 | 文件 | 依赖插件 |
-|------|------|------|
-| 友链 | `links.html` | 链接管理 |
-| 图库 | `photos.html` | 图库管理 |
-| 瞬间 | `moments.html` / `moment.html` | 瞬间插件 |
-| 朋友圈 | `friends.html` | 朋友圈插件 |
-| 文档 | `docs.html` / `doc.html` / `doc-catalog.html` | Docsme 文档 |
+| 模板 | 文件 | 依赖插件 | 说明 |
+|------|------|------|------|
+| 友链 | `links.html` | plugin-links | 友情链接展示 |
+| 图库 | `photos.html` | plugin-photos | 瀑布流图库 |
+| 瞬间 | `moments.html` / `moment.html` | plugin-moments | 瞬间列表/详情 |
+| 朋友圈 | `friends.html` | plugin-friends | RSS 聚合 |
+| 文档 | `docs.html` / `doc.html` / `doc-catalog.html` | plugin-docsme | 知识库文档 |
+| 追番 | `bangumis.html` | plugin-bangumi | Bilibili 追番 |
+| Steam | `steam.html` | plugin-steam | Steam 游戏库 |
 
 ### 侧边栏小工具
 
-| 组件 | 说明 |
-|------|------|
-| 作者卡片 | 头像、名称、简介、社交链接 |
-| 欢迎卡片 | 天气信息、问候语、日期显示 |
-| 最新文章 | 最新发布的文章列表 |
-| 热门文章 | 访问量最高的文章列表 |
-| 分类列表 | 文章分类导航 |
-| 标签云 | 文章标签聚合 |
-| 博客统计 | 文章数、分类数、标签数、最后更新 |
-| 广告位 | 自定义图片链接 |
+| 组件 | 说明 | 依赖 |
+|------|------|------|
+| 作者卡片 | 头像、名称、简介、社交链接 | 无 |
+| 欢迎卡片 | 天气信息、问候语、日期显示 | 无 |
+| 最新文章 | 最新发布的文章列表 | 无 |
+| 热门文章 | 访问量最高的文章列表 | 无 |
+| 分类列表 | 文章分类导航 | 无 |
+| 标签云 | 文章标签聚合 | 无 |
+| 博客统计 | 文章数、分类数、标签数、最后更新 | 无 |
+| 追番卡片 | Bilibili 追番轮播展示 | plugin-bangumi |
+| Steam 卡片 | Steam 游戏信息展示 | plugin-steam |
+| 广告位 | 自定义图片链接 | 无 |
 
 ---
 
@@ -143,28 +116,37 @@
 
 ## 🔌 插件适配
 
-### 功能类
+主题已适配以下插件，开箱即用：
 
-| 插件 | 链接 | 备注 |
-|------|------|------|
-| 瞬间 | [应用市场](https://www.halo.run/store/apps/app-SnwWD) | 朋友圈风格短博文 |
-| 朋友圈 | [应用市场](https://www.halo.run/store/apps/app-yISsV) | 聚合友链文章 |
-| Docsme 文档 | [应用市场](https://www.halo.run/store/apps/app-yffxw) | 知识库文档展示 |
-| 友链提交 | [应用市场](https://www.halo.run/store/apps/app-glejqzwk) | 自助申请友链 |
-| 图库管理 | [应用市场](https://www.halo.run/store/apps/app-BmQJW) | 瀑布流相册 |
-| 链接管理 | [应用市场](https://www.halo.run/store/apps/app-hfbQg) | 友链/书签管理 |
+### 内容类
+
+| 插件 | 应用市场 | GitHub | 主题支持 |
+|------|---------|--------|---------|
+| 瞬间管理 | [app-SnwWD](https://www.halo.run/store/apps/app-SnwWD) | [plugin-moments](https://github.com/halo-sigs/plugin-moments) | ✅ 前端发布、媒体上传 |
+| 朋友圈 | [app-yISsV](https://www.halo.run/store/apps/app-yISsV) | [plugin-friends](https://github.com/halo-sigs/plugin-friends) | ✅ RSS 聚合展示 |
+| Docsme 文档 | [app-yffxw](https://www.halo.run/store/apps/app-yffxw) | [plugin-docsme](https://github.com/liuzhihang/plugin-docsme) | ✅ 知识库文档 |
+| 图库管理 | [app-BmQJW](https://www.halo.run/store/apps/app-BmQJW) | [plugin-photos](https://github.com/halo-sigs/plugin-photos) | ✅ 瀑布流相册 |
+| 链接管理 | [app-hfbQg](https://www.halo.run/store/apps/app-hfbQg) | [plugin-links](https://github.com/halo-sigs/plugin-links) | ✅ 友链书签 |
+| 友链提交 | [app-glejqzwk](https://www.halo.run/store/apps/app-glejqzwk) | [plugin-link-submit](https://github.com/jiangqizheng/plugin-link-submit) | ✅ 自助申请 |
+
+### 扩展类
+
+| 插件 | 应用市场 | GitHub | 主题支持 |
+|------|---------|--------|---------|
+| Bilibili 追番 | [app-gmuowgah](https://www.halo.run/store/apps/app-gmuowgah) | [plugin-bangumi](https://github.com/chengzhongxue/plugin-bangumi) | ✅ 追番列表、轮播卡片 |
+| Steam 游戏库 | - | [plugin-steam](https://github.com/Tim0x0/halo-plugin-steam) | ✅ 游戏库展示、侧边栏卡片 |
+| 投票管理 | [app-veyvzyhv](https://www.halo.run/store/apps/app-veyvzyhv) | [plugin-vote](https://github.com/chengzhongxue/plugin-vote) | ✅ CSS 变量适配 |
 
 ### 工具类
 
-| 插件 | 链接 | 备注 |
-|------|------|------|
-| 投票管理 | [应用市场](https://www.halo.run/store/apps/app-veyvzyhv) | 文章投票功能 |
-| Steam 游戏库 | [GitHub](https://github.com/Tim0x0/halo-plugin-steam) | Steam 信息展示 |
-| Shiki 代码高亮 | [应用市场](https://www.halo.run/store/apps/app-kzloktzn) | 美观的代码块渲染 |
-| 搜索组件 | [应用市场](https://www.halo.run/store/apps/app-DlacW) | 强大的站内搜索 |
-| 评论组件 | [应用市场](https://www.halo.run/store/apps/app-YXyaD) | 现代化评论系统 |
-| 文本绘图 | [应用市场](https://www.halo.run/store/apps/app-ahBRi) | Mermaid/PlantUML 支持 |
-| lightgallery 灯箱 | [应用市场](https://www.halo.run/store/apps/app-OoggD) | 图片查看器 |
+| 插件 | 应用市场 | GitHub | 主题支持 |
+|------|---------|--------|---------|
+| Shiki 代码高亮 | [app-kzloktzn](https://www.halo.run/store/apps/app-kzloktzn) | [plugin-shiki](https://github.com/halo-sigs/plugin-shiki) | ✅ 代码块美化 |
+| 搜索组件 | [app-DlacW](https://www.halo.run/store/apps/app-DlacW) | [plugin-search-widget](https://github.com/halo-sigs/plugin-search-widget) | ✅ 全局搜索 |
+| 评论组件 | [app-YXyaD](https://www.halo.run/store/apps/app-YXyaD) | [plugin-comment-widget](https://github.com/halo-sigs/plugin-comment-widget) | ✅ 评论系统 |
+| 文本绘图 | [app-ahBRi](https://www.halo.run/store/apps/app-ahBRi) | [plugin-diagrams](https://github.com/halo-sigs/plugin-diagrams) | ✅ Mermaid/PlantUML |
+| lightgallery | [app-OoggD](https://www.halo.run/store/apps/app-OoggD) | [plugin-lightgallery](https://github.com/halo-sigs/plugin-lightgallery) | ✅ 图片灯箱 |
+| 访问统计 | [app-apCvA](https://www.halo.run/store/apps/app-apCvA) | [plugin-umami](https://github.com/halo-sigs/plugin-umami) | ✅ Umami 统计 |
 
 ### 存储类
 
@@ -181,29 +163,103 @@
 
 ---
 
-## 📦 安装
+## 🚀 快速开始
+
+### 安装主题
+
+**方式 1：应用市场（推荐）**
+
+1. Halo 后台 → 外观 → 主题
+2. 点击右上角 "安装主题" → "从应用市场安装"
+3. 搜索 "Sky Blog" 并安装
+
+**方式 2：手动安装**
 
 1. 从 [Releases](https://github.com/sky121666/halo-theme-sky-blog-1/releases) 下载最新版本
 2. Halo 后台 → 外观 → 主题 → 安装主题
-3. 上传 zip 文件并启用
+3. 上传 `.zip` 文件并启用
+
+### 配置主题
+
+1. 启用主题后，点击主题卡片的 "主题设置"
+2. 根据需要配置各个模块（参考 [完整文档](https://5ee.net/docs/halo-theme-sky-blog-1/jianjie)）
+3. 建议配置项：
+   - 通用设置 → 选择主题和颜色
+   - 首页设置 → 配置头部背景
+   - 导航设置 → 配置菜单和 Logo
+
+### 推荐插件
+
+安装以下插件以获得完整体验：
+
+- **必装**：搜索组件、评论组件
+- **推荐**：瞬间、图库、友链提交
+- **可选**：Docsme 文档、朋友圈、追番、Steam
 
 ---
 
-## 🔧 开发
+## 🔧 开发指南
+
+### 环境要求
+
+- Node.js 20+
+- pnpm 8+
+- Java 21+ (运行 Halo)
+
+### 开发命令
 
 ```bash
 pnpm install    # 安装依赖
-pnpm dev        # 开发模式
+pnpm dev        # 开发模式（热更新）
 pnpm build      # 构建主题包
+pnpm lint       # 代码检查
+pnpm format     # 代码格式化
+```
+
+### 目录结构
+
+```
+theme-sky-blog-1/
+├── src/              # 前端源码
+│   ├── common/       # 公共资源（main.js, CSS, Alpine 组件）
+│   ├── pages/        # 页面特定资源
+│   └── static/       # 静态资源
+├── templates/        # Halo 模板文件
+│   ├── assets/       # 构建产物（自动生成）
+│   └── modules/      # 模板模块
+├── docs/             # 主题配置文档
+├── theme.yaml        # 主题元数据
+├── settings.yaml     # 后台配置表单
+└── vite.config.ts    # Vite 构建配置
 ```
 
 ---
 
-## 💬 讨论
+## 📚 文档
 
-如果你对主题有什么建议或者意见，欢迎提 PR & Issue。
+完整的配置文档请访问：
 
-| 企业微信（备注进群） | QQ群 |
+- **在线文档**：[https://5ee.net/docs/halo-theme-sky-blog-1/jianjie](https://5ee.net/docs/halo-theme-sky-blog-1/jianjie)
+- **本地文档**：[docs/README.md](./docs/README.md)
+
+### 主要章节
+
+- [通用设置](./docs/general.md) - 主题、背景、侧边栏
+- [首页设置](./docs/index.md) - 头部、模块、布局
+- [文章页设置](./docs/article.md) - 文章展示和交互
+- [瞬间设置](./docs/moments.md) - 瞬间展示和前端发布
+- [插件适配](./docs/plugins.md) - 插件配置和兼容性
+
+---
+
+## 🐛 问题反馈
+
+如果你遇到问题或有功能建议：
+
+1. **GitHub Issues**：[提交 Issue](https://github.com/sky121666/halo-theme-sky-blog-1/issues)
+2. **加入社群**：与其他用户交流
+
+| 企业微信（备注进群） | QQ 群 |
 |:---:|:---:|
 | <img width="200" src="https://api.minio.yyds.pink/kunkunyu/files/2025/02/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20250212142105-pbceif.jpg" /> | <img width="200" src="https://api.minio.yyds.pink/kunkunyu/files/2025/05/qq-708998089-iqowsh.webp" /> |
 
@@ -211,6 +267,36 @@ pnpm build      # 构建主题包
 
 ---
 
+## 🤝 贡献
+
+欢迎提交 PR 和 Issue！
+
+**贡献指南**：
+- Fork 项目并创建分支
+- 遵循项目代码规范（ESLint + Prettier）
+- 提交前运行 `pnpm lint` 和 `pnpm format`
+- 提交信息遵循 [Conventional Commits](https://www.conventionalcommits.org/)
+
+---
+
+## ⭐ Star History
+
+如果这个主题对你有帮助，欢迎 Star 支持！
+
+---
+
 ## 📄 许可证
 
 [GPL-3.0](LICENSE)
+
+---
+
+## 💖 鸣谢
+
+感谢以下开源项目：
+
+- [Halo](https://github.com/halo-dev/halo) - 强大的博客系统
+- [Tailwind CSS](https://tailwindcss.com/) - 原子化 CSS 框架
+- [DaisyUI](https://daisyui.com/) - Tailwind CSS 组件库
+- [Alpine.js](https://alpinejs.dev/) - 轻量级 JS 框架
+- [Vite](https://vitejs.dev/) - 快速的构建工具
