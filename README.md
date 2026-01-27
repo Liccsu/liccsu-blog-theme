@@ -124,7 +124,7 @@ Sky Blog Theme 是一款功能丰富、高度可定制的 Halo 2.0 主题，采�
 |------|---------|--------|---------|
 | 瞬间管理 | [app-SnwWD](https://www.halo.run/store/apps/app-SnwWD) | [plugin-moments](https://github.com/halo-sigs/plugin-moments) | ✅ 前端发布、媒体上传 |
 | 朋友圈 | [app-yISsV](https://www.halo.run/store/apps/app-yISsV) | [plugin-friends](https://github.com/halo-sigs/plugin-friends) | ✅ RSS 聚合展示 |
-| Docsme 文档 | [app-yffxw](https://www.halo.run/store/apps/app-yffxw) | [plugin-docsme](https://github.com/liuzhihang/plugin-docsme) | ✅ 知识库文档 |
+| Docsme 文档 | [app-yffxw](https://www.halo.run/store/apps/app-yffxw) | - | ✅ 知识库文档 |
 | 图库管理 | [app-BmQJW](https://www.halo.run/store/apps/app-BmQJW) | [plugin-photos](https://github.com/halo-sigs/plugin-photos) | ✅ 瀑布流相册 |
 | 链接管理 | [app-hfbQg](https://www.halo.run/store/apps/app-hfbQg) | [plugin-links](https://github.com/halo-sigs/plugin-links) | ✅ 友链书签 |
 | 友链提交 | [app-glejqzwk](https://www.halo.run/store/apps/app-glejqzwk) | [plugin-link-submit](https://github.com/jiangqizheng/plugin-link-submit) | ✅ 自助申请 |
@@ -133,8 +133,8 @@ Sky Blog Theme 是一款功能丰富、高度可定制的 Halo 2.0 主题，采�
 
 | 插件 | 应用市场 | GitHub | 主题支持 |
 |------|---------|--------|---------|
-| Bilibili 追番 | [app-gmuowgah](https://www.halo.run/store/apps/app-gmuowgah) | [plugin-bangumi](https://github.com/chengzhongxue/plugin-bangumi) | ✅ 追番列表、轮播卡片 |
-| Steam 游戏库 | - | [plugin-steam](https://github.com/Tim0x0/halo-plugin-steam) | ✅ 游戏库展示、侧边栏卡片 |
+| Bilibili 追番 | [app-OTFPN](https://www.halo.run/store/apps/app-OTFPN) | [plugin-bilibili-bangumi](https://github.com/Roozenlz/plugin-bilibili-bangumi) | ✅ 追番列表、轮播卡片 |
+| Steam 游戏库 | [app-0ojqyzfh](https://www.halo.run/store/apps/app-0ojqyzfh) | [plugin-steam](https://github.com/Tim0x0/halo-plugin-steam) | ✅ 游戏库展示、侧边栏卡片 |
 | 投票管理 | [app-veyvzyhv](https://www.halo.run/store/apps/app-veyvzyhv) | [plugin-vote](https://github.com/chengzhongxue/plugin-vote) | ✅ CSS 变量适配 |
 
 ### 工具类
@@ -144,9 +144,8 @@ Sky Blog Theme 是一款功能丰富、高度可定制的 Halo 2.0 主题，采�
 | Shiki 代码高亮 | [app-kzloktzn](https://www.halo.run/store/apps/app-kzloktzn) | [plugin-shiki](https://github.com/halo-sigs/plugin-shiki) | ✅ 代码块美化 |
 | 搜索组件 | [app-DlacW](https://www.halo.run/store/apps/app-DlacW) | [plugin-search-widget](https://github.com/halo-sigs/plugin-search-widget) | ✅ 全局搜索 |
 | 评论组件 | [app-YXyaD](https://www.halo.run/store/apps/app-YXyaD) | [plugin-comment-widget](https://github.com/halo-sigs/plugin-comment-widget) | ✅ 评论系统 |
-| 文本绘图 | [app-ahBRi](https://www.halo.run/store/apps/app-ahBRi) | [plugin-diagrams](https://github.com/halo-sigs/plugin-diagrams) | ✅ Mermaid/PlantUML |
+| 文本绘图 | [app-ahBRi](https://www.halo.run/store/apps/app-ahBRi) | [plugin-text-diagram](https://github.com/halo-sigs/plugin-text-diagram) | ✅ Mermaid/PlantUML |
 | lightgallery | [app-OoggD](https://www.halo.run/store/apps/app-OoggD) | [plugin-lightgallery](https://github.com/halo-sigs/plugin-lightgallery) | ✅ 图片灯箱 |
-| 访问统计 | [app-apCvA](https://www.halo.run/store/apps/app-apCvA) | [plugin-umami](https://github.com/halo-sigs/plugin-umami) | ✅ Umami 统计 |
 
 ### 存储类
 

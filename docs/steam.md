@@ -2,7 +2,11 @@
 
 > 路径：**外观 → 主题 → Sky Blog → 设置 → Steam**
 
-需安装 `plugin-steam`（Steam 游戏库插件）并配置 Steam API Key 和 Steam ID。
+需安装 Steam 游戏库插件并配置 Steam API Key 和 Steam ID。
+
+**插件信息**：
+- 应用市场：[app-0ojqyzfh](https://www.halo.run/store/apps/app-0ojqyzfh)
+- GitHub：[plugin-steam](https://github.com/Tim0x0/halo-plugin-steam)
 
 ---
 

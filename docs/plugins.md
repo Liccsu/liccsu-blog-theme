@@ -72,6 +72,10 @@
 
 ### 文本绘图插件
 
+**插件信息**：
+- 应用市场：[app-ahBRi](https://www.halo.run/store/apps/app-ahBRi)
+- GitHub：[plugin-text-diagram](https://github.com/halo-sigs/plugin-text-diagram)
+
 | 配置项 | 推荐值 |
 |--------|--------|
 | **暗黑模式选择器** | `html[data-color-scheme="dark"]` |
@@ -112,7 +116,11 @@
 
 ---
 
-### Bilibili 追番插件 (plugin-bangumi)
+### Bilibili 追番插件
+
+**插件信息**：
+- 应用市场：[app-OTFPN](https://www.halo.run/store/apps/app-OTFPN)
+- GitHub：[plugin-bilibili-bangumi](https://github.com/Roozenlz/plugin-bilibili-bangumi)
 
 | 配置项 | 来源 | 说明 |
 |--------|------|------|
@@ -127,7 +135,11 @@
 
 ---
 
-### Steam 游戏库插件 (plugin-steam)
+### Steam 游戏库插件
+
+**插件信息**：
+- 应用市场：[app-0ojqyzfh](https://www.halo.run/store/apps/app-0ojqyzfh)
+- GitHub：[plugin-steam](https://github.com/Tim0x0/halo-plugin-steam)
 
 | 配置项 | 来源 | 说明 |
 |--------|------|------|

@@ -2,7 +2,11 @@
 
 > 路径：**外观 → 主题 → Sky Blog → 设置 → 追番页面**
 
-需安装 `plugin-bangumi`（Bilibili 追番插件）并配置 B 站 UID。
+需安装 Bilibili 追番插件并配置 B 站 UID。
+
+**插件信息**：
+- 应用市场：[app-OTFPN](https://www.halo.run/store/apps/app-OTFPN)
+- GitHub：[plugin-bilibili-bangumi](https://github.com/Roozenlz/plugin-bilibili-bangumi)
 
 ---
 
