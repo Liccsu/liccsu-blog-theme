@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+
+<!-- ========================================== -->
+<!--        装备页面主体内容                     -->
+<!-- ========================================== -->
+
+<th:block th:replace="~{plugin:equipment:modules/style}"></th:block>
+
+<main class="equipment-page relative" th:fragment="equipment-content">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="author-content author-content-item essayPage single"
+         th:style="'background:url('+${theme.config.equipment_settings?.cover_url}+') left 28% / cover no-repeat'">
+      <div class="card-content">
+        <div class="author-content-item-tips" th:text="${theme.config.equipment_settings?.page_subtitle} ?: '好物'">好物</div>
+        <span class="author-content-item-title" th:text="${theme.config.equipment_settings?.page_title} ?: '装备列表'">装备列表</span>
+        <div class="content-bottom">
+            <div class="tips" th:text="${theme.config.equipment_settings?.page_description} ?: '跟我一起享受科技带来的乐趣'">跟我一起享受科技带来的乐趣</div>
+        </div>
+      </div>
+    </div>
+
+    <th:block th:if="${not #lists.isEmpty(groups)}">
+      <!-- 科技风格 -->
+      <div id="equipment" th:if="${theme.config.equipment_settings?.mode == 'tech'}" x-data="{tab: ''}">
+        <!-- 胶囊tab -->
+        <div class="inline-flex p-1 bg-base-200/50 backdrop-blur-sm rounded-xl border border-base-content/10 dark:bg-base-300/40 dark:border-base-content/10">
+          <button @click="tab = ''"
+            :class="tab == '' ? 'bg-base-100 shadow-md text-base-content dark:bg-base-100/95' : 'text-base-content/60 hover:text-base-content hover:bg-base-100/40'"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+            全部</button>
+          <button th:each="group : ${groups}"
+                  th:data-group-name="${group.spec.displayName}"
+                  @click="tab = $el.dataset.groupName"
+                  :class="tab == $el.dataset.groupName ? 'bg-base-100 shadow-md text-base-content dark:bg-base-100/95' : 'text-base-content/60 hover:text-base-content over:bg-base-100/40'"
+                  class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                  [[${group.spec.displayName}]] [[${group.status.equipmentCount}]]</button>
+        </div>
+
+        <!-- 装备内容区域 -->
+        <div class="equipment-item" 
+            th:each="group : ${groups}"
+            th:data-group-name="${group.spec.displayName}"
+            x-show="tab == '' || tab == $el.dataset.groupName">
+          <div class="equipment-item-description" x-show="tab !== ''">✨描述：[[${group.spec.description}]]</div>
+          <div class="equipment-item-content" th:with="equipmentList = ${group.equipments}">
+            <div class="equipment-item-content-item" th:each="equipment : ${equipmentList}">
+              <div class="equipment-item-content-item-cover">
+                  <img class="equipment-item-content-item-image"
+                      th:alt="${equipment.spec.displayName}"
+                      th:src="${equipment.spec.cover}">
+              </div>
+              <div class="equipment-item-content-item-info">
+                <div class="equipment-item-content-item-name tooltip"
+                    data-tip="点击可查看详情"
+                    th:href="${equipment.spec.url}">
+                    <span>[[${equipment.spec.displayName}]]</span>
+                </div>
+                <div class="equipment-item-content-item-specification">[[${equipment.spec.specification}]]</div>
+                <div class="equipment-item-content-item-description tooltip"
+                    th:data-tip="${equipment.spec.description}">
+                    <span>[[${equipment.spec.description}]]</span>
+                  </div>
+                <div class="equipment-item-content-item-toolbar">
+                  <a class="equipment-item-content-item-link" th:href="${equipment.spec.url}" target="_blank">详情</a>
+                </div>
+              </div>
+            </div>
+            <!-- 空装备状态 -->
+            <div th:if="${group.equipments.isEmpty()}"
+                class="equipment-empty"
+                x-show="tab !== ''">
+              <div class="equipment-empty-icon">💻</div>
+              <p>暂无装备数据</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="equipment" th:if="${theme.config.equipment_settings?.mode == 'simple'}">
+        <th:block th:each="group : ${groups}">
+          <div class="equipment-item">
+            <h2 class="equipment-item-title">[[${group.spec.displayName}]]</h2>
+            <div class="equipment-item-description">[[${group.spec.description}]]</div>
+            <div class="equipment-item-content" th:with="equipmentList = ${group.equipments}">
+              <div class="equipment-item-content-item" th:each="equipment : ${equipmentList}">
+                <div class="equipment-item-content-item-cover">
+                    <img class="equipment-item-content-item-image"
+                         th:alt="${equipment.spec.displayName}"
+                         th:src="${equipment.spec.cover}">
+                </div>
+                <div class="equipment-item-content-item-info">
+                  <div class="equipment-item-content-item-name tooltip"
+                    data-tip="点击可查看详情"
+                    th:href="${equipment.spec.url}">
+                    <span>[[${equipment.spec.displayName}]]</span>
+                  </div>
+                  <div class="equipment-item-content-item-specification">
+                    [[${equipment.spec.specification}]]
+                  </div>
+                  <div class="equipment-item-content-item-description tooltip"
+                    th:data-tip="${equipment.spec.description}">
+                    <span>[[${equipment.spec.description}]]</span>
+                  </div>
+                  <div class="equipment-item-content-item-toolbar">
+                    <a class="equipment-item-content-item-link" th:href="${equipment.spec.url}" target="_blank">详情</a>
+                  </div>
+                </div>
+              </div>
+              <!-- 空装备状态 -->
+              <div th:if="${group.equipments.isEmpty()}" class="equipment-empty">
+                <div class="equipment-empty-icon">💻</div>
+                <p>暂无装备数据</p>
+              </div>
+            </div>
+          </div>
+        </th:block>
+      </div>
+    </th:block>
+
+    <!-- 空分组状态 -->
+    <div th:if="${#lists.isEmpty(groups) && groups != null}" class="groups-empty">
+      <div class="groups-empty-icon">📦</div>
+      <p>暂无分组数据</p>
+    </div>
+
+    <!-- 插件未加载提示 -->
+    <div th:if="${groups == null}" class="equipment-error groups-empty">
+      <div class="groups-empty-icon">❌</div>
+      <p>装备数据加载失败，请检查插件配置</p>
+    </div>
+
+    <!-- 评论区 -->
+    <th:block class="mt-12"
+      th:if="${theme.config.equipment_settings?.enable_comment != false}">
+      <div class="flex items-center gap-3 mb-5">
+        <div
+          class="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+          <span class="icon-[mdi--comment-text-outline] w-4 h-4 text-primary"></span>
+        </div>
+        <h2 class="text-lg font-semibold text-base-content">评论留言</h2>
+      </div>
+      <div class="glow-card bg-base-100/80 backdrop-blur-xl rounded-2xl border border-base-content/[0.06] p-6">
+        <halo:comment group="equipment.kunkunyu.com" kind="EquipmentPage" 
+          th:name="${equipmentName}" colorScheme="system">
+        </halo:comment>
+      </div>
+    </th:block>
+  </div>
+
+</main>
+
+</html>
+

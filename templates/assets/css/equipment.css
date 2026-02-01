@@ -1,0 +1,232 @@
+/* 我的装备 */
+
+/* 1. 封面图 */
+.author-content.author-content-item.essayPage.single {
+    min-height: 260px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px -4px var(--color-base-300);
+}
+
+.card-content {
+    position: relative;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 2rem;
+}
+
+.author-content-item-tips {
+    opacity: .8;
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: color-mix(in oklab, white 90%, transparent);
+}
+
+span.author-content-item-title {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    color: white;
+}
+
+.content-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    top: 134px;
+    min-height: 40px;
+}
+
+.tips {
+    max-width: calc(100% - 6rem);
+    line-height: 1.2;
+    color: color-mix(in oklab, white 80%, transparent);
+}
+
+
+/* 2. 装备列表 */
+
+.equipment-item-content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 8px 0 0 -8px;
+}
+
+.equipment-item-content-item {
+    width: calc(33.3% - 12px);
+    border-radius: 12px;
+    border: 1px solid color-mix(in oklab,var(--color-base-content) 14%, transparent);
+    overflow: hidden;
+    margin: 8px 6px;
+    background: var(--color-base-100);
+    box-shadow: 0 8px 16px -4px var(--color-base-300);
+    min-height: 400px;
+    position: relative;
+}
+
+@media screen and (max-width: 1200px) {
+    .equipment-item-content-item {
+        width: calc(50% - 12px);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .equipment-item-content-item {
+        width: 100%;
+    }
+}
+
+.equipment-item-content-item-info {
+    padding: 8px 16px 16px 16px;
+    margin-top: 12px;
+}
+
+.equipment-item-content-item-name {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 8px;
+    cursor: pointer;
+    width: fit-content;
+    color: var(--color-base-content);
+    background: linear-gradient(to right, var(--color-primary), var(--color-primary)) no-repeat;
+    background-size: 0 2px;
+    background-position: left bottom;
+    transition: .5s;
+}
+
+.equipment-item-content-item-name>span{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.equipment-item-content-item-name:hover {
+    color: var(--color-primary);
+    background-size: 100% 2px;
+}
+
+.equipment-item-content-item-specification {
+    font-size: 12px;
+    color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+    line-height: 1;
+    margin-bottom: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.equipment-item-content-item-description {
+    line-height: 20px;
+    color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+    height: 60px;
+    display: -webkit-box;
+    font-size: 14px;
+}
+
+.equipment-item-content-item-description>span{
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+a.equipment-item-content-item-link {
+    font-size: 14px;
+    background: color-mix(in oklab,var(--color-base-content) 10%, transparent);
+    padding: 4px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .5s;
+    color: var(--color-base-content);
+}
+
+a.equipment-item-content-item-link:hover {
+    background: var(--color-primary);
+    color: white;
+}
+
+h2.equipment-item-title {
+    line-height: 1;
+    font-weight: 700;
+    margin: 1rem 0 .7rem;
+    font-size: 24px;
+}
+
+.equipment-item-description {
+    line-height: 32px;
+    margin: 16px 0 0;
+    color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+    background: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+    border-left: 4px solid var(--color-primary);
+    padding-left: 6px;
+    border-radius: 4px;
+}
+
+.equipment-item-content-item-cover {
+    width: 100%;
+    height: 200px;
+    background: color-mix(in oklab,var(--color-base-content) 10%,transparent);
+    display: flex;
+    justify-content: center;
+}
+
+img.equipment-item-content-item-image {
+    object-fit: cover;
+    height: 100%;
+}
+
+div#equipment {
+    margin: 26px 0;
+    min-height: 526px;
+}
+
+.equipment-item-content-item-toolbar {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    width: 100%;
+    padding: 0 16px;
+}
+
+.equipment-item-content-item-toolbar a.bber-reply {
+    cursor: pointer;
+}
+
+/* 空装备状态 */
+.equipment-empty {
+    display: flex;
+    width: 100%;
+    height: 300px;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    border-radius: 12px;
+    margin: 10px;
+    border: 1px dashed color-mix(in oklab, var(--color-base-content) 20%, transparent);
+    box-shadow: 0 1px 6px color-mix(in srgb, var(--color-base-content) 10%, transparent);
+    background: linear-gradient(45deg, #ffffff17, #ffffff29);
+    filter: brightness(0.8);
+}
+
+/* 空分组状态 */
+.groups-empty {
+    display: flex;
+    width: 100%;
+    height: 300px;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    border-radius: 12px;
+    border: 1px dashed color-mix(in oklab, var(--color-base-content) 20%, transparent);
+    box-shadow: 0 1px 6px  color-mix(in srgb, var(--color-base-content) 10%, transparent);
+    background: linear-gradient(45deg, #ffffff17, #ffffff29);
+    filter: brightness(0.8);
+    margin-top: 40px;
+}
