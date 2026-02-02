@@ -55,48 +55,42 @@
 
 /* 雾天：柔和灰蓝，渐进过渡 */
 .weather-foggy {
-  background: linear-gradient(180deg,
-      #9ca8b3 0%,
-      /* 顶部柔和灰 */
-      #6b7b8a 40%,
-      /* 中间过渡 */
-      #3d4f5f 100%
-      /* 底部深灰蓝 */
-    );
+  background: linear-gradient(
+    180deg,
+    #9ca8b3 0%,
+    /* 顶部柔和灰 */ #6b7b8a 40%,
+    /* 中间过渡 */ #3d4f5f 100% /* 底部深灰蓝 */
+  );
 }
 
 /* 雨天：灰蓝压抑 */
 .weather-rainy {
-  background: linear-gradient(180deg, #373B44 0%, #4286f4 100%);
+  background: linear-gradient(180deg, #373b44 0%, #4286f4 100%);
 }
 
 /* 雷暴：深紫黑 */
 .weather-stormy {
-  background: linear-gradient(180deg, #141E30 0%, #243B55 100%);
+  background: linear-gradient(180deg, #141e30 0%, #243b55 100%);
 }
 
 /* 雪天：默认（深色主题）冷色调蓝灰渐变 */
 .weather-snowy {
-  background: linear-gradient(180deg,
-      #4a6a8a 0%,
-      /* 深冷蓝灰顶部 */
-      #6a8aaa 40%,
-      /* 中间过渡 */
-      #8aa4be 100%
-      /* 底部 */
-    );
+  background: linear-gradient(
+    180deg,
+    #4a6a8a 0%,
+    /* 深冷蓝灰顶部 */ #6a8aaa 40%,
+    /* 中间过渡 */ #8aa4be 100% /* 底部 */
+  );
 }
 
 /* 雪天：亮色主题 - 更深的背景增强雪花可见性 */
 [data-color-scheme="light"] .weather-snowy {
-  background: linear-gradient(180deg,
-      #5a7a9a 0%,
-      /* 冷蓝灰顶部 */
-      #7a9ab8 50%,
-      /* 中间 */
-      #9ab4cc 100%
-      /* 底部偏浅蓝灰 */
-    );
+  background: linear-gradient(
+    180deg,
+    #5a7a9a 0%,
+    /* 冷蓝灰顶部 */ #7a9ab8 50%,
+    /* 中间 */ #9ab4cc 100% /* 底部偏浅蓝灰 */
+  );
 }
 
 .atmosphere-glow {
@@ -107,7 +101,6 @@
   mix-blend-mode: overlay;
   animation: breathe 8s ease-in-out infinite;
 }
-
 
 /* ========================================
    2. 晴天 (Sunny) - 阳光草坪 (Stylized Lawn)
@@ -168,7 +161,6 @@
   background: #223e2a;
 }
 
-
 /* 精致花朵 */
 .sunny-flower-detailed {
   position: absolute;
@@ -183,7 +175,7 @@
 
 /* 花茎 */
 .sunny-flower-detailed::before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -220,8 +212,7 @@
   border-radius: 50%;
   box-shadow:
     0 0 0 4px #ffeb3b inset,
-    /* 花蕊 */
-    0 0 0 8px #fff;
+    /* 花蕊 */ 0 0 0 8px #fff;
   /* 花瓣暗示 */
   width: 20px;
   height: 20px;
@@ -233,7 +224,6 @@
   border-radius: 50%;
   box-shadow: 0 0 0 6px #ffeb3b;
 }
-
 
 @keyframes flower-sway {
   0% {
@@ -424,9 +414,7 @@
   height: 150px;
   background-image:
     linear-gradient(to top, #0f0f1a 0%, transparent 100%),
-    repeating-linear-gradient(90deg,
-      transparent 0, transparent 40px,
-      #050510 40px, #050510 50px);
+    repeating-linear-gradient(90deg, transparent 0, transparent 40px, #050510 40px, #050510 50px);
   /* 简易树干模拟 */
   z-index: 3;
 }
@@ -462,7 +450,6 @@
 }
 
 @keyframes firefly-float {
-
   0%,
   100% {
     transform: translate(0, 0) scale(1);
@@ -524,19 +511,21 @@
   /* 极深紫黑 */
   z-index: 3;
   /* 使用 clip-path 模拟扭曲树干和分叉枯枝 */
-  clip-path: polygon(40% 100%, 60% 100%, 55% 80%,
-      /* 根部 */
-      70% 60%, 50% 50%,
-      /* 枝干1 */
-      80% 30%, 60% 35%,
-      /* 枝叶1 */
-      50% 10%, 40% 35%,
-      /* 顶端 */
-      20% 30%, 30% 50%,
-      /* 枝叶2 */
-      10% 60%, 45% 80%
-      /* 根部回连 */
-    );
+  clip-path: polygon(
+    40% 100%,
+    60% 100%,
+    55% 80%,
+    /* 根部 */ 70% 60%,
+    50% 50%,
+    /* 枝干1 */ 80% 30%,
+    60% 35%,
+    /* 枝叶1 */ 50% 10%,
+    40% 35%,
+    /* 顶端 */ 20% 30%,
+    30% 50%,
+    /* 枝叶2 */ 10% 60%,
+    45% 80% /* 根部回连 */
+  );
   transform-origin: bottom center;
 }
 
@@ -555,7 +544,7 @@
 
 .spooky-eye-pair::before,
 .spooky-eye-pair::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   width: 6px;
@@ -583,7 +572,6 @@
 }
 
 @keyframes eye-blink {
-
   0%,
   70%,
   100% {
@@ -620,7 +608,6 @@
 }
 
 @keyframes ghost-float {
-
   0%,
   100% {
     transform: translate(0, 0);
@@ -640,7 +627,6 @@
     opacity: 0.7;
   }
 }
-
 
 /* ========================================
    5. 雨 & 雷暴 (Rain & Storm) - Canvas 系统
@@ -679,11 +665,10 @@
 
 /* 震动效果 (雷击时) */
 .weather-shake {
-  animation: weather-shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+  animation: weather-shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 @keyframes weather-shake {
-
   10%,
   90% {
     transform: translate3d(-1px, 0, 0);
@@ -812,7 +797,7 @@
 
 /* 窗格 (十字线) */
 .house-window::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 0;
@@ -822,7 +807,7 @@
 }
 
 .house-window::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 50%;
@@ -954,21 +939,25 @@
   background: #fff;
   border-radius: 70px 70px 10px 10px;
   /* 半圆顶 */
-  box-shadow: inset -10px -5px 20px rgba(0, 0, 0, 0.1), 10px 10px 15px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    inset -10px -5px 20px rgba(0, 0, 0, 0.1),
+    10px 10px 15px rgba(0, 0, 0, 0.1);
   z-index: 6;
   border: 1px solid #e1ecf4;
 }
 
 /* 雪屋纹理 - 冰砖 */
 .snow-igloo::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: 90px 90px 0 0;
   background-image:
     linear-gradient(rgba(200, 230, 255, 0.4) 1px, transparent 1px),
     linear-gradient(90deg, rgba(200, 230, 255, 0.4) 1px, transparent 1px);
-  background-size: 100% 20px, 40px 100%;
+  background-size:
+    100% 20px,
+    40px 100%;
   opacity: 0.5;
 }
 
@@ -1019,7 +1008,7 @@
 
 /* 积雪效果 */
 .snow-pine::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -30px;
@@ -1112,7 +1101,9 @@
   height: 80px;
   background: #fffdf0;
   border-radius: 50%;
-  box-shadow: 0 0 40px rgba(255, 253, 240, 0.8), 0 0 100px rgba(255, 220, 100, 0.4);
+  box-shadow:
+    0 0 40px rgba(255, 253, 240, 0.8),
+    0 0 100px rgba(255, 220, 100, 0.4);
   z-index: 1;
   opacity: 0.9;
 }
@@ -1120,7 +1111,9 @@
 /* 深色主题太阳 */
 [data-color-scheme="dark"] .mist-sun {
   background: #e0e0e0;
-  box-shadow: 0 0 30px rgba(200, 200, 255, 0.3), 0 0 80px rgba(100, 100, 200, 0.2);
+  box-shadow:
+    0 0 30px rgba(200, 200, 255, 0.3),
+    0 0 80px rgba(100, 100, 200, 0.2);
   opacity: 0.6;
 }
 
@@ -1177,7 +1170,6 @@
   border-bottom-color: #1a252f;
 }
 
-
 /* --- 树木 (Trees) --- */
 .mist-tree {
   position: absolute;
@@ -1189,7 +1181,7 @@
 }
 
 .mist-tree::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -1249,7 +1241,6 @@
 [data-color-scheme="dark"] .t-4 {
   background-color: #0f1a1a;
 }
-
 
 /* --- 流动雾气层 (SVG Background) --- */
 .mist-fog-layer {
@@ -1363,7 +1354,7 @@
 }
 
 .weather-stormy.flash-active::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: rgba(255, 255, 255, 0.2);
@@ -1385,7 +1376,6 @@
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0);
@@ -1397,7 +1387,6 @@
 }
 
 @keyframes breathe {
-
   0%,
   100% {
     opacity: 0.6;
@@ -1411,7 +1400,6 @@
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     transform: translate(-50%, -50%) scale(1);
@@ -1448,7 +1436,6 @@
 }
 
 @keyframes twinkle {
-
   0%,
   100% {
     opacity: 0.3;
@@ -1492,8 +1479,7 @@
   }
 
   100% {
-    transform:
-      translateY(calc(100vh + 50px)) translateX(calc(var(--wind-offset, 0px) + 20px)) rotate(360deg);
+    transform: translateY(calc(100vh + 50px)) translateX(calc(var(--wind-offset, 0px) + 20px)) rotate(360deg);
     opacity: 0;
   }
 }
