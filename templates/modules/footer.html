@@ -35,7 +35,7 @@
         <div class="flex flex-wrap justify-center gap-8 lg:gap-12">
           <!-- 品牌信息 -->
           <div class="w-full text-center md:w-auto md:text-left" th:fragment="brand-section">
-            <div class="mb-4 flex flex-col items-center gap-3 md:flex-row md:items-center">
+            <div class="mx-auto mb-4 flex flex-col items-center gap-3 md:mx-0 md:flex-row md:items-center">
               <!-- 站点图标 - 只在有图标配置时渲染容器 -->
               <div
                 th:if="${(theme.config.footer.brand_settings.brand_icon_type == 'iconify' and theme.config.footer.brand_settings.brand_icon != null) or (theme.config.footer.brand_settings.brand_icon_type == 'svg' and not #strings.isEmpty(theme.config.footer.brand_settings.brand_icon_html)) or (theme.config.footer.brand_settings.brand_icon_type == 'image' and not #strings.isEmpty(theme.config.footer.brand_settings.brand_icon_image))}"
