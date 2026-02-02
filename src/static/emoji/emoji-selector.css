@@ -19,8 +19,6 @@
   overflow: hidden;
 }
 
-
-
 .emoji-selector.show {
   opacity: 1;
   visibility: visible;
@@ -75,7 +73,6 @@
 
 .emoji-item:hover {
   background: var(--color-base-200);
-  
 }
 
 .emoji-item:active,
@@ -90,16 +87,15 @@
     width: 280px;
     max-height: 240px;
   }
-  
+
   .emoji-grid {
     grid-template-columns: repeat(7, 1fr);
     max-height: 200px;
   }
-  
+
   .emoji-item {
     width: 28px;
     height: 28px;
     font-size: 16px;
   }
 }
-

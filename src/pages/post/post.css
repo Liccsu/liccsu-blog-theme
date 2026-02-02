@@ -9,7 +9,7 @@
  */
 
 /* 导入公共文章内容样式 */
-@import '../../static/css/article-content.css';
+@import "../../static/css/article-content.css";
 
 /* ===================================================
  * 1. 文章容器 - 统一布局控制
@@ -31,7 +31,9 @@
   border: 2px dashed color-mix(in srgb, var(--color-primary) 50%, transparent);
   border-radius: 0.5rem 1.5rem 0.5rem 1.5rem;
   transform: rotate(-0.3deg);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .article-excerpt:hover {
@@ -55,7 +57,6 @@
 }
 
 @keyframes cursor-blink {
-
   0%,
   100% {
     opacity: 1;
@@ -79,7 +80,7 @@ body ai-summary-widget {
 }
 
 html[data-color-scheme="dark"] ai-summary-widget {
-  --lightningcss-light: !important;
+  --lightningcss-light:  !important;
   --lightningcss-dark: initial !important;
   color-scheme: dark !important;
 }
@@ -112,7 +113,9 @@ html[data-color-scheme="dark"] ai-summary-widget {
   backdrop-filter: blur(4px);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
 }
 
 .post-toc-overlay.open {

@@ -22,17 +22,28 @@
   letter-spacing: 0.05em;
   /* 打字机文字颜色适配副标题主色；未设置则回退到主题主色 */
   color: var(--subtitle-color, var(--color-primary));
-  animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+  animation:
+    typing 3.5s steps(40, end),
+    blink-caret 0.75s step-end infinite;
 }
 
 @keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 @keyframes blink-caret {
-  from, to { border-color: transparent; }
-  50% { border-color: var(--subtitle-color, var(--color-primary)); }
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: var(--subtitle-color, var(--color-primary));
+  }
 }
 
 /**
@@ -42,7 +53,7 @@
  */
 .gradient-flow {
   background: linear-gradient(
-    45deg, 
+    45deg,
     var(--color-primary),
     var(--color-secondary),
     var(--color-accent),
@@ -59,9 +70,15 @@
 }
 
 @keyframes rainbow-flow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /**
@@ -91,14 +108,14 @@
 }
 
 @keyframes fade-breath {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.75;
   }
   50% {
     opacity: 1;
   }
 }
-
 
 /* ===================================================
  * 性能优化
@@ -110,10 +127,9 @@
   .fade-pulse {
     animation: none !important;
   }
-  
+
   .typewriter {
     border-right: none;
     white-space: normal;
   }
 }
-

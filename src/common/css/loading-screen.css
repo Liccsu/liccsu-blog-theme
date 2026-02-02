@@ -89,7 +89,6 @@
 }
 
 @keyframes loading-pulse {
-
   0%,
   80%,
   100% {
@@ -142,7 +141,6 @@
 }
 
 @keyframes loading-bars {
-
   0%,
   40%,
   100% {

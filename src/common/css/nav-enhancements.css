@@ -41,7 +41,7 @@
 }
 
 /* 导航栏内容层级管理 - 确保内容显示在遮罩上层 */
-.navbar>* {
+.navbar > * {
   position: relative;
   z-index: 10;
 }
@@ -72,7 +72,9 @@
 /* 桌面端 hover 效果 - 仅在支持 hover 的设备上生效 */
 @media (hover: hover) {
   .nav-menu-item {
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      color 0.2s ease;
   }
 
   .nav-menu-item::before {
@@ -89,7 +91,9 @@
 
   /* Logo 区域交互效果 */
   .navbar .flex-shrink-0 a {
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
   }
 
   .navbar .flex-shrink-0 a:hover {
@@ -99,7 +103,9 @@
 
   /* 导航栏按钮 hover */
   .navbar .btn-ghost {
-    transition: transform 0.15s ease, background-color 0.15s ease;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease;
   }
 
   .navbar .btn-ghost:hover {
@@ -113,7 +119,6 @@
   transform: translateY(0) scale(0.98);
 }
 
-
 /**
  * 移动端菜单系统
  * 功能：抽屉式菜单、触摸优化、动画效果
@@ -125,12 +130,14 @@
 
 /* 移动端抽屉渐变背景 - 简化为 5 点渐变 */
 .drawer-gradient-bg {
-  background: linear-gradient(to right,
-      var(--color-base-100) 0%,
-      var(--color-base-100) 30%,
-      color-mix(in srgb, var(--color-base-100) 70%, transparent) 55%,
-      color-mix(in srgb, var(--color-base-100) 30%, transparent) 80%,
-      transparent 100%);
+  background: linear-gradient(
+    to right,
+    var(--color-base-100) 0%,
+    var(--color-base-100) 30%,
+    color-mix(in srgb, var(--color-base-100) 70%, transparent) 55%,
+    color-mix(in srgb, var(--color-base-100) 30%, transparent) 80%,
+    transparent 100%
+  );
 }
 
 /* 移动端抽屉滑入动画 - 父容器负责滑入 */
@@ -216,16 +223,17 @@
   left: 0;
   width: 100%;
   height: calc(100% + 1rem);
-  background: linear-gradient(to bottom,
-      var(--color-base-100) 0%,
-      color-mix(in srgb, var(--color-base-100) 85%, transparent) 40%,
-      color-mix(in srgb, var(--color-base-100) 50%, transparent) 65%,
-      color-mix(in srgb, var(--color-base-100) 15%, transparent) 85%,
-      transparent 100%);
+  background: linear-gradient(
+    to bottom,
+    var(--color-base-100) 0%,
+    color-mix(in srgb, var(--color-base-100) 85%, transparent) 40%,
+    color-mix(in srgb, var(--color-base-100) 50%, transparent) 65%,
+    color-mix(in srgb, var(--color-base-100) 15%, transparent) 85%,
+    transparent 100%
+  );
   pointer-events: none;
   z-index: -1;
 }
-
 
 /**
  * 菜单状态指示器
@@ -254,7 +262,7 @@
   }
 
   /* 移动端导航栏内边距优化 */
-  .navbar>div {
+  .navbar > div {
     padding-left: 1rem;
     padding-right: 1rem;
   }
@@ -262,7 +270,7 @@
 
 /* 小屏幕额外优化 */
 @media (max-width: 640px) {
-  .navbar>div {
+  .navbar > div {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     gap: 0.25rem;
@@ -274,7 +282,9 @@
  */
 @media (hover: hover) {
   .dropdown-content a {
-    transition: background-color 0.15s ease, transform 0.15s ease;
+    transition:
+      background-color 0.15s ease,
+      transform 0.15s ease;
   }
 
   .dropdown-content a:hover {

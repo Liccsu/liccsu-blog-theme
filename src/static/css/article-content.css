@@ -5,19 +5,19 @@
   letter-spacing: 0.03em; /* 微增字间距提升可读性 */
   word-spacing: 0.05em;
   color: var(--color-base-content);
-  
+
   /* 布局：继承容器的溢出处理 */
   max-width: 100%;
   overflow-wrap: break-word;
   word-break: break-word;
-  
+
   /* 两端对齐（中文排版标准） */
   text-align: justify;
   text-justify: inter-ideograph;
-  
+
   /* 标点优化 */
   hanging-punctuation: allow-end;
-  
+
   /* 最小宽度防止压缩 */
   min-width: 0;
 
@@ -25,21 +25,21 @@
   --art-radius: 1rem;
   --art-radius-sm: 0.5rem;
   --art-radius-lg: 1.25rem;
-  
+
   /* Soft Warm 阴影系统 */
   --art-shadow-sm: 0 2px 8px -2px color-mix(in srgb, var(--color-base-content) 6%, transparent);
   --art-shadow: 0 4px 20px -4px color-mix(in srgb, var(--color-base-content) 10%, transparent);
   --art-shadow-lg: 0 8px 30px -6px color-mix(in srgb, var(--color-base-content) 12%, transparent);
   --art-shadow-hover: 0 12px 40px -8px color-mix(in srgb, var(--color-base-content) 15%, transparent);
-  
+
   --art-border: 1px solid color-mix(in srgb, var(--color-base-content) 6%, transparent);
   --art-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   /* 主题色变体 */
   --art-accent-subtle: color-mix(in srgb, var(--color-primary) 8%, transparent);
   --art-accent-light: color-mix(in srgb, var(--color-primary) 20%, transparent);
   --art-accent-medium: color-mix(in srgb, var(--color-primary) 40%, transparent);
-  
+
   /* 中文排版间距变量 */
   --art-gap-xs: 0.5em;
   --art-gap-sm: 0.75em;
@@ -101,7 +101,7 @@
   margin-bottom: 1.5em;
   padding: 0.15em 0.4em 0.15em 0.35em;
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 40%,
     color-mix(in srgb, var(--color-primary) 25%, transparent) 45%,
     color-mix(in srgb, var(--color-primary) 40%, transparent) 55%,
@@ -117,7 +117,7 @@
   font-weight: 700;
   padding: 0.12em 0.35em 0.12em 0.3em;
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 45%,
     color-mix(in srgb, var(--color-secondary) 22%, transparent) 50%,
     color-mix(in srgb, var(--color-secondary) 38%, transparent) 60%,
@@ -133,7 +133,7 @@
   font-weight: 700;
   padding: 0.1em 0.3em 0.1em 0.25em;
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 50%,
     color-mix(in srgb, var(--color-accent) 18%, transparent) 55%,
     color-mix(in srgb, var(--color-accent) 35%, transparent) 65%,
@@ -149,7 +149,7 @@
   font-weight: 600;
   padding: 0.08em 0.25em 0.08em 0.2em;
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 55%,
     color-mix(in srgb, var(--color-info) 15%, transparent) 60%,
     color-mix(in srgb, var(--color-info) 30%, transparent) 70%,
@@ -165,7 +165,7 @@
   font-weight: 600;
   padding: 0.06em 0.2em 0.06em 0.15em;
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 58%,
     color-mix(in srgb, var(--color-success) 12%, transparent) 62%,
     color-mix(in srgb, var(--color-success) 25%, transparent) 72%,
@@ -181,7 +181,7 @@
   font-weight: 600;
   padding: 0.05em 0.18em 0.05em 0.12em;
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 60%,
     color-mix(in srgb, var(--color-neutral) 10%, transparent) 65%,
     color-mix(in srgb, var(--color-neutral) 22%, transparent) 75%,
@@ -204,7 +204,7 @@
  * ============================================*/
 [data-color-scheme="dark"] #article-content h1 {
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 40%,
     color-mix(in srgb, var(--color-primary) 35%, transparent) 45%,
     color-mix(in srgb, var(--color-primary) 55%, transparent) 55%,
@@ -215,7 +215,7 @@
 
 [data-color-scheme="dark"] #article-content h2 {
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 45%,
     color-mix(in srgb, var(--color-secondary) 32%, transparent) 50%,
     color-mix(in srgb, var(--color-secondary) 52%, transparent) 60%,
@@ -226,7 +226,7 @@
 
 [data-color-scheme="dark"] #article-content h3 {
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 50%,
     color-mix(in srgb, var(--color-accent) 28%, transparent) 55%,
     color-mix(in srgb, var(--color-accent) 48%, transparent) 65%,
@@ -237,7 +237,7 @@
 
 [data-color-scheme="dark"] #article-content h4 {
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 55%,
     color-mix(in srgb, var(--color-info) 25%, transparent) 60%,
     color-mix(in srgb, var(--color-info) 42%, transparent) 70%,
@@ -248,7 +248,7 @@
 
 [data-color-scheme="dark"] #article-content h5 {
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 58%,
     color-mix(in srgb, var(--color-success) 22%, transparent) 62%,
     color-mix(in srgb, var(--color-success) 38%, transparent) 72%,
@@ -259,7 +259,7 @@
 
 [data-color-scheme="dark"] #article-content h6 {
   background: linear-gradient(
-    180deg, 
+    180deg,
     transparent 60%,
     color-mix(in srgb, var(--color-neutral) 18%, transparent) 65%,
     color-mix(in srgb, var(--color-neutral) 32%, transparent) 75%,
@@ -323,10 +323,7 @@
 
 /* 高亮 - 荧光笔效果 */
 #article-content mark {
-  background: linear-gradient(
-    transparent 55%, 
-    color-mix(in srgb, var(--color-primary) 25%, transparent) 55%
-  );
+  background: linear-gradient(transparent 55%, color-mix(in srgb, var(--color-primary) 25%, transparent) 55%);
   padding: 0.05em 0.15em;
   border-radius: 3px;
   color: inherit;
@@ -379,7 +376,7 @@
   top: 0.25rem;
   left: 0.75rem;
   font-size: 3.5rem;
-  font-family: Georgia, 'Noto Serif SC', serif;
+  font-family: Georgia, "Noto Serif SC", serif;
   font-weight: 400;
   font-style: normal;
   color: var(--color-primary);
@@ -396,7 +393,7 @@
   bottom: -0.5rem;
   right: 0.75rem;
   font-size: 3.5rem;
-  font-family: Georgia, 'Noto Serif SC', serif;
+  font-family: Georgia, "Noto Serif SC", serif;
   font-weight: 400;
   font-style: normal;
   color: var(--color-primary);
@@ -447,7 +444,7 @@
   background: color-mix(in srgb, var(--color-primary) 10%, var(--color-base-100));
   border: 1px solid color-mix(in srgb, var(--color-primary) 15%, transparent);
   border-radius: 0.5em;
-  font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Monaco, monospace;
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Monaco, monospace;
   color: var(--color-primary);
   font-weight: 500;
   white-space: nowrap;
@@ -518,52 +515,52 @@
 
 /* 无序列表样式 - 6层各不相同 */
 #article-content ul {
-  list-style-type: disc;          /* ● 实心圆 */
+  list-style-type: disc; /* ● 实心圆 */
 }
 
 #article-content ul ul {
-  list-style-type: circle;        /* ○ 空心圆 */
+  list-style-type: circle; /* ○ 空心圆 */
 }
 
 #article-content ul ul ul {
-  list-style-type: square;        /* ■ 实心方块 */
+  list-style-type: square; /* ■ 实心方块 */
 }
 
 #article-content ul ul ul ul {
-  list-style-type: '◆ ';          /* ◆ 菱形 */
+  list-style-type: "◆ "; /* ◆ 菱形 */
 }
 
 #article-content ul ul ul ul ul {
-  list-style-type: '▸ ';          /* ▸ 三角 */
+  list-style-type: "▸ "; /* ▸ 三角 */
 }
 
 #article-content ul ul ul ul ul ul {
-  list-style-type: '– ';          /* – 短横线 */
+  list-style-type: "– "; /* – 短横线 */
 }
 
 /* 有序列表样式 - 6层各不相同 */
 #article-content ol {
-  list-style-type: decimal;       /* 1. 2. 3. */
+  list-style-type: decimal; /* 1. 2. 3. */
 }
 
 #article-content ol ol {
-  list-style-type: lower-alpha;   /* a. b. c. */
+  list-style-type: lower-alpha; /* a. b. c. */
 }
 
 #article-content ol ol ol {
-  list-style-type: lower-roman;   /* i. ii. iii. */
+  list-style-type: lower-roman; /* i. ii. iii. */
 }
 
 #article-content ol ol ol ol {
-  list-style-type: upper-alpha;   /* A. B. C. */
+  list-style-type: upper-alpha; /* A. B. C. */
 }
 
 #article-content ol ol ol ol ol {
-  list-style-type: upper-roman;   /* I. II. III. */
+  list-style-type: upper-roman; /* I. II. III. */
 }
 
 #article-content ol ol ol ol ol ol {
-  list-style-type: decimal;       /* 1. 2. 3. (第7层才循环) */
+  list-style-type: decimal; /* 1. 2. 3. (第7层才循环) */
 }
 
 /* ===================================================
@@ -632,7 +629,7 @@
 }
 
 #article-content ul[data-type="taskList"] input[type="checkbox"]:checked::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 4px;
   top: 1px;
@@ -785,7 +782,7 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   #article-content table th,
   #article-content table td {
     white-space: nowrap;
@@ -810,7 +807,7 @@
 }
 
 #article-content hr::after {
-  content: '✦';
+  content: "✦";
   position: absolute;
   left: 50%;
   top: 50%;
@@ -897,7 +894,7 @@
 }
 
 #article-content summary::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 1rem;
   top: 50%;
@@ -1208,10 +1205,19 @@ halo-contact-form {
 }
 
 @keyframes heart-beat {
-  0%, 100% { transform: scale(1); }
-  25% { transform: scale(1.3); }
-  50% { transform: scale(1.1); }
-  75% { transform: scale(1.2); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.3);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  75% {
+    transform: scale(1.2);
+  }
 }
 
 /* ===================================================
@@ -1301,7 +1307,9 @@ halo-contact-form {
   backdrop-filter: blur(4px);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
 }
 
 .post-toc-overlay.open {
@@ -1467,70 +1475,68 @@ halo-comment::part(comment-list),
  * 使用 daisyUI 语义化颜色，自动适配所有主题
  * ==================================================*/
 
-
 :root {
-    /* ========== 文本颜色 - 参考目录层次 ========== */
-    /* 标题：完整 base-content */
-    --vote-text-title-color: var(--color-base-content);
-    /* 描述：60% 透明度，与目录默认文字一致 */
-    --vote-text-description-color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
-    /* 选中状态：primary 色 */
-    --vote-text-selected-color: var(--color-primary);
-    /* 已投票：与选中状态一致 */
-    --vote-text-voted-color: var(--color-primary);
-    /* 错误：error 色 */
-    --vote-text-error-color: var(--color-error);
-    /* 按钮文字 */
-    --vote-text-button-color: var(--color-primary-content);
-    /* 图标：50% 透明度 */
-    --vote-icon-color: color-mix(in srgb, var(--color-base-content) 50%, transparent);
+  /* ========== 文本颜色 - 参考目录层次 ========== */
+  /* 标题：完整 base-content */
+  --vote-text-title-color: var(--color-base-content);
+  /* 描述：60% 透明度，与目录默认文字一致 */
+  --vote-text-description-color: color-mix(in srgb, var(--color-base-content) 60%, transparent);
+  /* 选中状态：primary 色 */
+  --vote-text-selected-color: var(--color-primary);
+  /* 已投票：与选中状态一致 */
+  --vote-text-voted-color: var(--color-primary);
+  /* 错误：error 色 */
+  --vote-text-error-color: var(--color-error);
+  /* 按钮文字 */
+  --vote-text-button-color: var(--color-primary-content);
+  /* 图标：50% 透明度 */
+  --vote-icon-color: color-mix(in srgb, var(--color-base-content) 50%, transparent);
 
-    /* ========== 背景颜色 - 参考目录层次 ========== */
-    /* 主容器背景 - 使用 base-200 作为卡片底色 */
-    --vote-background-primary-color: var(--color-base-200);
-    /* 选项默认背景 - base-100，比容器浅，形成凸起效果 */
-    --vote-background-secondary-color: var(--color-base-100);
-    /* 选项悬停背景 - 10% primary */
-    --vote-background-tertiary-color: color-mix(in srgb, var(--color-primary) 10%, var(--color-base-100));
-    /* 已选择背景 - 18% primary，比悬停稍深 */
-    --vote-background-selected-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-base-100));
-    /* 已投票背景 - 与选中状态一致 */
-    --vote-background-voted-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-base-100));
-    /* 进度条默认背景 */
-    --vote-background-progress-color: var(--color-base-300);
-    /* 进度条已投票背景 - 与选中背景一致 */
-    --vote-background-progress-voted-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-base-100));
-    /* 提交按钮背景 */
-    --vote-background-button-color: var(--color-primary);
-    /* 提交按钮悬停背景 */
-    --vote-background-button-hover-color: color-mix(in srgb, var(--color-primary) 85%, var(--color-base-content));
-    /* 信息标签背景 */
-    --vote-background-tag-color: color-mix(in srgb, var(--color-base-content) 10%, transparent);
-    /* 已投票标签背景 */
-    --vote-background-voted-tag-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  /* ========== 背景颜色 - 参考目录层次 ========== */
+  /* 主容器背景 - 使用 base-200 作为卡片底色 */
+  --vote-background-primary-color: var(--color-base-200);
+  /* 选项默认背景 - base-100，比容器浅，形成凸起效果 */
+  --vote-background-secondary-color: var(--color-base-100);
+  /* 选项悬停背景 - 10% primary */
+  --vote-background-tertiary-color: color-mix(in srgb, var(--color-primary) 10%, var(--color-base-100));
+  /* 已选择背景 - 18% primary，比悬停稍深 */
+  --vote-background-selected-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-base-100));
+  /* 已投票背景 - 与选中状态一致 */
+  --vote-background-voted-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-base-100));
+  /* 进度条默认背景 */
+  --vote-background-progress-color: var(--color-base-300);
+  /* 进度条已投票背景 - 与选中背景一致 */
+  --vote-background-progress-voted-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-base-100));
+  /* 提交按钮背景 */
+  --vote-background-button-color: var(--color-primary);
+  /* 提交按钮悬停背景 */
+  --vote-background-button-hover-color: color-mix(in srgb, var(--color-primary) 85%, var(--color-base-content));
+  /* 信息标签背景 */
+  --vote-background-tag-color: color-mix(in srgb, var(--color-base-content) 10%, transparent);
+  /* 已投票标签背景 */
+  --vote-background-voted-tag-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
 
-    /* ========== 边框颜色 ========== */
-    /* 默认边框 - 15% base-content */
-    --vote-border-color: color-mix(in srgb, var(--color-base-content) 15%, transparent);
-    /* 选中边框 - primary */
-    --vote-border-selected-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-base-100));
-    /* 已投票边框 - 与选中状态一致 */
-    --vote-border-voted-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-base-100));
-    /* ========== 阴影 ========== */
-    --vote-shadow: 
-        0 2px 8px -2px color-mix(in srgb, var(--color-base-content) 12%, transparent),
-        0 0 0 1px color-mix(in srgb, var(--color-base-content) 6%, transparent);
+  /* ========== 边框颜色 ========== */
+  /* 默认边框 - 15% base-content */
+  --vote-border-color: color-mix(in srgb, var(--color-base-content) 15%, transparent);
+  /* 选中边框 - primary */
+  --vote-border-selected-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-base-100));
+  /* 已投票边框 - 与选中状态一致 */
+  --vote-border-voted-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-base-100));
+  /* ========== 阴影 ========== */
+  --vote-shadow:
+    0 2px 8px -2px color-mix(in srgb, var(--color-base-content) 12%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--color-base-content) 6%, transparent);
 
-    /* ========== PK 模式 ========== */
-    --vote-pk-option1-bg: var(--color-primary);
-    --vote-pk-option2-bg: var(--color-secondary);
-    --vote-pk-progress-text-color: var(--color-primary-content);
+  /* ========== PK 模式 ========== */
+  --vote-pk-option1-bg: var(--color-primary);
+  --vote-pk-option2-bg: var(--color-secondary);
+  --vote-pk-progress-text-color: var(--color-primary-content);
 }
 
 /* 深色模式微调 */
 [data-color-scheme="dark"] {
-    --vote-border-color: color-mix(in srgb, var(--color-base-content) 20%, transparent);
-    --vote-shadow: 
-        0 2px 12px -2px rgba(0, 0, 0, 0.4),
-        0 0 0 1px color-mix(in srgb, var(--color-base-content) 10%, transparent);
+  --vote-border-color: color-mix(in srgb, var(--color-base-content) 20%, transparent);
+  --vote-shadow:
+    0 2px 12px -2px rgba(0, 0, 0, 0.4), 0 0 0 1px color-mix(in srgb, var(--color-base-content) 10%, transparent);
 }

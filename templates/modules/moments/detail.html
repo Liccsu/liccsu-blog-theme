@@ -3,8 +3,8 @@
 <!-- 插件变量：moment                            -->
 <!-- ========================================== -->
 <th:block th:fragment="content">
-
-  <th:block th:with="
+  <th:block
+    th:with="
     cfg=${theme.config.moments_settings},
     enableUpvote=${cfg?.enable_upvote != false},
     enableComment=${cfg?.enable_comment != false},
@@ -12,10 +12,9 @@
     shareSettings=${cfg?.share_settings},
     shareItemIds=${shareSettings?.share_item_ids ?: {'wechat','weibo','x','qq'}},
     content=${moment.spec.content}
-  ">
-
-    <div class="max-w-2xl mx-auto px-4 py-8">
-
+  "
+  >
+    <div class="mx-auto max-w-2xl px-4 py-8">
       <!-- 返回按钮 -->
       <div class="mb-6">
         <a href="/moments" class="btn btn-sm btn-ghost gap-1">
@@ -25,33 +24,51 @@
       </div>
 
       <!-- 瞬间卡片 - 与列表页样式一致 -->
-      <article class="card bg-base-100 shadow-sm rounded-2xl overflow-hidden">
+      <article class="card bg-base-100 overflow-hidden rounded-2xl shadow-sm">
         <div class="p-4">
           <!-- 头部：头像 + 用户名 + 时间 -->
-          <div class="flex items-center gap-3 mb-3">
+          <div class="mb-3 flex items-center gap-3">
             <div class="avatar">
-              <a th:href="@{/authors/{name}(name=${moment.owner.name})}"
-                class="w-11 h-11 rounded-xl bg-base-200 block transition-transform active:scale-95">
-                <img th:if="${moment.owner?.avatar != null}" th:src="${moment.owner.avatar}"
-                  th:alt="${moment.owner.displayName}" />
-                <div th:if="${moment.owner?.avatar == null}"
-                  class="w-full h-full flex items-center justify-center text-base-content/40 font-semibold"
-                  th:text="${moment.owner?.displayName != null ? #strings.substring(moment.owner.displayName, 0, 1) : 'U'}">
-                  U</div>
+              <a
+                th:href="@{/authors/{name}(name=${moment.owner.name})}"
+                class="bg-base-200 block h-11 w-11 rounded-xl transition-transform active:scale-95"
+              >
+                <img
+                  th:if="${moment.owner?.avatar != null}"
+                  th:src="${moment.owner.avatar}"
+                  th:alt="${moment.owner.displayName}"
+                />
+                <div
+                  th:if="${moment.owner?.avatar == null}"
+                  class="text-base-content/40 flex h-full w-full items-center justify-center font-semibold"
+                  th:text="${moment.owner?.displayName != null ? #strings.substring(moment.owner.displayName, 0, 1) : 'U'}"
+                >
+                  U
+                </div>
               </a>
             </div>
-            <div class="flex-1 min-w-0">
-              <a th:href="@{/authors/{name}(name=${moment.owner.name})}"
-                class="font-semibold text-primary text-sm truncate hover:underline"
-                th:text="${moment.owner?.displayName ?: '匿名用户'}">用户名</a>
-              <div class="text-xs text-base-content/40"
-                th:text="${#temporals.format(moment.spec.releaseTime, 'MM-dd HH:mm')}">11-27 14:00</div>
+            <div class="min-w-0 flex-1">
+              <a
+                th:href="@{/authors/{name}(name=${moment.owner.name})}"
+                class="text-primary truncate text-sm font-semibold hover:underline"
+                th:text="${moment.owner?.displayName ?: '匿名用户'}"
+                >用户名</a
+              >
+              <div
+                class="text-base-content/40 text-xs"
+                th:text="${#temporals.format(moment.spec.releaseTime, 'MM-dd HH:mm')}"
+              >
+                11-27 14:00
+              </div>
             </div>
           </div>
 
           <!-- 文字内容 -->
-          <div th:if="${not #strings.isEmpty(content.html)}" class="text-sm text-base-content leading-relaxed mb-3"
-            th:utext="${content.html}">
+          <div
+            th:if="${not #strings.isEmpty(content.html)}"
+            class="text-base-content mb-3 text-sm leading-relaxed"
+            th:utext="${content.html}"
+          >
             今天的天气真好...
           </div>
 
@@ -60,11 +77,20 @@
             <!-- 单图 -->
             <th:block th:if="${#lists.size(content.medium) == 1}">
               <th:block th:each="medium : ${content.medium}">
-                <img th:if="${medium.type.name == 'PHOTO'}" th:src="${medium.url}" alt="瞬间图片"
-                  class="rounded-xl max-h-72 object-cover cursor-pointer" loading="lazy" />
-                <video th:if="${medium.type.name == 'VIDEO'}" th:src="${medium.url}" controls preload="metadata"
-                  class="rounded-xl max-h-72 w-full">
-                </video>
+                <img
+                  th:if="${medium.type.name == 'PHOTO'}"
+                  th:src="${medium.url}"
+                  alt="瞬间图片"
+                  class="max-h-72 cursor-pointer rounded-xl object-cover"
+                  loading="lazy"
+                />
+                <video
+                  th:if="${medium.type.name == 'VIDEO'}"
+                  th:src="${medium.url}"
+                  controls
+                  preload="metadata"
+                  class="max-h-72 w-full rounded-xl"
+                ></video>
                 <div th:if="${medium.type.name == 'AUDIO'}" class="bg-base-200 rounded-xl p-3">
                   <audio th:src="${medium.url}" controls class="w-full"></audio>
                 </div>
@@ -72,18 +98,29 @@
             </th:block>
 
             <!-- 多图网格 -->
-            <div th:if="${#lists.size(content.medium) > 1}" class="grid gap-1 rounded-xl overflow-hidden"
-              th:classappend="${#lists.size(content.medium) == 2 or #lists.size(content.medium) == 4} ? 'grid-cols-2' : 'grid-cols-3'">
+            <div
+              th:if="${#lists.size(content.medium) > 1}"
+              class="grid gap-1 overflow-hidden rounded-xl"
+              th:classappend="${#lists.size(content.medium) == 2 or #lists.size(content.medium) == 4} ? 'grid-cols-2' : 'grid-cols-3'"
+            >
               <th:block th:each="medium, stat : ${content.medium}">
-                <div th:if="${medium.type.name == 'PHOTO' && stat.index < 9}"
-                  class="aspect-square relative bg-base-200 overflow-hidden cursor-pointer">
-                  <img th:src="${medium.url}" alt="瞬间图片"
-                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    loading="lazy" />
-                  <div th:if="${stat.index == 8 && #lists.size(content.medium) > 9}"
-                    class="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <span class="text-white font-semibold"
-                      th:text="'+' + (${#lists.size(content.medium)} - 9)">+3</span>
+                <div
+                  th:if="${medium.type.name == 'PHOTO' && stat.index < 9}"
+                  class="bg-base-200 relative aspect-square cursor-pointer overflow-hidden"
+                >
+                  <img
+                    th:src="${medium.url}"
+                    alt="瞬间图片"
+                    class="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div
+                    th:if="${stat.index == 8 && #lists.size(content.medium) > 9}"
+                    class="absolute inset-0 flex items-center justify-center bg-black/50"
+                  >
+                    <span class="font-semibold text-white" th:text="'+' + (${#lists.size(content.medium)} - 9)"
+                      >+3</span
+                    >
                   </div>
                 </div>
               </th:block>
@@ -92,16 +129,25 @@
 
           <!-- 标签 -->
           <div th:if="${moment.spec.tags != null && !moment.spec.tags.isEmpty()}" class="mb-3 flex flex-wrap gap-1.5">
-            <a th:each="tag : ${moment.spec.tags}" th:href="@{/moments(tag=${tag})}"
-              class="badge badge-sm badge-ghost text-primary" th:text="'#' + ${tag}">#标签</a>
+            <a
+              th:each="tag : ${moment.spec.tags}"
+              th:href="@{/moments(tag=${tag})}"
+              class="badge badge-sm badge-ghost text-primary"
+              th:text="'#' + ${tag}"
+              >#标签</a
+            >
           </div>
 
           <!-- 互动操作 -->
-          <div class="flex items-center gap-4 pt-2 border-t border-base-200 text-sm text-base-content/50">
+          <div class="border-base-200 text-base-content/50 flex items-center gap-4 border-t pt-2 text-sm">
             <!-- 点赞按钮 -->
-            <button th:if="${enableUpvote}" class="inline-flex items-center gap-1.5 hover:text-error transition-colors"
-              th:data-moment-name="${moment.metadata.name}" th:data-upvote-count="${moment.stats?.upvote ?: 0}"
-              onclick="handleMomentUpvote(this)">
+            <button
+              th:if="${enableUpvote}"
+              class="hover:text-error inline-flex items-center gap-1.5 transition-colors"
+              th:data-moment-name="${moment.metadata.name}"
+              th:data-upvote-count="${moment.stats?.upvote ?: 0}"
+              onclick="handleMomentUpvote(this)"
+            >
               <span class="icon-[heroicons--heart] size-5"></span>
               <span class="upvote-count" th:text="${moment.stats?.upvote ?: 0}">0</span>
             </button>
@@ -111,33 +157,40 @@
               <span th:text="${moment.stats?.totalComment ?: 0}">0</span>
             </div>
             <!-- 分享 -->
-            <button th:if="${enableShare}" x-data @click="$dispatch('open-share-modal')"
-              class="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+            <button
+              th:if="${enableShare}"
+              x-data
+              @click="$dispatch('open-share-modal')"
+              class="hover:text-primary inline-flex items-center gap-1.5 transition-colors"
+            >
               <span class="icon-[heroicons--share] size-5"></span>
             </button>
           </div>
 
           <!-- 评论区 - 直接显示 -->
-          <div th:if="${enableComment}" class="mt-3 pt-3 border-t border-base-200">
-            <halo:comment group="moment.halo.run" kind="Moment" th:attr="name=${moment.metadata.name}"
-              colorScheme="system">
+          <div th:if="${enableComment}" class="border-base-200 mt-3 border-t pt-3">
+            <halo:comment
+              group="moment.halo.run"
+              kind="Moment"
+              th:attr="name=${moment.metadata.name}"
+              colorScheme="system"
+            >
             </halo:comment>
           </div>
         </div>
       </article>
-
     </div>
 
     <!-- 分享弹窗 - 使用通用组件 -->
     <th:block th:if="${enableShare}">
-      <th:block th:replace="~{modules/share-modal :: shareModal(
+      <th:block
+        th:replace="~{modules/share-modal :: shareModal(
         title='分享瞬间',
         shareUrl=${'/moments/' + moment.metadata.name},
         shareTitle=${(moment.owner?.displayName ?: '匿名用户') + ' 的瞬间'},
         shareItemIds=${shareItemIds}
-      )}" />
+      )}"
+      />
     </th:block>
-
   </th:block>
-
 </th:block>

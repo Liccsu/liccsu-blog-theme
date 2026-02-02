@@ -2,11 +2,11 @@
  * 归档页脚本
  * 模板位置：templates/archives.html
  */
-import './archives.css';
+import "./archives.css";
 
 // Alpine.js 归档滚动组件
-document.addEventListener('alpine:init', () => {
-  Alpine.data('archiveScroll', () => ({
+document.addEventListener("alpine:init", () => {
+  Alpine.data("archiveScroll", () => ({
     currentMonth: {},
 
     init() {
@@ -14,7 +14,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     updateCurrentMonth() {
-      const sections = document.querySelectorAll('.month-section');
+      const sections = document.querySelectorAll(".month-section");
       const headerOffset = 100; // 粘性标题的高度偏移
 
       sections.forEach((section) => {

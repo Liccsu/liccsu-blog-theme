@@ -8,12 +8,9 @@ on:
 jobs:
   cd:
     uses: halo-sigs/reusable-workflows/.github/workflows/theme-cd.yaml@v3
-    secrets:
-      halo-pat: ${{ secrets.HALO_PAT }}
     permissions:
       contents: write
     with:
-      app-id: app-squauk4h
-      skip-appstore-release: false
+      skip-appstore-release: true
       node-version: 22
       pnpm-version: 10
