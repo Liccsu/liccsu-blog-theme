@@ -28,7 +28,7 @@
                    sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}"
 >
   <div
-    th:class="${theme.config.index.background_settings?.enable_header != false} ? 'max-w-7xl lg:pb-12' : 'max-w-7xl lg:pb-12' mx-auto px-4 pt-6 pt-20 pb-8 sm:px-6 lg:px-8 lg:pt-8 lg:pt-24"
+    th:class="${theme.config.index.background_settings?.enable_header != false} ? 'max-w-7xl lg:pb-12 mx-auto px-4 pt-6 pt-20 pb-8 sm:px-6 lg:px-8 lg:pt-8 lg:pt-24' : 'max-w-7xl lg:pb-12 mx-auto px-4 pt-6 pt-20 pb-8 sm:px-6 lg:px-8 lg:pt-8 lg:pt-24'"
   >
     <!-- 主内容区：内容 + 侧边栏 -->
     <div class="lazy-anim flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">

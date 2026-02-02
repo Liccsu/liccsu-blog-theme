@@ -48,7 +48,7 @@
   <h1
     id="main-title"
     th:if="${theme.config.index.title_settings.show_title}"
-    th:class="${'text-4xl animate-in fade-in zoom-in effect-base ' + theme.config.index.title_settings.style_effect + ' ' + theme.config.index.title_settings.title_font} mb-3 font-bold text-white transition-all duration-700 sm:mb-4 sm:text-5xl md:mb-6 md:text-6xl lg:text-7xl xl:text-8xl"
+    th:class="${'text-4xl animate-in fade-in zoom-in effect-base ' + theme.config.index.title_settings.style_effect + ' ' + theme.config.index.title_settings.title_font + ' mb-3 font-bold text-white transition-all duration-700 sm:mb-4 sm:text-5xl md:mb-6 md:text-6xl lg:text-7xl xl:text-8xl'}"
     th:style="${!#strings.isEmpty(theme.config.index.title_settings.effect_color) ? '--title-color: ' + theme.config.index.title_settings.effect_color + '; animation-delay: 0.2s;' : 'animation-delay: 0.2s;'}"
     th:data-text="${#strings.isEmpty(theme.config.index.title_settings.custom_title) ? site.title : theme.config.index.title_settings.custom_title}"
     th:data-original-text="${#strings.isEmpty(theme.config.index.title_settings.custom_title) ? site.title : theme.config.index.title_settings.custom_title}"
@@ -68,7 +68,7 @@
   >
     <p
       id="subtitle"
-      th:class="${'transition-all ' + theme.config.index.subtitle_settings.subtitle_font + ' ' + theme.config.index.subtitle_settings.subtitle_effect} duration-300"
+      th:class="${'transition-all ' + theme.config.index.subtitle_settings.subtitle_font + ' ' + theme.config.index.subtitle_settings.subtitle_effect + ' duration-300'}"
       th:style="${!#strings.isEmpty(theme.config.index.subtitle_settings.subtitle_color) ? '--subtitle-color: ' + theme.config.index.subtitle_settings.subtitle_color : ''}"
       th:text="${theme.config.index.subtitle_settings.subtitle_text}"
     >
