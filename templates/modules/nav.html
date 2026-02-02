@@ -130,7 +130,7 @@
             <!-- 主题切换功能 -->
             <div
               th:if="${theme.config.nav.theme_settings.show_theme_toggle}"
-              class="dropdown dropdown-end"
+              class="relative"
               x-data="createThemeToggle()"
               th:attr="data-light-theme=${theme.config.nav.theme_settings.light_theme},
                         data-dark-theme=${theme.config.nav.theme_settings.dark_theme},
@@ -164,9 +164,14 @@
               <ul
                 x-show="isDropdownOpen"
                 x-cloak
+                x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
                 @click.outside="isDropdownOpen = false"
-                tabindex="0"
-                class="dropdown-content menu bg-base-100 rounded-box border-base-300 z-50 w-36 border p-2 shadow-lg"
+                class="menu bg-base-100 rounded-box border-base-300 absolute right-0 top-full z-50 mt-2 w-36 border p-2 shadow-lg"
               >
                 <li>
                   <button
