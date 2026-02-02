@@ -106,12 +106,15 @@ import "./index.css";
     // 加载缓存数据（用于确定初始状态）
     loadWeatherData();
 
+    // 立即渲染初始效果（使用缓存/默认值），避免背景空白
+    renderEffect();
+
     // 设置等待天气数据的超时
     const waitTimeout = setTimeout(() => {
       if (!weatherDataReceived) {
-        // 超时后使用缓存/默认值渲染并隐藏加载屏幕
-        renderEffect();
+        // 超时后直接隐藏加载屏幕（效果已经渲染好了）
         notifyLoadingScreenReady();
+        isFirstRender = false;
       }
     }, WEATHER_WAIT_TIMEOUT);
 
@@ -123,11 +126,16 @@ import "./index.css";
       const normalizedBg = normalizeWeatherType(newBg);
 
       if (isFirstRender) {
-        // 首次渲染：清除超时，直接渲染
+        // 首次收到真实数据
         clearTimeout(waitTimeout);
         weatherDataReceived = true;
-        currentState.type = normalizedBg;
-        renderEffect();
+
+        if (normalizedBg !== currentState.type) {
+          // 天气类型不同，使用双层过渡切换
+          currentState.type = normalizedBg;
+          transitionToNewEffect();
+        }
+        // 通知加载屏幕可以隐藏
         notifyLoadingScreenReady();
         isFirstRender = false;
       } else if (normalizedBg !== currentState.type) {
