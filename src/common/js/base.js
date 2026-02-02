@@ -124,11 +124,31 @@ window.SkyUtils = {
 window.SkyLoadingScreen = {
   startTime: Date.now(),
   isHidden: false,
+  isWaitingForWeather: false, // 是否正在等待天气数据
+
+  /**
+   * 设置等待天气数据模式（首页专用）
+   */
+  waitForWeather() {
+    this.isWaitingForWeather = true;
+
+    // 监听天气效果准备就绪事件
+    window.addEventListener(
+      "sky-weather-effect-ready",
+      () => {
+        this.isWaitingForWeather = false;
+        this.hide();
+      },
+      { once: true },
+    );
+  },
 
   /**
    * 隐藏加载屏幕
    */
   hide() {
+    // 如果正在等待天气数据，不隐藏
+    if (this.isWaitingForWeather) return;
     if (this.isHidden) return;
 
     const loadingScreen = document.getElementById("loading-screen");

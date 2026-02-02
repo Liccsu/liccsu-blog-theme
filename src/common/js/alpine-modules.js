@@ -719,6 +719,25 @@ function welcomeWeatherCard() {
       } else {
         setTimeout(() => this.loadWeather(), 100);
       }
+
+      // 监听天气刷新请求（来自首页天气效果的定时刷新）
+      window.addEventListener("sky-weather-refresh-request", () => {
+        this.forceRefreshWeather();
+      });
+    },
+
+    /**
+     * 强制刷新天气（忽略缓存）
+     */
+    async forceRefreshWeather() {
+      try {
+        // 清除缓存
+        localStorage.removeItem(CACHE_KEY);
+        // 重新获取天气
+        await this.fetchWeatherByIP();
+      } catch (e) {
+        // Silent fail
+      }
     },
 
     updateGreeting() {

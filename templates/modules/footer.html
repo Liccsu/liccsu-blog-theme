@@ -35,7 +35,7 @@
         <div class="flex flex-wrap justify-center gap-8 lg:gap-12">
           <!-- 品牌信息 -->
           <div class="w-full text-center md:w-auto md:text-left" th:fragment="brand-section">
-            <div class="mb-4 inline-flex items-center gap-3">
+            <div class="mb-4 flex flex-col items-center gap-3 md:flex-row md:items-center">
               <!-- 站点图标 - 支持 Iconify、SVG 代码和图片上传 -->
               <div class="text-primary flex h-10 w-10 items-center justify-center">
                 <!-- Iconify 图标选择器类型 - 兼容两种数据格式 -->
@@ -66,7 +66,7 @@
                   class="h-full w-full object-contain"
                 />
               </div>
-              <div>
+              <div class="text-center md:text-left">
                 <h3
                   class="text-base-content text-lg font-bold"
                   th:if="${theme.config.footer.brand_settings.show_brand_title}"

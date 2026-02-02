@@ -86,6 +86,13 @@
     <!-- 悬浮 Dock 控制栏 -->
     <th:block th:replace="~{modules/floating-dock :: dockWithConfig(${theme.config.index}, 'basic')}" />
 
+    <!-- 天气联动模式：等待天气数据后再隐藏加载屏幕 -->
+    <script th:if="${theme.config.index.background_settings.background_type == 'weather'}">
+      if (window.SkyLoadingScreen) {
+        window.SkyLoadingScreen.waitForWeather();
+      }
+    </script>
+
     <!-- JavaScript 文件 -->
     <script type="module" th:src="@{/assets/js/main.js?v={version}(version=${theme.spec.version})}"></script>
     <script type="module" th:src="@{/assets/js/index.js?v={version}(version=${theme.spec.version})}"></script>

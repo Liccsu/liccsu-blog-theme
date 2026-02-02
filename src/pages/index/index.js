@@ -5,13 +5,17 @@
 import "./index.css";
 
 /**
- * 天气联动背景效果 - 终极卡通真实感融合版 (V3)
- * 修复太阳旋转诡异问题，增强云朵可见性与动态感
+ * 天气联动背景效果 - 终极卡通真实感融合版 (V4)
+ * 新增：双层叠加过渡、等待天气数据、定时刷新
  */
 (function () {
   "use strict";
 
   const CACHE_KEY = "sky_weather_cache_v12";
+  const WEATHER_WAIT_TIMEOUT = 3000; // 等待天气数据超时时间（毫秒）
+  const WEATHER_REFRESH_INTERVAL = 30 * 60 * 1000; // 天气刷新间隔（30分钟）
+  const TRANSITION_DURATION = 400; // 过渡动画时长（毫秒）
+
   const weatherNameMap = {
     sunny: "☀️ 晴天",
     cloudy: "☁️ 多云",
@@ -75,7 +79,23 @@ import "./index.css";
 
   let container = null;
   let effectLayer = null;
+  let isFirstRender = true; // 是否首次渲染
+  let weatherDataReceived = false; // 是否已收到天气数据
+  let refreshIntervalId = null; // 定时刷新 ID
 
+  /**
+   * 标准化天气类型
+   */
+  function normalizeWeatherType(type) {
+    if (type === "rain") return "rainy";
+    if (type === "snow") return "snowy";
+    if (type === "fog") return "foggy";
+    return type;
+  }
+
+  /**
+   * 初始化天气效果
+   */
   function init() {
     container = document.getElementById("weather-effect-root");
     if (!container) return;
@@ -83,24 +103,137 @@ import "./index.css";
     effectLayer = container.querySelector(".weather-effect-layer");
     if (!effectLayer) return;
 
-    // 第一阶段：立即渲染（使用缓存或默认晴天）
+    // 加载缓存数据（用于确定初始状态）
     loadWeatherData();
-    renderEffect();
-    setupScrollListener();
 
-    // 第二阶段：监听天气数据更新事件（来自天气卡片的真实数据）
+    // 设置等待天气数据的超时
+    const waitTimeout = setTimeout(() => {
+      if (!weatherDataReceived) {
+        // 超时后使用缓存/默认值渲染并隐藏加载屏幕
+        renderEffect();
+        notifyLoadingScreenReady();
+      }
+    }, WEATHER_WAIT_TIMEOUT);
+
+    // 监听天气数据更新事件
     window.addEventListener("sky-weather-updated", (event) => {
       const newBg = event.detail?.weatherBg;
+      if (!newBg) return;
 
-      if (newBg && newBg !== currentState.type) {
-        // 标准化天气类型
-        let normalizedBg = newBg;
-        if (newBg === "rain") normalizedBg = "rainy";
-        if (newBg === "snow") normalizedBg = "snowy";
-        if (newBg === "fog") normalizedBg = "foggy";
+      const normalizedBg = normalizeWeatherType(newBg);
 
+      if (isFirstRender) {
+        // 首次渲染：清除超时，直接渲染
+        clearTimeout(waitTimeout);
+        weatherDataReceived = true;
         currentState.type = normalizedBg;
         renderEffect();
+        notifyLoadingScreenReady();
+        isFirstRender = false;
+      } else if (normalizedBg !== currentState.type) {
+        // 后续更新：使用双层叠加过渡
+        currentState.type = normalizedBg;
+        transitionToNewEffect();
+      }
+    });
+
+    setupScrollListener();
+
+    // 启动定时刷新
+    startWeatherRefresh();
+  }
+
+  /**
+   * 通知加载屏幕可以隐藏
+   */
+  function notifyLoadingScreenReady() {
+    window.dispatchEvent(new CustomEvent("sky-weather-effect-ready"));
+  }
+
+  /**
+   * 启动定时刷新天气
+   */
+  function startWeatherRefresh() {
+    // 清除已有的定时器
+    if (refreshIntervalId) {
+      clearInterval(refreshIntervalId);
+    }
+
+    // 每 30 分钟触发一次天气刷新
+    refreshIntervalId = setInterval(() => {
+      // 触发天气卡片重新获取数据
+      window.dispatchEvent(new CustomEvent("sky-weather-refresh-request"));
+    }, WEATHER_REFRESH_INTERVAL);
+  }
+
+  /**
+   * 双层叠加过渡效果
+   */
+  function transitionToNewEffect() {
+    if (!effectLayer) return;
+
+    // 1. 保存旧层引用
+    const oldLayer = effectLayer;
+
+    // 2. 创建新层
+    const newLayer = document.createElement("div");
+    newLayer.className = "weather-effect-layer";
+    newLayer.style.cssText = "position: absolute; inset: 0; opacity: 0; transition: opacity " + TRANSITION_DURATION + "ms ease-in-out;";
+
+    // 3. 将新层插入到旧层后面
+    oldLayer.parentNode.insertBefore(newLayer, oldLayer.nextSibling);
+
+    // 4. 切换 effectLayer 引用到新层
+    effectLayer = newLayer;
+
+    // 5. 在新层上渲染新效果
+    renderEffectContent();
+
+    // 6. 更新 weather-effect 类名
+    const weatherEffect = container.querySelector(".weather-effect");
+    if (weatherEffect) {
+      weatherEffect.className = "weather-effect weather-" + currentState.type;
+      weatherEffect.style.setProperty("--wind-force", 1.0);
+    }
+
+    // 7. 触发新层淡入
+    requestAnimationFrame(() => {
+      newLayer.style.opacity = "1";
+      oldLayer.style.transition = "opacity " + TRANSITION_DURATION + "ms ease-in-out";
+      oldLayer.style.opacity = "0";
+    });
+
+    // 8. 过渡完成后清理旧层
+    setTimeout(() => {
+      // 清理旧层的定时器等资源
+      cleanupLayer(oldLayer);
+      // 移除旧层
+      if (oldLayer.parentNode) {
+        oldLayer.parentNode.removeChild(oldLayer);
+      }
+      // 移除新层的内联样式，恢复正常
+      newLayer.style.cssText = "";
+    }, TRANSITION_DURATION + 50);
+  }
+
+  /**
+   * 清理效果层资源
+   */
+  function cleanupLayer(layer) {
+    if (!layer) return;
+
+    // 查找并调用所有清理函数
+    const elementsWithCleanup = layer.querySelectorAll("[data-has-cleanup]");
+    elementsWithCleanup.forEach((el) => {
+      if (typeof el._cleanup === "function") {
+        el._cleanup();
+      }
+    });
+
+    // 直接检查子元素的清理函数
+    Array.from(layer.children).forEach((child) => {
+      if (typeof child._cleanup === "function") {
+        child._cleanup();
       }
     });
   }
@@ -136,11 +269,8 @@ import "./index.css";
   function renderEffect() {
     if (!effectLayer) return;
 
-    // 清理旧场景（如果有清理函数）
-    if (effectLayer.lastElementChild && typeof effectLayer.lastElementChild._cleanup === "function") {
-      effectLayer.lastElementChild._cleanup();
-    }
-
+    // 清理旧场景
+    cleanupLayer(effectLayer);
     effectLayer.innerHTML = "";
 
     const weatherEffect = container.querySelector(".weather-effect");
@@ -149,6 +279,13 @@ import "./index.css";
       weatherEffect.style.setProperty("--wind-force", 1.0); // 默认微风
     }
 
+    renderEffectContent();
+  }
+
+  /**
+   * 渲染效果内容（不清理，用于双层过渡）
+   */
+  function renderEffectContent() {
     createAtmosphere();
 
     switch (currentState.type) {
