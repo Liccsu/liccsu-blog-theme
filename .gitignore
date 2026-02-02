@@ -1,5 +1,6 @@
 node_modules/
 dist/
+templates/assets/
 .DS_Store
 .env
 .vscode/
