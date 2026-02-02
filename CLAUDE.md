@@ -82,6 +82,32 @@ Tailwind 原子类 > DaisyUI 组件 > 自定义 CSS（BEM 命名）
 
 类型：`feat`, `fix`, `refactor`, `style`, `perf`, `docs`, `build`, `chore`
 
+## 同步检查清单
+
+### 版本号同步
+
+修改版本号时，必须同步更新以下文件：
+
+- `package.json` - `version` 字段
+- `theme.yaml` - `version` 字段
+- `example-config.json` - `version` 字段
+
+### 配置项同步
+
+修改 `settings.yaml` 中的配置项时，检查是否需要同步更新：
+
+- `example-config.json` - 示例配置文件，需保持与 settings.yaml 结构一致
+
+### 文档同步
+
+进行以下修改时，检查是否需要更新 `README.md` 和 `docs/` 目录下的相关文档：
+
+- 新增功能或配置项
+- 修改现有功能的行为
+- 修改 API 或组件接口
+- 修改构建流程或开发规范
+- 修改环境要求或依赖版本
+
 ## 环境要求
 
 - Node.js 20+
