@@ -8,7 +8,7 @@ spec:
     name: Liccsu
     website: https://github.com/Liccsu
   description: 基于 Sky Blog Theme 的 Halo 博客主题衍生版本，采用 Vite + Tailwind CSS + DaisyUI + Alpine.js 技术栈
-  logo: /themes/liccsu-blog-theme/assets/images/heihei.png
+  logo: /themes/liccsu-blog-theme/assets/images/logo.png
   homepage: https://github.com/Liccsu/liccsu-blog-theme
   repo: https://github.com/Liccsu/liccsu-blog-theme
   issues: https://github.com/Liccsu/liccsu-blog-theme/issues
