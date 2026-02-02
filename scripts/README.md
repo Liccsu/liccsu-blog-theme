@@ -34,7 +34,7 @@ npm run build
 
 这将：
 - 复制 SVG 到 `templates/assets/previews/`
-- 打包到 `dist/theme-sky-blog-1-*.zip`
+- 打包到 `dist/liccsu-blog-theme-*.zip`
 
 ### 3. 配置说明
 

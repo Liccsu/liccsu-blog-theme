@@ -1,7 +1,7 @@
 apiVersion: v1alpha1
 kind: Setting
 metadata:
-  name: theme-sky-blog-1-setting
+  name: liccsu-blog-theme-setting
 spec:
   forms:
     - group: general
@@ -401,67 +401,67 @@ spec:
               options:
                 - label: Light
                   value: light
-                  render: "/themes/theme-sky-blog-1/assets/previews/light.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/light.svg"
                 - label: Cupcake
                   value: cupcake
-                  render: "/themes/theme-sky-blog-1/assets/previews/cupcake.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/cupcake.svg"
                 - label: Bumblebee
                   value: bumblebee
-                  render: "/themes/theme-sky-blog-1/assets/previews/bumblebee.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/bumblebee.svg"
                 - label: Emerald
                   value: emerald
-                  render: "/themes/theme-sky-blog-1/assets/previews/emerald.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/emerald.svg"
                 - label: Corporate
                   value: corporate
-                  render: "/themes/theme-sky-blog-1/assets/previews/corporate.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/corporate.svg"
                 - label: Retro
                   value: retro
-                  render: "/themes/theme-sky-blog-1/assets/previews/retro.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/retro.svg"
                 - label: Cyberpunk
                   value: cyberpunk
-                  render: "/themes/theme-sky-blog-1/assets/previews/cyberpunk.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/cyberpunk.svg"
                 - label: Valentine
                   value: valentine
-                  render: "/themes/theme-sky-blog-1/assets/previews/valentine.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/valentine.svg"
                 - label: Garden
                   value: garden
-                  render: "/themes/theme-sky-blog-1/assets/previews/garden.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/garden.svg"
                 - label: Lofi
                   value: lofi
-                  render: "/themes/theme-sky-blog-1/assets/previews/lofi.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/lofi.svg"
                 - label: Pastel
                   value: pastel
-                  render: "/themes/theme-sky-blog-1/assets/previews/pastel.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/pastel.svg"
                 - label: Fantasy
                   value: fantasy
-                  render: "/themes/theme-sky-blog-1/assets/previews/fantasy.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/fantasy.svg"
                 - label: Wireframe
                   value: wireframe
-                  render: "/themes/theme-sky-blog-1/assets/previews/wireframe.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/wireframe.svg"
                 - label: CMYK
                   value: cmyk
-                  render: "/themes/theme-sky-blog-1/assets/previews/cmyk.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/cmyk.svg"
                 - label: Autumn
                   value: autumn
-                  render: "/themes/theme-sky-blog-1/assets/previews/autumn.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/autumn.svg"
                 - label: Acid
                   value: acid
-                  render: "/themes/theme-sky-blog-1/assets/previews/acid.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/acid.svg"
                 - label: Lemonade
                   value: lemonade
-                  render: "/themes/theme-sky-blog-1/assets/previews/lemonade.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/lemonade.svg"
                 - label: Winter
                   value: winter
-                  render: "/themes/theme-sky-blog-1/assets/previews/winter.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/winter.svg"
                 - label: Nord
                   value: nord
-                  render: "/themes/theme-sky-blog-1/assets/previews/nord.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/nord.svg"
                 - label: Caramellatte
                   value: caramellatte
-                  render: "/themes/theme-sky-blog-1/assets/previews/caramellatte.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/caramellatte.svg"
                 - label: Silk
                   value: silk
-                  render: "/themes/theme-sky-blog-1/assets/previews/silk.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/silk.svg"
             - $formkit: toggle
               name: dark_theme
               label: 深色主题
@@ -473,46 +473,46 @@ spec:
               options:
                 - label: Dark
                   value: dark
-                  render: "/themes/theme-sky-blog-1/assets/previews/dark.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/dark.svg"
                 - label: Synthwave
                   value: synthwave
-                  render: "/themes/theme-sky-blog-1/assets/previews/synthwave.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/synthwave.svg"
                 - label: Halloween
                   value: halloween
-                  render: "/themes/theme-sky-blog-1/assets/previews/halloween.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/halloween.svg"
                 - label: Forest
                   value: forest
-                  render: "/themes/theme-sky-blog-1/assets/previews/forest.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/forest.svg"
                 - label: Aqua
                   value: aqua
-                  render: "/themes/theme-sky-blog-1/assets/previews/aqua.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/aqua.svg"
                 - label: Black
                   value: black
-                  render: "/themes/theme-sky-blog-1/assets/previews/black.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/black.svg"
                 - label: Luxury
                   value: luxury
-                  render: "/themes/theme-sky-blog-1/assets/previews/luxury.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/luxury.svg"
                 - label: Dracula
                   value: dracula
-                  render: "/themes/theme-sky-blog-1/assets/previews/dracula.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/dracula.svg"
                 - label: Business
                   value: business
-                  render: "/themes/theme-sky-blog-1/assets/previews/business.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/business.svg"
                 - label: Night
                   value: night
-                  render: "/themes/theme-sky-blog-1/assets/previews/night.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/night.svg"
                 - label: Coffee
                   value: coffee
-                  render: "/themes/theme-sky-blog-1/assets/previews/coffee.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/coffee.svg"
                 - label: Dim
                   value: dim
-                  render: "/themes/theme-sky-blog-1/assets/previews/dim.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/dim.svg"
                 - label: Sunset
                   value: sunset
-                  render: "/themes/theme-sky-blog-1/assets/previews/sunset.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/sunset.svg"
                 - label: Abyss
                   value: abyss
-                  render: "/themes/theme-sky-blog-1/assets/previews/abyss.svg"
+                  render: "/themes/liccsu-blog-theme/assets/previews/abyss.svg"
         - $formkit: group
           name: right_settings
           label: 功能设置
@@ -705,7 +705,7 @@ spec:
             social_title: "关注我们"
             social_links:
               - name: "GitHub"
-                url: "https://github.com/sky121666/halo-theme-sky-blog-1"
+                url: "https://github.com/Liccsu/liccsu-blog-theme"
                 icon: '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>'
               - name: "Twitter"
                 url: "https://twitter.com/username"

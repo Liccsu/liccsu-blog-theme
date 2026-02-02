@@ -1,10 +1,12 @@
 ---
 trigger: always_on
-description: Sky Blog Theme 项目开发规范 - 包含技术栈、目录结构、代码风格和开发流程规范
+description: Liccsu Blog Theme 项目开发规范 - 包含技术栈、目录结构、代码风格和开发流程规范
 globs:
 ---
 
-# Sky Blog Theme - 项目开发规范
+# Liccsu Blog Theme - 项目开发规范
+
+基于 [Sky Blog Theme](https://github.com/sky121666/halo-theme-sky-blog-1) 的 Halo 2.0 博客主题衍生版本
 
 ## 🎯 项目定位
 
@@ -30,7 +32,7 @@ globs:
 ## 📁 目录结构
 
 ```
-theme-sky-blog-1/
+liccsu-blog-theme/
 ├── src/                          # 前端源码
 │   ├── common/                   # 公共资源
 │   │   ├── main.js              # 入口（包含 CSS 导入）
@@ -190,7 +192,7 @@ function createComponent() {
 ### 开发命令
 ```bash
 npm run dev      # 开发服务器 + 热更新
-npm run build    # 构建主题包 → dist/theme-sky-blog-1-*.zip
+npm run build    # 构建主题包 → dist/liccsu-blog-theme-*.zip
 npm run lint     # ESLint 检查
 npm run prettier # 代码格式化
 ```

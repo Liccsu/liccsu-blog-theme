@@ -223,7 +223,7 @@ function createShareModal() {
       const width = 400, height = 500;
       const left = (window.innerWidth - width) / 2;
       const top = (window.innerHeight - height) / 2;
-      const qrcodePageUrl = `/themes/theme-sky-blog-1/assets/qrcode/qrcode-share.html?url=${encodeURIComponent(this.permalink)}`;
+      const qrcodePageUrl = `/themes/liccsu-blog-theme/assets/qrcode/qrcode-share.html?url=${encodeURIComponent(this.permalink)}`;
       window.open(qrcodePageUrl, '微信扫码分享',
         `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no`);
     }
