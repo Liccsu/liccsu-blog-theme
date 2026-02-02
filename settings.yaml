@@ -16,8 +16,8 @@ spec:
             css_style: bars
             loading_text: "Loading..."
             min_duration: 300
-            custom_svg: ''
-            custom_gif: ''
+            custom_svg: ""
+            custom_gif: ""
           children:
             - $formkit: switch
               id: enable_loading
@@ -270,7 +270,7 @@ spec:
           value:
             logo_type: none
             logo_icon: null
-            logo_icon_html: ''
+            logo_icon_html: ""
             logo_image: ""
             show_logo_title: true
             custom_logo_title: "5ee.net"
@@ -311,7 +311,7 @@ spec:
               help: 直接输入 SVG 或其他 HTML 代码，将在页面中直接渲染
               language: html
               height: 120
-              value: ''
+              value: ""
             - $formkit: attachment
               name: logo_image
               key: logo_image_field
@@ -349,7 +349,7 @@ spec:
           label: 主题设置
           value:
             show_theme_toggle: true
-            default_theme: dark_theme
+            default_theme: system
             light_theme: light
             dark_theme: dark
             light_icon: null
@@ -380,12 +380,14 @@ spec:
             - $formkit: toggle
               name: default_theme
               label: 默认主题
-              help: 当前默认显示的主题,可从以下主题中选择,https://daisyui.com/theme-generator/ 查看具体配色方案
+              help: 新用户首次访问时使用的主题模式
               render-type: text
               size: 80
               gap: 10
-              value: dark_theme
+              value: system
               options:
+                - label: 跟随系统
+                  value: system
                 - label: 浅色主题
                   value: light_theme
                 - label: 深色主题
@@ -560,7 +562,7 @@ spec:
           value:
             brand_icon_type: iconify
             brand_icon: null
-            brand_icon_html: ''
+            brand_icon_html: ""
             brand_icon_image: ""
             show_brand_title: true
             custom_brand_title: ""
@@ -603,7 +605,7 @@ spec:
               help: 直接输入 SVG 或其他 HTML 代码，将在页面中直接渲染
               language: html
               height: 120
-              value: ''
+              value: ""
             - $formkit: attachment
               name: brand_icon_image
               key: brand_icon_image_field
@@ -3188,7 +3190,7 @@ spec:
     # Docsme 文档插件设置
     # =========================================
     - group: docsme
-      label: 文档 
+      label: 文档
       formSchema:
         # 文档内容页设置 (doc.html)
         - $formkit: group
@@ -3473,7 +3475,7 @@ spec:
                   name: auth_logo
                   label: Logo
                   help: 留空则使用站点默认 Logo
-                  accepts: ['image/*']
+                  accepts: ["image/*"]
                 - $formkit: text
                   name: auth_site_title
                   label: 标题
@@ -3483,13 +3485,13 @@ spec:
                   name: auth_side_image
                   label: 侧边栏背景图
                   help: 自定义侧边栏的背景图片，上传后将覆盖默认的渐变背景
-                  accepts: ['image/*']
+                  accepts: ["image/*"]
                 - $formkit: text
                   name: features_welcome
                   label: 欢迎语
                   placeholder: "欢迎来到"
                   value: "欢迎来到"
-                
+
                 # 特性 1
                 - $formkit: iconify
                   name: feature_1_icon
@@ -3534,7 +3536,6 @@ spec:
                   name: feature_3_desc
                   label: 特性 3 描述
                   value: "随时随地访问您的创作"
-
 
     - group: bangumi_settings
       label: 追番页面

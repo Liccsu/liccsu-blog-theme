@@ -68,7 +68,7 @@
       },
       "theme_settings": {
         "show_theme_toggle": true,
-        "default_theme": "light_theme",
+        "default_theme": "system",
         "light_theme": "nord",
         "dark_theme": "business"
       },
@@ -309,13 +309,7 @@
         "enable_share": true,
         "enable_comment": true,
         "share_settings": {
-          "share_item_ids": [
-            "wechat",
-            "qq",
-            "qzone",
-            "weibo",
-            "native"
-          ]
+          "share_item_ids": ["wechat", "qq", "qzone", "weibo", "native"]
         }
       },
       "dock_settings": {
@@ -634,13 +628,7 @@
         }
       ],
       "share_settings": {
-        "share_item_ids": [
-          "wechat",
-          "qq",
-          "qzone",
-          "weibo",
-          "native"
-        ]
+        "share_item_ids": ["wechat", "qq", "qzone", "weibo", "native"]
       },
       "floating_dock": {
         "enable_custom_dock": false,
@@ -692,13 +680,7 @@
       "doc_settings": {
         "enable_share": true,
         "share_settings": {
-          "share_item_ids": [
-            "wechat",
-            "qq",
-            "qzone",
-            "weibo",
-            "native"
-          ]
+          "share_item_ids": ["wechat", "qq", "qzone", "weibo", "native"]
         },
         "enable_custom_dock": false,
         "dock_style": "bottom",
