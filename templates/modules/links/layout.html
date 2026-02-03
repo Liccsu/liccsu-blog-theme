@@ -13,6 +13,9 @@
     <meta name="view-transition" content="same-origin" />
 
     <!-- 防止主题闪烁 -->
+    <!-- 移动端状态栏颜色 -->
+    <th:block th:replace="~{modules/theme-script :: theme-color-meta}" />
+    <!-- 防止主题闪烁 - 在渲染前立即应用主题 -->
     <th:block th:replace="~{modules/theme-script :: inline-script}" />
 
     <!-- 页面标题 -->

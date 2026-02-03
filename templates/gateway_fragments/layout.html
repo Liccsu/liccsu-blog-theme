@@ -29,6 +29,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
     <title th:text="${title}">Auth</title>
 
+    <!-- 移动端状态栏颜色 -->
+    <th:block th:replace="~{modules/theme-script :: theme-color-meta}" />
+    <!-- 防止主题闪烁 - 在渲染前立即应用主题 -->
     <th:block th:replace="~{modules/theme-script :: inline-script}" />
     <link rel="stylesheet" th:href="@{/assets/css/main.css?v={version}(version=${theme.spec.version})}" />
 

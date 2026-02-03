@@ -515,6 +515,56 @@ function createThemeToggle() {
           html.classList.remove("theme-transitioning");
         });
       });
+
+      // 更新移动端状态栏颜色
+      this.updateThemeColor();
+    },
+
+    /**
+     * 更新移动端状态栏颜色
+     * 通过 meta[name="theme-color"] 标签控制
+     * Safari: 使用带 media 属性的 meta 标签跟随系统主题（JS 动态修改无效）
+     * Chrome Android 等: 支持 JS 动态修改无 media 属性的 meta 标签
+     */
+    updateThemeColor() {
+      requestAnimationFrame(() => {
+        // 获取当前主题的背景色并转换为 HEX
+        const hexColor = this.getThemeBackgroundColor();
+
+        // 为支持动态更新的浏览器（如 Chrome Android）更新无 media 属性的 meta 标签
+        let dynamicMeta = document.querySelector('meta[name="theme-color"]:not([media])');
+        if (!dynamicMeta) {
+          dynamicMeta = document.createElement("meta");
+          dynamicMeta.name = "theme-color";
+          document.head.appendChild(dynamicMeta);
+        }
+        dynamicMeta.content = hexColor;
+      });
+    },
+
+    /**
+     * 获取当前主题的背景色（HEX 格式）
+     * 从 CSS 变量 --b1 获取 oklch 值并转换为 HEX
+     */
+    getThemeBackgroundColor() {
+      // 创建临时元素获取计算后的颜色
+      const temp = document.createElement("div");
+      temp.style.cssText = "position:absolute;visibility:hidden;background-color:oklch(var(--b1))";
+      document.body.appendChild(temp);
+      const computedColor = getComputedStyle(temp).backgroundColor;
+      temp.remove();
+
+      // 将 rgb/rgba 转换为 HEX
+      const match = computedColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        const r = parseInt(match[1]).toString(16).padStart(2, "0");
+        const g = parseInt(match[2]).toString(16).padStart(2, "0");
+        const b = parseInt(match[3]).toString(16).padStart(2, "0");
+        return `#${r}${g}${b}`;
+      }
+
+      // 回退到默认颜色
+      return this.isDark ? "#1f2937" : "#ffffff";
     },
   };
 }
