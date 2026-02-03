@@ -32,10 +32,12 @@
 
 <!-- 分类集合内容片段：/categories -->
 <main class="relative" th:fragment="category-collection"
-  th:with="cfg = ${theme.config.category_settings},
+  th:with="rootCfg = ${theme.config.category_settings},
+               cfg = ${rootCfg.basic_info},
+               sidebarCfg = ${rootCfg.sidebar_settings},
                globalSidebarCfg = ${theme.config.general.sidebar_settings},
-               useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
-               sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
+               useCustomSidebar = ${sidebarCfg?.enable_custom_sidebar == true},
+               sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
   <!-- 简约样式：不使用页头 Banner，直接展示分类按钮与列表 -->
 
   <!-- 主体内容区域（两列布局，与 post 一致） -->
@@ -45,7 +47,7 @@
       <section class="flex-1" th:classappend="${cfg.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <th:block th:with="categories = ${categoryFinder.listAsTree()}">
           <!-- 分类切换块 - 根据后台设置渲染不同风格 -->
-          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+          <th:block th:switch="${theme.config.category_settings.basic_info.category_display_style}">
             <th:block th:case="'pills'">
               <th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, null)}" />
             </th:block>
@@ -76,7 +78,7 @@
                              currentPage=${#numbers.formatInteger(pageParam, 0)}, 
                              posts=${postFinder.list({page: currentPage, size: pageSize})}">
             <!-- 动态渲染不同风格的列表 - 使用后台默认设置 -->
-            <th:block th:switch="${theme.config.category_settings.list_style}">
+            <th:block th:switch="${theme.config.category_settings.basic_info.list_style}">
               <th:block th:case="'modern'">
                 <th:block
                   th:replace="~{modules/categories/list-modern :: modern(${posts}, ${theme.config.category_settings})}" />
@@ -120,8 +122,9 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${cfg.show_sidebar != false}" class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
-        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${cfg})}" />
+      <aside th:if="${sidebarCfg.show_sidebar != false}"
+        class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
+        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${sidebarCfg})}" />
       </aside>
     </div>
   </div>
@@ -129,10 +132,12 @@
 
 <!-- 分类归档内容片段：/categories/:slug -->
 <main class="relative" th:fragment="category-archive"
-  th:with="cfg = ${theme.config.category_settings},
+  th:with="rootCfg = ${theme.config.category_settings},
+               cfg = ${rootCfg.basic_info},
+               sidebarCfg = ${rootCfg.sidebar_settings},
                globalSidebarCfg = ${theme.config.general.sidebar_settings},
-               useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
-               sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
+               useCustomSidebar = ${sidebarCfg?.enable_custom_sidebar == true},
+               sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
   <!-- 简约样式：不使用页头 Banner，直接展示分类按钮与当前分类列表 -->
 
   <!-- 主体内容区域（与 post 一致的两列布局） -->
@@ -140,10 +145,10 @@
     <div class="flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
       <section class="flex-1"
-        th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+        th:classappend="${theme.config.category_settings.sidebar_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <!-- 分类切换块 - 根据后台设置渲染不同风格 -->
         <th:block th:with="categories=${categoryFinder.listAsTree()}">
-          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+          <th:block th:switch="${theme.config.category_settings.basic_info.category_display_style}">
             <th:block th:case="'pills'">
               <th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" />
             </th:block>
@@ -163,7 +168,7 @@
         </th:block>
 
         <!-- 文章列表（当前分类）：使用后台默认设置 -->
-        <th:block th:switch="${theme.config.category_settings.list_style}">
+        <th:block th:switch="${theme.config.category_settings.basic_info.list_style}">
           <th:block th:case="'modern'">
             <th:block
               th:replace="~{modules/categories/list-modern :: modern(${posts}, ${theme.config.category_settings})}" />
@@ -200,8 +205,9 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${cfg.show_sidebar != false}" class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
-        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${cfg})}" />
+      <aside th:if="${sidebarCfg.show_sidebar != false}"
+        class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
+        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${sidebarCfg})}" />
       </aside>
     </div>
   </div>
@@ -209,10 +215,12 @@
 
 <!-- 分类归档内容片段：/categories/:slug - 强制卡片风格 -->
 <main class="relative" th:fragment="category-archive-card"
-  th:with="cfg = ${theme.config.category_settings},
+  th:with="rootCfg = ${theme.config.category_settings},
+               cfg = ${rootCfg.basic_info},
+               sidebarCfg = ${rootCfg.sidebar_settings},
                globalSidebarCfg = ${theme.config.general.sidebar_settings},
-               useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
-               sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
+               useCustomSidebar = ${sidebarCfg?.enable_custom_sidebar == true},
+               sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
   <!-- 简约样式：不使用页头 Banner，直接展示分类按钮与当前分类列表 -->
 
   <!-- 主体内容区域（与 post 一致的两列布局） -->
@@ -220,10 +228,10 @@
     <div class="flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
       <section class="flex-1"
-        th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+        th:classappend="${theme.config.category_settings.sidebar_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <!-- 分类切换块 -->
         <th:block th:with="categories=${categoryFinder.listAsTree()}">
-          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+          <th:block th:switch="${theme.config.category_settings.basic_info.category_display_style}">
             <th:block th:case="'pills'">
               <th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" />
             </th:block>
@@ -259,8 +267,9 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${cfg.show_sidebar != false}" class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
-        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${cfg})}" />
+      <aside th:if="${sidebarCfg.show_sidebar != false}"
+        class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
+        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${sidebarCfg})}" />
       </aside>
     </div>
   </div>
@@ -268,10 +277,12 @@
 
 <!-- 分类归档内容片段：/categories/:slug - 强制列表风格 -->
 <main class="relative" th:fragment="category-archive-list"
-  th:with="cfg = ${theme.config.category_settings},
+  th:with="rootCfg = ${theme.config.category_settings},
+               cfg = ${rootCfg.basic_info},
+               sidebarCfg = ${rootCfg.sidebar_settings},
                globalSidebarCfg = ${theme.config.general.sidebar_settings},
-               useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
-               sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
+               useCustomSidebar = ${sidebarCfg?.enable_custom_sidebar == true},
+               sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
   <!-- 简约样式：不使用页头 Banner，直接展示分类按钮与当前分类列表 -->
 
   <!-- 主体内容区域（与 post 一致的两列布局） -->
@@ -279,10 +290,10 @@
     <div class="flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
       <section class="flex-1"
-        th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+        th:classappend="${theme.config.category_settings.sidebar_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <!-- 分类切换块 -->
         <th:block th:with="categories=${categoryFinder.listAsTree()}">
-          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+          <th:block th:switch="${theme.config.category_settings.basic_info.category_display_style}">
             <th:block th:case="'pills'">
               <th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" />
             </th:block>
@@ -318,8 +329,9 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${cfg.show_sidebar != false}" class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
-        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${cfg})}" />
+      <aside th:if="${sidebarCfg.show_sidebar != false}"
+        class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
+        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${sidebarCfg})}" />
       </aside>
     </div>
   </div>
@@ -327,10 +339,12 @@
 
 <!-- 分类归档内容片段：/categories/:slug - 强制杂志风格 -->
 <main class="relative" th:fragment="category-archive-magazine"
-  th:with="cfg = ${theme.config.category_settings},
+  th:with="rootCfg = ${theme.config.category_settings},
+               cfg = ${rootCfg.basic_info},
+               sidebarCfg = ${rootCfg.sidebar_settings},
                globalSidebarCfg = ${theme.config.general.sidebar_settings},
-               useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
-               sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
+               useCustomSidebar = ${sidebarCfg?.enable_custom_sidebar == true},
+               sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
   <!-- 简约样式：不使用页头 Banner，直接展示分类按钮与当前分类列表 -->
 
   <!-- 主体内容区域（与 post 一致的两列布局） -->
@@ -338,10 +352,10 @@
     <div class="flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
       <section class="flex-1"
-        th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+        th:classappend="${theme.config.category_settings.sidebar_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <!-- 分类切换块 -->
         <th:block th:with="categories=${categoryFinder.listAsTree()}">
-          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+          <th:block th:switch="${theme.config.category_settings.basic_info.category_display_style}">
             <th:block th:case="'pills'">
               <th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" />
             </th:block>
@@ -377,8 +391,9 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${cfg.show_sidebar != false}" class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
-        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${cfg})}" />
+      <aside th:if="${sidebarCfg.show_sidebar != false}"
+        class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
+        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${sidebarCfg})}" />
       </aside>
     </div>
   </div>
@@ -386,10 +401,12 @@
 
 <!-- 分类归档内容片段：/categories/:slug - 强制极简风格 -->
 <main class="relative" th:fragment="category-archive-minimal"
-  th:with="cfg = ${theme.config.category_settings},
+  th:with="rootCfg = ${theme.config.category_settings},
+               cfg = ${rootCfg.basic_info},
+               sidebarCfg = ${rootCfg.sidebar_settings},
                globalSidebarCfg = ${theme.config.general.sidebar_settings},
-               useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
-               sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
+               useCustomSidebar = ${sidebarCfg?.enable_custom_sidebar == true},
+               sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
   <!-- 简约样式：不使用页头 Banner，直接展示分类按钮与当前分类列表 -->
 
   <!-- 主体内容区域（与 post 一致的两列布局） -->
@@ -397,10 +414,10 @@
     <div class="flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">
       <!-- 左侧：分类按钮与当前分类文章列表（分页） -->
       <section class="flex-1"
-        th:classappend="${theme.config.category_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
+        th:classappend="${theme.config.category_settings.sidebar_settings.show_sidebar == false ? 'max-w-6xl mx-auto' : ''}">
         <!-- 分类切换块 -->
         <th:block th:with="categories=${categoryFinder.listAsTree()}">
-          <th:block th:switch="${theme.config.category_settings.category_display_style}">
+          <th:block th:switch="${theme.config.category_settings.basic_info.category_display_style}">
             <th:block th:case="'pills'">
               <th:block th:replace="~{modules/categories/category-switch :: pills(${categories}, ${category})}" />
             </th:block>
@@ -436,8 +453,9 @@
       </section>
 
       <!-- 右侧：通用功能区块（不含文章目录） -->
-      <aside th:if="${cfg.show_sidebar != false}" class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
-        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${cfg})}" />
+      <aside th:if="${sidebarCfg.show_sidebar != false}"
+        class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
+        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${sidebarCfg})}" />
       </aside>
     </div>
   </div>

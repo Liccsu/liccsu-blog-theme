@@ -8,19 +8,21 @@
 
 <!-- 标签集合内容片段：/tags -->
 <main class="relative" th:fragment="tag-collection"
-  th:with="cfg = ${theme.config.tag_settings},
+  th:with="rootCfg = ${theme.config.tag_settings},
+               cfg = ${rootCfg.basic_info},
+               sidebarCfg = ${rootCfg.sidebar_settings},
                globalSidebarCfg = ${theme.config.general.sidebar_settings},
-               useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
-               sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
+               useCustomSidebar = ${sidebarCfg?.enable_custom_sidebar == true},
+               sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
   <!-- 主体内容区域（两列布局） -->
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">
       <!-- 左侧：标签切换块与文章列表 -->
-      <section class="flex-1" th:classappend="${cfg.show_sidebar != true ? 'max-w-6xl mx-auto' : ''}">
+      <section class="flex-1" th:classappend="${sidebarCfg.show_sidebar != true ? 'max-w-6xl mx-auto' : ''}">
         <th:block th:with="tags = ${tagFinder.listAll()}">
 
           <!-- 标签切换块 - 根据后台设置渲染不同风格 -->
-          <th:block th:switch="${theme.config.tag_settings.tag_display_style}">
+          <th:block th:switch="${theme.config.tag_settings.basic_info.tag_display_style}">
             <th:block th:case="'pills'">
               <th:block th:replace="~{modules/tags/tag-switch :: pills(${tags}, null)}" />
             </th:block>
@@ -51,7 +53,7 @@
                              currentPage=${#numbers.formatInteger(pageParam, 0)}, 
                              posts=${postFinder.list({page: currentPage, size: pageSize})}">
             <!-- 动态渲染不同风格的列表 -->
-            <th:block th:switch="${theme.config.tag_settings.list_style}">
+            <th:block th:switch="${theme.config.tag_settings.basic_info.list_style}">
               <th:block th:case="'modern'">
                 <th:block
                   th:replace="~{modules/categories/list-modern :: modern(${posts}, ${theme.config.tag_settings})}" />
@@ -94,8 +96,9 @@
       </section>
 
       <!-- 右侧：侧边栏 -->
-      <aside th:if="${cfg.show_sidebar == true}" class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
-        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${cfg})}" />
+      <aside th:if="${sidebarCfg.show_sidebar == true}"
+        class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
+        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${sidebarCfg})}" />
       </aside>
     </div>
   </div>
@@ -103,20 +106,22 @@
 
 <!-- 标签归档内容片段：/tags/:slug -->
 <main class="relative" th:fragment="tag-archive"
-  th:with="cfg = ${theme.config.tag_settings},
+  th:with="rootCfg = ${theme.config.tag_settings},
+               cfg = ${rootCfg.basic_info},
+               sidebarCfg = ${rootCfg.sidebar_settings},
                globalSidebarCfg = ${theme.config.general.sidebar_settings},
-               useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
-               sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
+               useCustomSidebar = ${sidebarCfg?.enable_custom_sidebar == true},
+               sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
   <!-- 主体内容区域 -->
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">
       <!-- 左侧：标签切换块与当前标签文章列表 -->
       <section class="flex-1"
-        th:classappend="${theme.config.tag_settings.show_sidebar != true ? 'max-w-6xl mx-auto' : ''}">
+        th:classappend="${theme.config.tag_settings.sidebar_settings.show_sidebar != true ? 'max-w-6xl mx-auto' : ''}">
 
         <!-- 标签切换块 -->
         <th:block th:with="tags = ${tagFinder.listAll()}">
-          <th:block th:switch="${theme.config.tag_settings.tag_display_style}">
+          <th:block th:switch="${theme.config.tag_settings.basic_info.tag_display_style}">
             <th:block th:case="'pills'">
               <th:block th:replace="~{modules/tags/tag-switch :: pills(${tags}, ${tag})}" />
             </th:block>
@@ -136,7 +141,7 @@
         </th:block>
 
         <!-- 文章列表（当前标签） -->
-        <th:block th:switch="${theme.config.tag_settings.list_style}">
+        <th:block th:switch="${theme.config.tag_settings.basic_info.list_style}">
           <th:block th:case="'modern'">
             <th:block
               th:replace="~{modules/categories/list-modern :: modern(${posts}, ${theme.config.tag_settings})}" />
@@ -172,8 +177,9 @@
       </section>
 
       <!-- 右侧：侧边栏 -->
-      <aside th:if="${cfg.show_sidebar == true}" class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
-        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${cfg})}" />
+      <aside th:if="${sidebarCfg.show_sidebar == true}"
+        class="right-sidebar w-80 space-y-6 hidden lg:block sticky top-20 self-start">
+        <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${sidebarCfg})}" />
       </aside>
     </div>
   </div>

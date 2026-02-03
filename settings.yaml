@@ -1788,89 +1788,114 @@ spec:
     - group: category_settings
       label: 分类
       formSchema:
-        - $formkit: switch
-          id: cat_show_sidebar
-          name: show_sidebar
-          label: 显示侧边栏
-          help: 控制分类页是否显示侧边栏
-          value: true
-        - $formkit: switch
-          id: cat_enable_custom_sidebar
-          name: enable_custom_sidebar
-          if: $get(cat_show_sidebar).value
-          label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
-          value: false
-        - $formkit: toggle
-          name: sidebar_position
-          if: $get(cat_enable_custom_sidebar).value
-          label: 侧边栏位置
-          render-type: text
-          size: 80
-          gap: 10
-          value: right
-          options:
-            - label: 左侧
-              value: left
-            - label: 右侧
-              value: right
-        - $formkit: array
-          name: sidebar_widgets
-          if: $get(cat_enable_custom_sidebar).value
-          label: 小工具列表
-          addLabel: 添加小工具
-          min: 0
-          max: 10
-          itemLabels:
-            - type: text
-              label: $value.widget
+        # ===== 基础信息 =====
+        - $formkit: group
+          name: basic_info
+          label: 基础信息
           value:
-            - widget: author_card
-            - widget: blog_stats
-            - widget: categories
-            - widget: tags
-            - widget: popular_posts
+            list_style: modern
+            category_display_style: style_1
           children:
-            - $formkit: select
-              name: widget
-              label: 小工具类型
-              options: *widget_options
-        - $formkit: toggle
-          name: list_style
-          label: 文章列表风格
-          help: |
-            选择分类页的文章列表展示风格。
-            • 分类页可通过「分类管理 → 自定义模板」单独覆盖
-          render-type: text
-          size: 60
-          gap: 10
-          value: modern
-          options:
-            - label: 卡片
+            - $formkit: toggle
+              name: list_style
+              label: 文章列表风格
+              help: |
+                选择分类页的文章列表展示风格。
+                • 分类页可通过「分类管理 → 自定义模板」单独覆盖
+              render-type: text
+              size: 60
+              gap: 10
               value: modern
-            - label: 列表
-              value: media_text
-            - label: 杂志
-              value: magazine
-            - label: 极简
-              value: minimal
-        - $formkit: toggle
-          name: category_display_style
-          label: 分类切换块风格
-          help: 选择分类页顶部分类列表的展示风格
-          render-type: text
-          size: 60
-          gap: 10
-          value: chips
-          options:
-            - label: 药丸
-              value: pills
-            - label: 芯片
+              options:
+                - label: 卡片
+                  value: modern
+                - label: 列表
+                  value: media_text
+                - label: 杂志
+                  value: magazine
+                - label: 极简
+                  value: minimal
+            - $formkit: toggle
+              name: category_display_style
+              label: 分类切换块风格
+              help: 选择分类页顶部分类列表的展示风格
+              render-type: text
+              size: 60
+              gap: 10
               value: chips
-            - label: 下划线
-              value: underline
-            - label: 玻璃拟态
-              value: glass
+              options:
+                - label: 药丸
+                  value: pills
+                - label: 芯片
+                  value: chips
+                - label: 下划线
+                  value: underline
+                - label: 玻璃拟态
+                  value: glass
+        
+        # ===== 侧边栏设置 =====
+        - $formkit: group
+          name: sidebar_settings
+          label: 侧边栏设置
+          value:
+            show_sidebar: true
+            enable_custom_sidebar: false
+            sidebar_position: right
+            sidebar_widgets:
+              - widget: author_card
+              - widget: blog_stats
+              - widget: categories
+              - widget: tags
+              - widget: popular_posts
+          children:
+            - $formkit: switch
+              id: cat_show_sidebar
+              name: show_sidebar
+              label: 显示侧边栏
+              help: 控制分类页是否显示侧边栏
+              value: true
+            - $formkit: switch
+              id: cat_enable_custom_sidebar
+              name: enable_custom_sidebar
+              if: $get(cat_show_sidebar).value
+              label: 定制侧边栏
+              help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
+              value: false
+            - $formkit: toggle
+              name: sidebar_position
+              if: $get(cat_enable_custom_sidebar).value
+              label: 侧边栏位置
+              render-type: text
+              size: 80
+              gap: 10
+              value: right
+              options:
+                - label: 左侧
+                  value: left
+                - label: 右侧
+                  value: right
+            - $formkit: array
+              name: sidebar_widgets
+              if: $get(cat_enable_custom_sidebar).value
+              label: 小工具列表
+              addLabel: 添加小工具
+              min: 0
+              max: 10
+              itemLabels:
+                - type: text
+                  label: $value.widget
+              value:
+                - widget: author_card
+                - widget: blog_stats
+                - widget: categories
+                - widget: tags
+                - widget: popular_posts
+              children:
+                - $formkit: select
+                  name: widget
+                  label: 小工具类型
+                  options: *widget_options
+
         # 封面回退设置
         - $formkit: group
           name: cover_fallback
@@ -1945,87 +1970,111 @@ spec:
     - group: tag_settings
       label: 标签
       formSchema:
-        - $formkit: switch
-          id: tag_show_sidebar
-          name: show_sidebar
-          label: 显示侧边栏
-          help: 控制标签页是否显示侧边栏
-          value: false
-        - $formkit: switch
-          id: tag_enable_custom_sidebar
-          name: enable_custom_sidebar
-          if: $get(tag_show_sidebar).value
-          label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
-          value: false
-        - $formkit: toggle
-          name: sidebar_position
-          if: $get(tag_enable_custom_sidebar).value
-          label: 侧边栏位置
-          render-type: text
-          size: 80
-          gap: 10
-          value: right
-          options:
-            - label: 左侧
-              value: left
-            - label: 右侧
-              value: right
-        - $formkit: array
-          name: sidebar_widgets
-          if: $get(tag_enable_custom_sidebar).value
-          label: 小工具列表
-          addLabel: 添加小工具
-          min: 0
-          max: 10
-          itemLabels:
-            - type: text
-              label: $value.widget
+        # ===== 基础信息 =====
+        - $formkit: group
+          name: basic_info
+          label: 基础信息
           value:
-            - widget: author_card
-            - widget: blog_stats
-            - widget: categories
-            - widget: tags
-            - widget: popular_posts
+            list_style: minimal
+            tag_display_style: underline
           children:
-            - $formkit: select
-              name: widget
-              label: 小工具类型
-              options: *widget_options
-        - $formkit: toggle
-          name: list_style
-          label: 文章列表风格
-          help: 选择标签页的文章列表展示风格
-          render-type: text
-          size: 60
-          gap: 10
-          value: minimal
-          options:
-            - label: 卡片
-              value: modern
-            - label: 列表
-              value: media_text
-            - label: 杂志
-              value: magazine
-            - label: 极简
+            - $formkit: toggle
+              name: list_style
+              label: 文章列表风格
+              help: 选择标签页的文章列表展示风格
+              render-type: text
+              size: 60
+              gap: 10
               value: minimal
-        - $formkit: toggle
-          name: tag_display_style
-          label: 标签切换块风格
-          help: 选择标签页顶部标签列表的展示风格
-          render-type: text
-          size: 60
-          gap: 10
-          value: underline
-          options:
-            - label: 药丸
-              value: pills
-            - label: 芯片
-              value: chips
-            - label: 下划线
+              options:
+                - label: 卡片
+                  value: modern
+                - label: 列表
+                  value: media_text
+                - label: 杂志
+                  value: magazine
+                - label: 极简
+                  value: minimal
+            - $formkit: toggle
+              name: tag_display_style
+              label: 标签切换块风格
+              help: 选择标签页顶部标签列表的展示风格
+              render-type: text
+              size: 60
+              gap: 10
               value: underline
-            - label: 玻璃拟态
-              value: glass
+              options:
+                - label: 药丸
+                  value: pills
+                - label: 芯片
+                  value: chips
+                - label: 下划线
+                  value: underline
+                - label: 玻璃拟态
+                  value: glass
+        
+        # ===== 侧边栏设置 =====
+        - $formkit: group
+          name: sidebar_settings
+          label: 侧边栏设置
+          value:
+            show_sidebar: false
+            enable_custom_sidebar: false
+            sidebar_position: right
+            sidebar_widgets:
+              - widget: author_card
+              - widget: blog_stats
+              - widget: categories
+              - widget: tags
+              - widget: popular_posts
+          children:
+            - $formkit: switch
+              id: tag_show_sidebar
+              name: show_sidebar
+              label: 显示侧边栏
+              help: 控制标签页是否显示侧边栏
+              value: false
+            - $formkit: switch
+              id: tag_enable_custom_sidebar
+              name: enable_custom_sidebar
+              if: $get(tag_show_sidebar).value
+              label: 定制侧边栏
+              help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
+              value: false
+            - $formkit: toggle
+              name: sidebar_position
+              if: $get(tag_enable_custom_sidebar).value
+              label: 侧边栏位置
+              render-type: text
+              size: 80
+              gap: 10
+              value: right
+              options:
+                - label: 左侧
+                  value: left
+                - label: 右侧
+                  value: right
+            - $formkit: array
+              name: sidebar_widgets
+              if: $get(tag_enable_custom_sidebar).value
+              label: 小工具列表
+              addLabel: 添加小工具
+              min: 0
+              max: 10
+              itemLabels:
+                - type: text
+                  label: $value.widget
+              value:
+                - widget: author_card
+                - widget: blog_stats
+                - widget: categories
+                - widget: tags
+                - widget: popular_posts
+              children:
+                - $formkit: select
+                  name: widget
+                  label: 小工具类型
+                  options: *widget_options
         # 封面回退设置
         - $formkit: group
           name: cover_fallback
@@ -2100,58 +2149,81 @@ spec:
     - group: archive_settings
       label: 归档
       formSchema:
-        - $formkit: switch
-          id: archive_show_sidebar
-          name: show_sidebar
-          label: 显示侧边栏
-          help: 控制归档页是否显示侧边栏
-          value: false
-        - $formkit: switch
-          id: archive_enable_custom_sidebar
-          name: enable_custom_sidebar
-          if: $get(archive_show_sidebar).value
-          label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
-          value: false
-        - $formkit: toggle
-          name: sidebar_position
-          if: $get(archive_enable_custom_sidebar).value
-          label: 侧边栏位置
-          render-type: text
-          size: 80
-          gap: 10
-          value: right
-          options:
-            - label: 左侧
-              value: left
-            - label: 右侧
-              value: right
-        - $formkit: array
-          name: sidebar_widgets
-          if: $get(archive_enable_custom_sidebar).value
-          label: 小工具列表
-          addLabel: 添加小工具
-          min: 0
-          max: 10
-          itemLabels:
-            - type: text
-              label: $value.widget
+        # ===== 基础信息 =====
+        - $formkit: group
+          name: basic_info
+          label: 基础信息
           value:
-            - widget: author_card
-            - widget: blog_stats
-            - widget: categories
-            - widget: tags
-            - widget: popular_posts
+            enable_comment: false
           children:
-            - $formkit: select
-              name: widget
-              label: 小工具类型
-              options: *widget_options
-        - $formkit: switch
-          name: enable_comment
-          label: 启用评论
-          help: 在归档页面底部显示评论区
-          value: false
+            - $formkit: switch
+              name: enable_comment
+              label: 启用评论
+              help: 在归档页面底部显示评论区
+              value: false
+        
+        # ===== 侧边栏设置 =====
+        - $formkit: group
+          name: sidebar_settings
+          label: 侧边栏设置
+          value:
+            show_sidebar: false
+            enable_custom_sidebar: false
+            sidebar_position: right
+            sidebar_widgets:
+              - widget: author_card
+              - widget: blog_stats
+              - widget: categories
+              - widget: tags
+              - widget: popular_posts
+          children:
+            - $formkit: switch
+              id: archive_show_sidebar
+              name: show_sidebar
+              label: 显示侧边栏
+              help: 控制归档页是否显示侧边栏
+              value: false
+            - $formkit: switch
+              id: archive_enable_custom_sidebar
+              name: enable_custom_sidebar
+              if: $get(archive_show_sidebar).value
+              label: 定制侧边栏
+              help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
+              value: false
+            - $formkit: toggle
+              name: sidebar_position
+              if: $get(archive_enable_custom_sidebar).value
+              label: 侧边栏位置
+              render-type: text
+              size: 80
+              gap: 10
+              value: right
+              options:
+                - label: 左侧
+                  value: left
+                - label: 右侧
+                  value: right
+            - $formkit: array
+              name: sidebar_widgets
+              if: $get(archive_enable_custom_sidebar).value
+              label: 小工具列表
+              addLabel: 添加小工具
+              min: 0
+              max: 10
+              itemLabels:
+                - type: text
+                  label: $value.widget
+              value:
+                - widget: author_card
+                - widget: blog_stats
+                - widget: categories
+                - widget: tags
+                - widget: popular_posts
+              children:
+                - $formkit: select
+                  name: widget
+                  label: 小工具类型
+                  options: *widget_options
         # 悬浮控制栏设置
         - $formkit: group
           name: floating_dock
@@ -2181,52 +2253,66 @@ spec:
     - group: author_settings
       label: 作者
       formSchema:
-        - $formkit: switch
-          id: author_show_sidebar
-          name: show_sidebar
-          label: 显示侧边栏
-          help: 控制作者页是否显示侧边栏
-          value: true
-        - $formkit: switch
-          id: author_enable_custom_sidebar
-          name: enable_custom_sidebar
-          if: $get(author_show_sidebar).value
-          label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
-          value: false
-        - $formkit: toggle
-          name: sidebar_position
-          if: $get(author_enable_custom_sidebar).value
-          label: 侧边栏位置
-          render-type: text
-          size: 80
-          gap: 10
-          value: right
-          options:
-            - label: 左侧
-              value: left
-            - label: 右侧
-              value: right
-        - $formkit: array
-          name: sidebar_widgets
-          if: $get(author_enable_custom_sidebar).value
-          label: 小工具列表
-          addLabel: 添加小工具
-          min: 0
-          max: 10
-          itemLabels:
-            - type: text
-              label: $value.widget
+        # ===== 侧边栏设置 =====
+        - $formkit: group
+          name: sidebar_settings
+          label: 侧边栏设置
           value:
-            - widget: welcome_card
-            - widget: blog_stats
-            - widget: categories
-            - widget: tags
+            show_sidebar: true
+            enable_custom_sidebar: false
+            sidebar_position: right
+            sidebar_widgets:
+              - widget: welcome_card
+              - widget: blog_stats
+              - widget: categories
+              - widget: tags
           children:
-            - $formkit: select
-              name: widget
-              label: 小工具类型
-              options: *widget_options
+            - $formkit: switch
+              id: author_show_sidebar
+              name: show_sidebar
+              label: 显示侧边栏
+              help: 控制作者页是否显示侧边栏
+              value: true
+            - $formkit: switch
+              id: author_enable_custom_sidebar
+              name: enable_custom_sidebar
+              if: $get(author_show_sidebar).value
+              label: 定制侧边栏
+              help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
+              value: false
+            - $formkit: toggle
+              name: sidebar_position
+              if: $get(author_enable_custom_sidebar).value
+              label: 侧边栏位置
+              render-type: text
+              size: 80
+              gap: 10
+              value: right
+              options:
+                - label: 左侧
+                  value: left
+                - label: 右侧
+                  value: right
+            - $formkit: array
+              name: sidebar_widgets
+              if: $get(author_enable_custom_sidebar).value
+              label: 小工具列表
+              addLabel: 添加小工具
+              min: 0
+              max: 10
+              itemLabels:
+                - type: text
+                  label: $value.widget
+              value:
+                - widget: welcome_card
+                - widget: blog_stats
+                - widget: categories
+                - widget: tags
+              children:
+                - $formkit: select
+                  name: widget
+                  label: 小工具类型
+                  options: *widget_options
         # 内容显示设置
         - $formkit: group
           name: content_settings
@@ -2286,16 +2372,29 @@ spec:
     - group: links_settings
       label: 友链
       formSchema:
-        - $formkit: text
-          name: page_title
-          label: 页面标题
-          value: "友情链接"
-          placeholder: "友情链接"
-        - $formkit: textarea
-          name: page_description
-          label: 页面描述
-          value: "感谢这些优秀的网站与博客，让互联网变得更加精彩"
-          rows: 2
+        - $formkit: group
+          name: basic_info
+          label: 基础信息
+          value:
+            page_title: "友情链接"
+            page_description: "感谢这些优秀的网站与博客，让互联网变得更加精彩"
+            enable_comment: true
+          children:
+            - $formkit: text
+              name: page_title
+              label: 页面标题
+              value: "友情链接"
+              placeholder: "友情链接"
+            - $formkit: textarea
+              name: page_description
+              label: 页面描述
+              value: "感谢这些优秀的网站与博客，让互联网变得更加精彩"
+              rows: 2
+            - $formkit: switch
+              name: enable_comment
+              label: 启用评论
+              help: 在友链页面底部显示评论区
+              value: true
         # 申请设置分组
         - $formkit: group
           name: apply_settings
@@ -2367,9 +2466,10 @@ spec:
               rows: 2
 
         # 其他功能 (侧边栏与评论)
+        # ===== 侧边栏设置 =====
         - $formkit: group
-          name: other_functions
-          label: 其他功能
+          name: sidebar_settings
+          label: 侧边栏设置
           value:
             show_sidebar: false
             enable_custom_sidebar: false
@@ -2380,7 +2480,6 @@ spec:
               - widget: categories
               - widget: tags
               - widget: popular_posts
-            enable_comment: true
           children:
             - $formkit: switch
               id: links_show_sidebar
@@ -2429,11 +2528,6 @@ spec:
                   name: widget
                   label: 小工具类型
                   options: *widget_options
-            - $formkit: switch
-              name: enable_comment
-              label: 启用评论
-              help: 在友链页面底部显示评论区
-              value: true
         # 悬浮控制栏设置
         - $formkit: group
           name: floating_dock
@@ -2910,68 +3004,90 @@ spec:
     - group: moments_settings
       label: 瞬间
       formSchema:
-        - $formkit: text
-          name: page_title
-          label: 页面标题
-          value: "瞬间"
-          placeholder: "瞬间页面的标题"
-        - $formkit: switch
-          id: moments_show_sidebar
-          name: show_sidebar
-          label: 显示侧边栏
-          help: 启用后显示侧边栏，页面变为左右布局
-          value: false
-        - $formkit: switch
-          id: moments_enable_custom_sidebar
-          name: enable_custom_sidebar
-          if: $get(moments_show_sidebar).value
-          label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
-          value: false
-        - $formkit: toggle
-          name: sidebar_position
-          if: $get(moments_enable_custom_sidebar).value
-          label: 侧边栏位置
-          render-type: text
-          size: 80
-          gap: 10
-          value: right
-          options:
-            - label: 左侧
-              value: left
-            - label: 右侧
-              value: right
-        - $formkit: array
-          name: sidebar_widgets
-          if: $get(moments_enable_custom_sidebar).value
-          label: 小工具列表
-          addLabel: 添加小工具
-          min: 0
-          max: 10
-          itemLabels:
-            - type: text
-              label: $value.widget
+        - $formkit: group
+          name: basic_info
+          label: 基础信息
           value:
-            - widget: author_card
-            - widget: blog_stats
-            - widget: categories
-            - widget: tags
-            - widget: popular_posts
+            page_title: "瞬间"
+            enable_upvote: true
+            enable_comment: true
           children:
-            - $formkit: select
-              name: widget
-              label: 小工具类型
-              options: *widget_options
-        - $formkit: switch
-          name: enable_upvote
-          label: 启用点赞
-          help: 在每条瞬间下方显示点赞按钮
-          value: true
-        - $formkit: switch
-          name: enable_comment
-          label: 启用评论
-          help: 在每条瞬间下方显示评论区
-          value: true
+            - $formkit: text
+              name: page_title
+              label: 页面标题
+              value: "瞬间"
+              placeholder: "瞬间页面的标题"
+            - $formkit: switch
+              name: enable_upvote
+              label: 启用点赞
+              help: 在每条瞬间下方显示点赞按钮
+              value: true
+            - $formkit: switch
+              name: enable_comment
+              label: 启用评论
+              help: 在每条瞬间下方显示评论区
+              value: true
+        - $formkit: group
+          name: sidebar_settings
+          label: 侧边栏设置
+          value:
+            show_sidebar: false
+            enable_custom_sidebar: false
+            sidebar_position: right
+            sidebar_widgets:
+              - widget: author_card
+              - widget: blog_stats
+              - widget: categories
+              - widget: tags
+              - widget: popular_posts
+          children:
+            - $formkit: switch
+              id: moments_show_sidebar
+              name: show_sidebar
+              label: 显示侧边栏
+              help: 启用后显示侧边栏，页面变为左右布局
+              value: false
+            - $formkit: switch
+              id: moments_enable_custom_sidebar
+              name: enable_custom_sidebar
+              if: $get(moments_show_sidebar).value
+              label: 定制侧边栏
+              help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
+              value: false
+            - $formkit: toggle
+              name: sidebar_position
+              if: $get(moments_enable_custom_sidebar).value
+              label: 侧边栏位置
+              render-type: text
+              size: 80
+              gap: 10
+              value: right
+              options:
+                - label: 左侧
+                  value: left
+                - label: 右侧
+                  value: right
+            - $formkit: array
+              name: sidebar_widgets
+              if: $get(moments_enable_custom_sidebar).value
+              label: 小工具列表
+              addLabel: 添加小工具
+              min: 0
+              max: 10
+              itemLabels:
+                - type: text
+                  label: $value.widget
+              value:
+                - widget: author_card
+                - widget: blog_stats
+                - widget: categories
+                - widget: tags
+                - widget: popular_posts
+              children:
+                - $formkit: select
+                  name: widget
+                  label: 小工具类型
+                  options: *widget_options
         - $formkit: group
           name: publish_settings
           label: 前端发布设置
@@ -3083,81 +3199,103 @@ spec:
       label: 朋友圈
       formSchema:
         - $formkit: group
-          name: plugin_tips
-          label: 插件配置提示
-          help: 每页显示数量等参数请在「后台 → 插件 → 朋友圈 → 基本设置」中配置
-          children: []
-        - $formkit: text
-          name: page_title
-          label: 页面标题
-          value: "朋友圈"
-          placeholder: "朋友圈页面的标题"
-        - $formkit: textarea
-          name: page_description
-          label: 页面描述
-          value: "订阅朋友们的最新动态"
-          rows: 2
-          placeholder: "朋友圈页面的描述"
-        - $formkit: toggle
-          name: list_style
-          label: 列表样式
-          help: 选择朋友圈页面的展示样式
-          render-type: text
-          size: 80
-          gap: 10
-          value: single_column
-          options:
-            - label: 单列
-              value: single_column
-            - label: 双列
-              value: two_columns
-        - $formkit: switch
-          id: friends_page_show_sidebar
-          name: show_sidebar
-          label: 显示侧边栏
-          help: 启用后显示侧边栏，页面变为左右布局
-          value: false
-        - $formkit: switch
-          id: friends_page_enable_custom_sidebar
-          name: enable_custom_sidebar
-          if: $get(friends_page_show_sidebar).value
-          label: 定制侧边栏
-          help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
-          value: false
-        - $formkit: toggle
-          name: sidebar_position
-          if: $get(friends_page_enable_custom_sidebar).value
-          label: 侧边栏位置
-          render-type: text
-          size: 80
-          gap: 10
-          value: right
-          options:
-            - label: 左侧
-              value: left
-            - label: 右侧
-              value: right
-        - $formkit: array
-          name: sidebar_widgets
-          if: $get(friends_page_enable_custom_sidebar).value
-          label: 小工具列表
-          addLabel: 添加小工具
-          min: 0
-          max: 10
-          itemLabels:
-            - type: text
-              label: $value.widget
+          name: basic_info
+          label: 基础信息
           value:
-            - widget: author_card
-            - widget: blog_stats
-            - widget: categories
-            - widget: tags
-            - widget: popular_posts
+            page_title: "朋友圈"
+            page_description: "订阅朋友们的最新动态"
+            list_style: single_column
           children:
-            - $formkit: select
-              name: widget
-              label: 小工具类型
-              options: *widget_options
+            - $formkit: group
+              name: plugin_tips
+              label: 插件配置提示
+              help: 每页显示数量等参数请在「后台 → 插件 → 朋友圈 → 基本设置」中配置
+              children: []
+            - $formkit: text
+              name: page_title
+              label: 页面标题
+              value: "朋友圈"
+              placeholder: "朋友圈页面的标题"
+            - $formkit: textarea
+              name: page_description
+              label: 页面描述
+              value: "订阅朋友们的最新动态"
+              rows: 2
+              placeholder: "朋友圈页面的描述"
+            - $formkit: toggle
+              name: list_style
+              label: 列表样式
+              help: 选择朋友圈页面的展示样式
+              render-type: text
+              size: 80
+              gap: 10
+              value: single_column
+              options:
+                - label: 单列
+                  value: single_column
+                - label: 双列
+                  value: two_columns
+        - $formkit: group
+          name: sidebar_settings
+          label: 侧边栏设置
+          value:
+            show_sidebar: false
+            enable_custom_sidebar: false
+            sidebar_position: right
+            sidebar_widgets:
+              - widget: author_card
+              - widget: blog_stats
+              - widget: categories
+              - widget: tags
+              - widget: popular_posts
+          children:
+            - $formkit: switch
+              id: friends_page_show_sidebar
+              name: show_sidebar
+              label: 显示侧边栏
+              help: 启用后显示侧边栏，页面变为左右布局
+              value: false
+            - $formkit: switch
+              id: friends_page_enable_custom_sidebar
+              name: enable_custom_sidebar
+              if: $get(friends_page_show_sidebar).value
+              label: 定制侧边栏
+              help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
+              value: false
+            - $formkit: toggle
+              name: sidebar_position
+              if: $get(friends_page_enable_custom_sidebar).value
+              label: 侧边栏位置
+              render-type: text
+              size: 80
+              gap: 10
+              value: right
+              options:
+                - label: 左侧
+                  value: left
+                - label: 右侧
+                  value: right
+            - $formkit: array
+              name: sidebar_widgets
+              if: $get(friends_page_enable_custom_sidebar).value
+              label: 小工具列表
+              addLabel: 添加小工具
+              min: 0
+              max: 10
+              itemLabels:
+                - type: text
+                  label: $value.widget
+              value:
+                - widget: author_card
+                - widget: blog_stats
+                - widget: categories
+                - widget: tags
+                - widget: popular_posts
+              children:
+                - $formkit: select
+                  name: widget
+                  label: 小工具类型
+                  options: *widget_options
         # 悬浮控制栏设置
         - $formkit: group
           name: floating_dock
