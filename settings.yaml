@@ -3811,10 +3811,11 @@ spec:
           label: 风格设置
           value:
             mode: "tech"
-            cover_url: "https://www.dmoe.cc/random.php"
+            tab_style: "pills"
+            hero_background: "https://www.dmoe.cc/random.php"
           children:
             - $formkit: toggle
-              id: equipment_mode
+              id: mode
               name: mode
               label: 装备页风格
               help: 选择装备页面的展示风格
@@ -3827,26 +3828,31 @@ spec:
                   value: tech
                 - label: 优雅卡片
                   value: simple
-            - $formkit: select
+            - $formkit: toggle
               name: tab_style
+              key: tab_style_field
               label: Tab 切换样式
               help: 选择分组切换按钮的展示样式
-              if: $get(equipment_mode).value === 'tech'
+              if: $get(mode).value === 'tech'
+              render-type: text
+              size: 80
+              gap: 10
               value: pills
               options:
                 - label: 药丸胶囊
                   value: pills
                 - label: 芯片边框
                   value: chips
-                - label: 极简下划线
+                - label: 下划线
                   value: underline
-                - label: 玻璃拟态
+                - label: 玻璃
                   value: glass
             - $formkit: attachment
               name: hero_background
+              key: hero_background_field
               label: Hero 背景图
               help: 优雅卡片模式下的顶部大图（建议 16:9 比例）
-              if: $get(equipment_mode).value === 'simple'
+              if: $get(mode).value === 'simple'
               value: "https://www.dmoe.cc/random.php"
               accepts:
                 - "image/*"
