@@ -500,9 +500,10 @@
 
 
         <th:block th:with="
-            tab0 = ${tabsOrder[0].tab},
-            tab1 = ${tabsOrder[1].tab},
-            tab2 = ${tabsOrder[2].tab},
+            tabsList = ${tabsOrder.![#this instanceof T(java.lang.String) ? #this : #this.tab]},
+            tab0 = ${tabsList[0]},
+            tab1 = ${tabsList[1]},
+            tab2 = ${tabsList[2]},
             isTab0Enabled = ${(tab0 == 'posts' and showPostsTab) or (tab0 == 'friends' and showFriendsTab) or (tab0 == 'moments' and showMomentsTab)},
             isTab1Enabled = ${(tab1 == 'posts' and showPostsTab) or (tab1 == 'friends' and showFriendsTab) or (tab1 == 'moments' and showMomentsTab)},
             firstEnabledTab = ${isTab0Enabled ? tab0 : (isTab1Enabled ? tab1 : tab2)},
@@ -514,23 +515,23 @@
               <th:block th:case="'pills'">
                 <div class="mb-8">
                   <div class="flex flex-wrap items-center gap-2">
-                    <th:block th:each="tabItem : ${tabsOrder}">
+                    <th:block th:each="tabCode : ${tabsList}">
                       <!-- 全部文章 -->
-                      <button th:if="${tabItem.tab == 'posts' and showPostsTab}" @click="tab = 'site'"
+                      <button th:if="${tabCode == 'posts' and showPostsTab}" @click="tab = 'site'"
                         :class="tab === 'site' ? 'bg-base-100 text-base-content shadow-sm border-base-content/10' : 'bg-base-100/60 text-base-content/60 border-base-content/5 hover:bg-base-100 hover:text-base-content hover:shadow-sm hover:border-base-content/10'"
                         class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer">
                         <span class="icon-[heroicons--home] w-3.5 h-3.5"></span>
                         全部文章
                       </button>
                       <!-- 朋友动态 -->
-                      <button th:if="${tabItem.tab == 'friends' and showFriendsTab}" @click="tab = 'friends'"
+                      <button th:if="${tabCode == 'friends' and showFriendsTab}" @click="tab = 'friends'"
                         :class="tab === 'friends' ? 'bg-base-100 text-base-content shadow-sm border-base-content/10' : 'bg-base-100/60 text-base-content/60 border-base-content/5 hover:bg-base-100 hover:text-base-content hover:shadow-sm hover:border-base-content/10'"
                         class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer">
                         <span class="icon-[heroicons--users] w-3.5 h-3.5"></span>
                         朋友动态
                       </button>
                       <!-- 瞬间说说 -->
-                      <button th:if="${tabItem.tab == 'moments' and showMomentsTab}" @click="tab = 'moments'"
+                      <button th:if="${tabCode == 'moments' and showMomentsTab}" @click="tab = 'moments'"
                         :class="tab === 'moments' ? 'bg-base-100 text-base-content shadow-sm border-base-content/10' : 'bg-base-100/60 text-base-content/60 border-base-content/5 hover:bg-base-100 hover:text-base-content hover:shadow-sm hover:border-base-content/10'"
                         class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer">
                         <span class="icon-[heroicons--chat-bubble-left-ellipsis] w-3.5 h-3.5"></span>
@@ -545,19 +546,19 @@
                 <div class="mb-8">
                   <div
                     class="inline-flex p-1 bg-base-200/50 backdrop-blur-sm rounded-xl border border-base-content/10 dark:bg-base-300/40 dark:border-base-content/10">
-                    <th:block th:each="tabItem : ${tabsOrder}">
+                    <th:block th:each="tabCode : ${tabsList}">
                       <!-- 全部文章 -->
-                      <button th:if="${tabItem.tab == 'posts' and showPostsTab}" @click="tab = 'site'"
+                      <button th:if="${tabCode == 'posts' and showPostsTab}" @click="tab = 'site'"
                         :class="tab === 'site' ? 'bg-base-100 shadow-md text-base-content dark:bg-base-100/95' : 'text-base-content/60 hover:text-base-content hover:bg-base-100/40'"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
                         <span class="icon-[heroicons--squares-2x2] w-4 h-4"></span>全部文章</button>
                       <!-- 朋友动态 -->
-                      <button th:if="${tabItem.tab == 'friends' and showFriendsTab}" @click="tab = 'friends'"
+                      <button th:if="${tabCode == 'friends' and showFriendsTab}" @click="tab = 'friends'"
                         :class="tab === 'friends' ? 'bg-base-100 shadow-md text-base-content dark:bg-base-100/95' : 'text-base-content/60 hover:text-base-content hover:bg-base-100/40'"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
                         <span class="icon-[heroicons--users] w-4 h-4"></span>朋友动态</button>
                       <!-- 瞬间说说 -->
-                      <button th:if="${tabItem.tab == 'moments' and showMomentsTab}" @click="tab = 'moments'"
+                      <button th:if="${tabCode == 'moments' and showMomentsTab}" @click="tab = 'moments'"
                         :class="tab === 'moments' ? 'bg-base-100 shadow-md text-base-content dark:bg-base-100/95' : 'text-base-content/60 hover:text-base-content hover:bg-base-100/40'"
                         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
                         <span class="icon-[heroicons--chat-bubble-left-ellipsis] w-4 h-4"></span>瞬间说说</button>
@@ -569,9 +570,9 @@
               <th:block th:case="'underline'">
                 <div class="mb-8 border-b border-base-200">
                   <div class="flex flex-wrap items-center gap-1 -mb-px">
-                    <th:block th:each="tabItem : ${tabsOrder}">
+                    <th:block th:each="tabCode : ${tabsList}">
                       <!-- 全部文章 -->
-                      <button th:if="${tabItem.tab == 'posts' and showPostsTab}" @click="tab = 'site'"
+                      <button th:if="${tabCode == 'posts' and showPostsTab}" @click="tab = 'site'"
                         :class="tab === 'site' ? 'text-primary' : 'text-base-content/60 hover:text-base-content'"
                         class="relative px-4 py-3 text-sm font-medium transition-colors duration-200">
                         全部文章
@@ -579,7 +580,7 @@
                           class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"></span>
                       </button>
                       <!-- 朋友动态 -->
-                      <button th:if="${tabItem.tab == 'friends' and showFriendsTab}" @click="tab = 'friends'"
+                      <button th:if="${tabCode == 'friends' and showFriendsTab}" @click="tab = 'friends'"
                         :class="tab === 'friends' ? 'text-primary' : 'text-base-content/60 hover:text-base-content'"
                         class="relative px-4 py-3 text-sm font-medium transition-colors duration-200">
                         朋友动态
@@ -587,7 +588,7 @@
                           class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"></span>
                       </button>
                       <!-- 瞬间说说 -->
-                      <button th:if="${tabItem.tab == 'moments' and showMomentsTab}" @click="tab = 'moments'"
+                      <button th:if="${tabCode == 'moments' and showMomentsTab}" @click="tab = 'moments'"
                         :class="tab === 'moments' ? 'text-primary' : 'text-base-content/60 hover:text-base-content'"
                         class="relative px-4 py-3 text-sm font-medium transition-colors duration-200">
                         瞬间说说
@@ -602,14 +603,14 @@
               <th:block th:case="'glass'">
                 <div class="mb-8">
                   <div class="flex flex-wrap items-center gap-2">
-                    <th:block th:each="tabItem : ${tabsOrder}">
-                      <button th:if="${tabItem.tab == 'posts' and showPostsTab}" @click="tab = 'site'"
+                    <th:block th:each="tabCode : ${tabsList}">
+                      <button th:if="${tabCode == 'posts' and showPostsTab}" @click="tab = 'site'"
                         :class="tab === 'site' ? 'bg-base-100/90 text-base-content shadow-md dark:bg-base-100/95' : 'text-base-content/60 hover:bg-base-100/50 hover:text-base-content'"
                         class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300">全部文章</button>
-                      <button th:if="${tabItem.tab == 'friends' and showFriendsTab}" @click="tab = 'friends'"
+                      <button th:if="${tabCode == 'friends' and showFriendsTab}" @click="tab = 'friends'"
                         :class="tab === 'friends' ? 'bg-base-100/90 text-base-content shadow-md dark:bg-base-100/95' : 'text-base-content/60 hover:bg-base-100/50 hover:text-base-content'"
                         class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300">朋友动态</button>
-                      <button th:if="${tabItem.tab == 'moments' and showMomentsTab}" @click="tab = 'moments'"
+                      <button th:if="${tabCode == 'moments' and showMomentsTab}" @click="tab = 'moments'"
                         :class="tab === 'moments' ? 'bg-base-100/90 text-base-content shadow-md dark:bg-base-100/95' : 'text-base-content/60 hover:bg-base-100/50 hover:text-base-content'"
                         class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300">瞬间说说</button>
                     </th:block>
@@ -620,14 +621,14 @@
               <th:block th:case="*">
                 <div class="mb-8">
                   <div class="flex flex-wrap items-center gap-3">
-                    <th:block th:each="tabItem : ${tabsOrder}">
-                      <button th:if="${tabItem.tab == 'posts' and showPostsTab}" @click="tab = 'site'"
+                    <th:block th:each="tabCode : ${tabsList}">
+                      <button th:if="${tabCode == 'posts' and showPostsTab}" @click="tab = 'site'"
                         :class="tab === 'site' ? 'bg-primary text-primary-content shadow-lg shadow-primary/30' : 'bg-base-200/80 text-base-content/70 hover:bg-base-300 hover:text-base-content hover:shadow-md'"
                         class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300">全部文章</button>
-                      <button th:if="${tabItem.tab == 'friends' and showFriendsTab}" @click="tab = 'friends'"
+                      <button th:if="${tabCode == 'friends' and showFriendsTab}" @click="tab = 'friends'"
                         :class="tab === 'friends' ? 'bg-primary text-primary-content shadow-lg shadow-primary/30' : 'bg-base-200/80 text-base-content/70 hover:bg-base-300 hover:text-base-content hover:shadow-md'"
                         class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300">朋友动态</button>
-                      <button th:if="${tabItem.tab == 'moments' and showMomentsTab}" @click="tab = 'moments'"
+                      <button th:if="${tabCode == 'moments' and showMomentsTab}" @click="tab = 'moments'"
                         :class="tab === 'moments' ? 'bg-primary text-primary-content shadow-lg shadow-primary/30' : 'bg-base-200/80 text-base-content/70 hover:bg-base-300 hover:text-base-content hover:shadow-md'"
                         class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300">瞬间说说</button>
                     </th:block>
