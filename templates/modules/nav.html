@@ -144,21 +144,66 @@
                 class="flex h-10 w-10 items-center justify-center rounded-full transition-transform hover:scale-110"
                 title="切换主题"
               >
+                <!-- 浅色模式图标 -->
                 <span
                   x-cloak
                   x-show="mode === 'light'"
-                  class="icon-[heroicons--sun] text-base-content/60 hover:text-primary h-5 w-5 transition-colors"
-                ></span>
+                  class="text-base-content/60 hover:text-primary h-5 w-5 transition-colors [&>svg]:h-full [&>svg]:w-full"
+                >
+                  <th:block
+                    th:if="${theme.config.nav.theme_settings.light_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.light_icon)}"
+                  >
+                    <span
+                      th:utext="${theme.config.nav.theme_settings.light_icon}"
+                      class="block h-full w-full [&>svg]:h-full [&>svg]:w-full"
+                    ></span>
+                  </th:block>
+                  <th:block
+                    th:unless="${theme.config.nav.theme_settings.light_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.light_icon)}"
+                  >
+                    <span class="icon-[heroicons--sun] h-full w-full"></span>
+                  </th:block>
+                </span>
+                <!-- 深色模式图标 -->
                 <span
                   x-cloak
                   x-show="mode === 'dark'"
-                  class="icon-[heroicons--moon] text-base-content/60 hover:text-primary h-5 w-5 transition-colors"
-                ></span>
+                  class="text-base-content/60 hover:text-primary h-5 w-5 transition-colors [&>svg]:h-full [&>svg]:w-full"
+                >
+                  <th:block
+                    th:if="${theme.config.nav.theme_settings.dark_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.dark_icon)}"
+                  >
+                    <span
+                      th:utext="${theme.config.nav.theme_settings.dark_icon}"
+                      class="block h-full w-full [&>svg]:h-full [&>svg]:w-full"
+                    ></span>
+                  </th:block>
+                  <th:block
+                    th:unless="${theme.config.nav.theme_settings.dark_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.dark_icon)}"
+                  >
+                    <span class="icon-[heroicons--moon] h-full w-full"></span>
+                  </th:block>
+                </span>
+                <!-- 跟随系统图标 -->
                 <span
                   x-cloak
                   x-show="mode === 'system'"
-                  class="icon-[heroicons--computer-desktop] text-base-content/60 hover:text-primary h-5 w-5 transition-colors"
-                ></span>
+                  class="text-base-content/60 hover:text-primary h-5 w-5 transition-colors [&>svg]:h-full [&>svg]:w-full"
+                >
+                  <th:block
+                    th:if="${theme.config.nav.theme_settings.system_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.system_icon)}"
+                  >
+                    <span
+                      th:utext="${theme.config.nav.theme_settings.system_icon}"
+                      class="block h-full w-full [&>svg]:h-full [&>svg]:w-full"
+                    ></span>
+                  </th:block>
+                  <th:block
+                    th:unless="${theme.config.nav.theme_settings.system_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.system_icon)}"
+                  >
+                    <span class="icon-[gg--dark-mode] h-full w-full"></span>
+                  </th:block>
+                </span>
               </button>
               <!-- 下拉菜单 -->
               <ul
@@ -179,7 +224,21 @@
                     :class="{ 'active': mode === 'light' }"
                     class="flex items-center gap-2"
                   >
-                    <span class="icon-[heroicons--sun] h-4 w-4"></span>
+                    <span class="h-4 w-4 [&>svg]:h-full [&>svg]:w-full">
+                      <th:block
+                        th:if="${theme.config.nav.theme_settings.light_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.light_icon)}"
+                      >
+                        <span
+                          th:utext="${theme.config.nav.theme_settings.light_icon}"
+                          class="block h-full w-full [&>svg]:h-full [&>svg]:w-full"
+                        ></span>
+                      </th:block>
+                      <th:block
+                        th:unless="${theme.config.nav.theme_settings.light_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.light_icon)}"
+                      >
+                        <span class="icon-[heroicons--sun] h-full w-full"></span>
+                      </th:block>
+                    </span>
                     浅色模式
                   </button>
                 </li>
@@ -189,7 +248,21 @@
                     :class="{ 'active': mode === 'dark' }"
                     class="flex items-center gap-2"
                   >
-                    <span class="icon-[heroicons--moon] h-4 w-4"></span>
+                    <span class="h-4 w-4 [&>svg]:h-full [&>svg]:w-full">
+                      <th:block
+                        th:if="${theme.config.nav.theme_settings.dark_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.dark_icon)}"
+                      >
+                        <span
+                          th:utext="${theme.config.nav.theme_settings.dark_icon}"
+                          class="block h-full w-full [&>svg]:h-full [&>svg]:w-full"
+                        ></span>
+                      </th:block>
+                      <th:block
+                        th:unless="${theme.config.nav.theme_settings.dark_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.dark_icon)}"
+                      >
+                        <span class="icon-[heroicons--moon] h-full w-full"></span>
+                      </th:block>
+                    </span>
                     深色模式
                   </button>
                 </li>
@@ -199,7 +272,21 @@
                     :class="{ 'active': mode === 'system' }"
                     class="flex items-center gap-2"
                   >
-                    <span class="icon-[heroicons--computer-desktop] h-4 w-4"></span>
+                    <span class="h-4 w-4 [&>svg]:h-full [&>svg]:w-full">
+                      <th:block
+                        th:if="${theme.config.nav.theme_settings.system_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.system_icon)}"
+                      >
+                        <span
+                          th:utext="${theme.config.nav.theme_settings.system_icon}"
+                          class="block h-full w-full [&>svg]:h-full [&>svg]:w-full"
+                        ></span>
+                      </th:block>
+                      <th:block
+                        th:unless="${theme.config.nav.theme_settings.system_icon != null and !#strings.isEmpty(theme.config.nav.theme_settings.system_icon)}"
+                      >
+                        <span class="icon-[gg--dark-mode] h-full w-full"></span>
+                      </th:block>
+                    </span>
                     跟随系统
                   </button>
                 </li>

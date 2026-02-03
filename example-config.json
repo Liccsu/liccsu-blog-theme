@@ -70,7 +70,10 @@
         "show_theme_toggle": true,
         "default_theme": "system",
         "light_theme": "nord",
-        "dark_theme": "business"
+        "dark_theme": "business",
+        "light_icon": null,
+        "dark_icon": null,
+        "system_icon": null
       },
       "menu_settings": {
         "primary_menu": "primary"

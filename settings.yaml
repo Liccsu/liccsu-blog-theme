@@ -354,6 +354,7 @@ spec:
             dark_theme: dark
             light_icon: null
             dark_icon: null
+            system_icon: null
           children:
             - $formkit: switch
               id: nav_show_theme_toggle
@@ -375,6 +376,14 @@ spec:
               if: $get(nav_show_theme_toggle).value
               label: 深色主题图标
               help: 自定义深色主题按钮图标，不选择则使用默认图标
+              format: svg
+              value-only: true
+            - $formkit: iconify
+              name: system_icon
+              key: system_icon_field
+              if: $get(nav_show_theme_toggle).value
+              label: 跟随系统图标
+              help: 自定义跟随系统按钮图标，不选择则使用默认图标
               format: svg
               value-only: true
             - $formkit: toggle
