@@ -1403,12 +1403,17 @@ spec:
                   value: missing_only
                 - label: 始终使用
                   value: always
-            - $formkit: text
+            - $formkit: attachment
               name: cover_fallback_url
               if: $get(show_posts_tab).value && $get(index_cover_fallback_enable).value
-              label: 替代图片地址
-              help: 默认封面图片的 URL 地址
-              value: "https://www.dmoe.cc/random.php"
+              label: 默认封面图片
+              help: 上传或选择作为替代封面的图片（支持 jpeg/png/webp/gif）
+              accepts:
+                - image/jpeg
+                - image/png
+                - image/webp
+                - image/gif
+              value: ""
         # 朋友动态设置
         - $formkit: group
           name: friends_settings
@@ -2464,10 +2469,7 @@ spec:
               help: 申请按钮跳转的链接，默认为 /# (不跳转)
               placeholder: "/#"
 
-            # Blogger Info (Merged)
-            - $formkit: header
-              if: $get(apply_enable).value
-              label: 本站信息配置
+            # 本站信息配置
             - $formkit: text
               name: blogger_logo
               if: $get(apply_enable).value
