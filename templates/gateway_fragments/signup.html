@@ -147,10 +147,9 @@
                     throw new Error("请先输入邮箱地址");
                 }
 
-                // 检查是否启用 Altcha，如果启用则获取验证结果
-                const altchaEnabled = [[${#strings.equalsIgnoreCase(globalInfo.captchaProvider, 'ALTCHA')}]];
-                const altchaPayload = altchaEnabled && typeof requestAltchaChallengeResult === 'function' 
-                    ? await requestAltchaChallengeResult() 
+                // Altcha captcha (Halo Pro only feature, disabled in regular version)
+                const altchaPayload = typeof requestAltchaChallengeResult === 'function'
+                    ? await requestAltchaChallengeResult()
                     : '';
 
                 const response = await fetch("/signup/send-email-code", {
