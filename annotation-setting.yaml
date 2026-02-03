@@ -11,12 +11,12 @@ spec:
     group: equipment.kunkunyu.com
     kind: EquipmentGroup
   formSchema:
-    - $formkit: "textarea"
+    - $formkit: "iconify"
       name: "icon"
-      label: "图标 SVG"
-      help: "输入图标的 SVG 代码，或使用 iconify 格式如 <span class='icon-[heroicons--cpu-chip]'></span>"
-      placeholder: "<svg>...</svg>"
-      rows: 2
+      label: "分组图标"
+      format: "svg"
+      value-only: true
+      help: "选择装备分组的图标"
 
 ---
 
