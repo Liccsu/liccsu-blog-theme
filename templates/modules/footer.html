@@ -38,9 +38,16 @@
             <div class="mx-auto mb-4 flex flex-col items-center gap-3 md:mx-0 md:flex-row md:items-center">
               <!-- 站点图标 - 只在有图标配置时渲染容器 -->
               <div
-                th:if="${(theme.config.footer.brand_settings.brand_icon_type == 'iconify' and theme.config.footer.brand_settings.brand_icon != null) or (theme.config.footer.brand_settings.brand_icon_type == 'svg' and not #strings.isEmpty(theme.config.footer.brand_settings.brand_icon_html)) or (theme.config.footer.brand_settings.brand_icon_type == 'image' and not #strings.isEmpty(theme.config.footer.brand_settings.brand_icon_image))}"
+                th:if="${(theme.config.footer.brand_settings.brand_icon_type == 'system' and !#strings.isEmpty(site.logo)) or (theme.config.footer.brand_settings.brand_icon_type == 'iconify' and theme.config.footer.brand_settings.brand_icon != null) or (theme.config.footer.brand_settings.brand_icon_type == 'svg' and not #strings.isEmpty(theme.config.footer.brand_settings.brand_icon_html)) or (theme.config.footer.brand_settings.brand_icon_type == 'image' and not #strings.isEmpty(theme.config.footer.brand_settings.brand_icon_image))}"
                 class="text-primary flex h-10 w-10 shrink-0 items-center justify-center"
               >
+                <!-- 设置-Logo 类型 -->
+                <img
+                  th:if="${theme.config.footer.brand_settings.brand_icon_type == 'system' && !#strings.isEmpty(site.logo)}"
+                  th:src="${site.logo}"
+                  th:alt="${#strings.isEmpty(theme.config.footer.brand_settings.custom_brand_title) ? site.title : theme.config.footer.brand_settings.custom_brand_title}"
+                  class="h-full w-full object-contain"
+                />
                 <!-- Iconify 图标选择器类型 - 兼容两种数据格式 -->
                 <span
                   th:if="${theme.config.footer.brand_settings.brand_icon_type == 'iconify' and theme.config.footer.brand_settings.brand_icon != null and !theme.config.footer.brand_settings.brand_icon.toString().startsWith('<svg')}"

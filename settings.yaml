@@ -592,6 +592,8 @@ spec:
               options:
                 - label: 隐藏
                   value: none
+                - label: 设置-Logo
+                  value: system
                 - label: Iconify
                   value: iconify
                 - label: SVG
