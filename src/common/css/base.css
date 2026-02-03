@@ -54,34 +54,37 @@
 :root {
     /* 基础样式变量 */
     --halo-search-widget-base-font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-    /* 颜色变量 - 使用正确的 DaisyUI 5 变量格式 */
-    --halo-search-widget-base-bg-color: var(--color-base-100);
-    /* base-100 */
+    /* 颜色变量 - Halo 搜索组件适配 (Spotlight Style) */
+    /* 1. 基础排版与形状 */
+    --halo-search-widget-base-font-size: 0.875rem;
+    --halo-search-widget-base-font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    --halo-search-widget-base-rounded: 0.5rem;
+    /* 8px - 干练圆角 */
 
-    /* 修复字体加载问题 (来自 PR #15) */
+    /* 2. 核心颜色 (Light Mode - Clean) */
+    --halo-search-widget-base-bg-color: var(--color-base-100);
+    /* 搜索框：纯净白/底色 */
+    --halo-search-widget-modal-bg-color: var(--color-base-100);
+    /* 模态框：纯净白/底色 */
+    --halo-search-widget-modal-layer-color: color-mix(in oklch, var(--color-base-300) 40%, transparent);
+    /* 遮罩：适度遮挡 */
+
+    /* 3. 文本与内容 */
+    --halo-search-widget-primary-color: var(--color-primary);
+    --halo-search-widget-content-color: var(--color-base-content);
+    --halo-search-widget-muted-color: color-mix(in oklch, var(--color-base-content) 50%, transparent);
+
+    /* 4. 交互组件 */
+    --halo-search-widget-hit-bg-color: transparent;
+    /* 结果项：默认透明，去卡片化 */
+    --halo-search-widget-divider-color: color-mix(in oklch, var(--color-base-content) 5%, transparent);
+    /* 极淡分割线 */
+    --halo-search-widget-kbd-border-color: color-mix(in oklch, var(--color-base-content) 10%, transparent);
+    --halo-search-widget-kbd-shadow: 0 1px 2px 0 color-mix(in oklch, var(--color-base-content) 5%, transparent);
+
+    /* 修复字体加载问题 */
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
-    --halo-search-widget-primary-color: var(--color-primary);
-    /* primary */
-    --halo-search-widget-muted-color: color-mix(in oklch, var(--color-base-content) 80%, transparent);
-    /* base-content/80 */
-    --halo-search-widget-content-color: var(--color-base-content);
-    /* base-content */
-    /* 模态框样式 */
-    --halo-search-widget-modal-bg-color: var(--color-base-100);
-    /* base-100 */
-    --halo-search-widget-modal-layer-color: color-mix(in oklch, var(--color-base-200) 80%, transparent);
-    /* base-200/80 */
-    /* 搜索结果项样式 */
-    --halo-search-widget-hit-bg-color: var(--color-base-200);
-    /* base-200 */
-    /* 分割线和边框样式 */
-    --halo-search-widget-divider-color: var(--color-base-300);
-    /* base-300 */
-    --halo-search-widget-kbd-border-color: var(--color-base-300);
-    /* base-300 */
-    --halo-search-widget-kbd-shadow: 0 1px 3px 0 color-mix(in oklch, var(--color-base-100) 10%, transparent), 0 1px 2px -1px color-mix(in oklch, var(--color-base-100) 10%, transparent);
 
 
 
@@ -216,6 +219,18 @@ html[data-color-scheme="dark"],
 
     --halo-cw-emoji-picker-color-border: var(--color-base-300) !important;
     --halo-cw-emoji-picker-color-border-over: var(--color-primary) !important;
+
+    /* Search Widget Dark Mode Overrides (Minimalist List Style) */
+    --halo-search-widget-base-bg-color: color-mix(in srgb, var(--color-base-100), #fff 4%) !important;
+    --halo-search-widget-modal-bg-color: color-mix(in srgb, var(--color-base-100), #fff 6%) !important;
+    --halo-search-widget-modal-layer-color: rgba(0, 0, 0, 0.7) !important;
+
+    /* 结果列表：透明背景，依靠选中态区分 */
+    --halo-search-widget-hit-bg-color: transparent !important;
+
+    --halo-search-widget-divider-color: rgba(255, 255, 255, 0.05) !important;
+    --halo-search-widget-kbd-border-color: rgba(255, 255, 255, 0.1) !important;
+    --halo-search-widget-muted-color: rgba(255, 255, 255, 0.4) !important;
 }
 
 /* 评论组件按钮文字颜色修复 */
