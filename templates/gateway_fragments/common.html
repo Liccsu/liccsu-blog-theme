@@ -78,7 +78,7 @@
 <!-- 基础样式资源 -->
 <th:block th:fragment="basicStyleResources">
     <link rel="stylesheet" href="/webjars/normalize.css/8.0.1/normalize.css" />
-    <link rel="stylesheet" th:href="|/styles/main.css?v=${site.version}|" />
+
 </th:block>
 
 <!-- ========================================== -->
@@ -99,6 +99,9 @@
 <!-- ========================================== -->
 <!--    社交账号登录                            -->
 <!-- ========================================== -->
+<!-- ========================================== -->
+<!--    社交账号登录                            -->
+<!-- ========================================== -->
 <div th:remove="tag" th:fragment="socialAuthProviders">
     <th:block th:unless="${#lists.isEmpty(socialAuthProviders)}">
         <!-- 分隔线 -->
@@ -108,15 +111,13 @@
             <div class="flex-1 h-px bg-base-content/10"></div>
         </div>
 
-        <!-- 社交登录按钮列表 -->
-        <div class="flex flex-wrap justify-center gap-3">
+        <!-- 社交登录按钮列表 (Grid Layout) -->
+        <div class="auth-provider-grid">
             <th:block th:each="provider : ${socialAuthProviders}">
-                <form class="social-auth-provider-form"
+                <form class="social-auth-provider-form w-full"
                     th:action="|/login/social/${provider.metadata.name}?remember-me=false|" method="post">
-                    <button type="submit"
-                        class="btn btn-outline btn-sm gap-2 hover:scale-105 transition-all duration-300">
-                        <img th:src="${provider.spec.logo}" th:alt="|${provider.spec.displayName}'s icon|"
-                            class="w-4 h-4" />
+                    <button type="submit" class="auth-provider-btn">
+                        <img th:src="${provider.spec.logo}" th:alt="|${provider.spec.displayName}'s icon|" />
                         <span th:text="${provider.spec.displayName}">Provider</span>
                     </button>
                 </form>
@@ -156,13 +157,11 @@
             <div class="flex-1 h-px bg-base-content/10"></div>
         </div>
 
-        <!-- 其他登录方式 -->
-        <div class="flex flex-wrap justify-center gap-3">
+        <!-- 其他登录方式 (Grid Layout) -->
+        <div class="auth-provider-grid">
             <th:block th:each="provider : ${formAuthProviders}">
-                <a th:href="'/login?method=' + ${provider.metadata.name}"
-                    class="btn btn-ghost btn-sm gap-2 hover:scale-105 transition-all duration-300">
-                    <img th:src="${provider.spec.logo}" th:alt="|${provider.spec.displayName}'s icon|"
-                        class="w-4 h-4" />
+                <a th:href="'/login?method=' + ${provider.metadata.name}" class="auth-provider-btn">
+                    <img th:src="${provider.spec.logo}" th:alt="|${provider.spec.displayName}'s icon|" />
                     <span
                         th:text="${#messages.msgOrNull('formAuthProviders.' + provider.metadata.name + '.displayName') ?: provider.spec.displayName}">Method</span>
                 </a>
