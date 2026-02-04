@@ -290,8 +290,12 @@
   }
 }
 
-.bangumi-stagger-1 { animation-delay: 0.1s; }
-.bangumi-stagger-2 { animation-delay: 0.2s; }
+.bangumi-stagger-1 {
+  animation-delay: 0.1s;
+}
+.bangumi-stagger-2 {
+  animation-delay: 0.2s;
+}
 
 /* ========================================== */
 /*     响应式                                 */

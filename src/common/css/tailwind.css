@@ -9,5 +9,4 @@
 @plugin "@iconify/tailwind4";
 @plugin "daisyui" {
   themes: all;
- }
-
+}

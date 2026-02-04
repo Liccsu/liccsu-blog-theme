@@ -1,5 +1,6 @@
 <!-- 首页内容区 -->
-<th:block th:fragment="main-content"
+<th:block
+  th:fragment="main-content"
   th:with="githubUsername = ${theme.config.about_settings.github.username},
                    profile = ${theme.config.about_settings.profile},
                    indexCfg = ${theme.config.index},
@@ -24,20 +25,23 @@
                    momentsListStyle = ${momentsSettings.list_style ?: 'two_columns'},
                    globalSidebarCfg = ${theme.config.general.sidebar_settings},
                    useCustomSidebar = ${sidebarCfg?.enable_custom_sidebar == true},
-                   sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}">
-
+                   sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}"
+>
   <div
-    th:class="${theme.config.index.background_settings?.enable_header != false} ? 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8 lg:pt-24 lg:pb-12' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-8 lg:pt-8 lg:pb-12'">
-
+    th:class="${theme.config.index.background_settings?.enable_header != false} ? 'max-w-7xl lg:pb-12 mx-auto px-4 pt-6 pt-20 pb-8 sm:px-6 lg:px-8 lg:pt-8 lg:pt-24' : 'max-w-7xl lg:pb-12 mx-auto px-4 pt-6 pt-20 pb-8 sm:px-6 lg:px-8 lg:pt-8 lg:pt-24'"
+  >
     <!-- 主内容区：内容 + 侧边栏 -->
-    <div class="flex gap-8 lazy-anim" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">
+    <div class="lazy-anim flex gap-8" th:classappend="${sidebarPosition == 'left'} ? 'flex-row-reverse' : ''">
       <!-- 左侧：热力图 + Tab切换 + 文章列表 -->
-      <section class="flex-1 min-w-0">
+      <section class="min-w-0 flex-1">
         <!-- GitHub 热力图 -->
-        <div th:if="${showHeatmap and heatmapType == 'github' and githubUsername != null and !githubUsername.isEmpty()}"
-          class="heatmap-card rounded-[1.5rem] backdrop-blur-xl bg-base-100/70 border border-base-content/5 shadow-lg p-5 mb-8"
-          x-data="githubHeatmap()" x-init="init()" x-cloak>
-
+        <div
+          th:if="${showHeatmap and heatmapType == 'github' and githubUsername != null and !githubUsername.isEmpty()}"
+          class="heatmap-card bg-base-100/70 border-base-content/5 mb-8 rounded-[1.5rem] border p-5 shadow-lg backdrop-blur-xl"
+          x-data="githubHeatmap()"
+          x-init="init()"
+          x-cloak
+        >
           <!-- 骨架屏加载状态 -->
           <div x-show="loading" class="heatmap-skeleton">
             <div class="flex flex-wrap gap-[3px]">
@@ -48,42 +52,49 @@
           </div>
 
           <!-- 热力图图片 -->
-          <img x-show="!loading && !error" x-ref="img" x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="github-heatmap-img"
-            alt="GitHub Contributions" />
+          <img
+            x-show="!loading && !error"
+            x-ref="img"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            class="github-heatmap-img"
+            alt="GitHub Contributions"
+          />
 
           <!-- 错误状态 -->
           <div x-show="error" x-cloak class="heatmap-error">
             <span class="icon-[heroicons--exclamation-triangle] heatmap-error-icon"></span>
             <p class="heatmap-error-text">GitHub 热力图加载失败</p>
             <button @click="retry()" class="heatmap-retry-btn">
-              <span class="icon-[heroicons--arrow-path] w-3 h-3 mr-1 inline-block"></span>
+              <span class="icon-[heroicons--arrow-path] mr-1 inline-block h-3 w-3"></span>
               重试
             </button>
           </div>
 
           <!-- 底部信息栏 -->
-          <div x-show="!loading && !error" class="heatmap-footer flex items-center justify-between mt-3">
-            <span class="text-xs text-base-content/40">GitHub 年度贡献</span>
-            <div class="heatmap-legend hidden sm:flex items-center gap-1 text-xs text-base-content/40">
+          <div x-show="!loading && !error" class="heatmap-footer mt-3 flex items-center justify-between">
+            <span class="text-base-content/40 text-xs">GitHub 年度贡献</span>
+            <div class="heatmap-legend text-base-content/40 hidden items-center gap-1 text-xs sm:flex">
               <span>Less</span>
               <span
-                class="inline-block w-2.5 h-2.5 rounded-sm border border-base-content/10 bg-base-content/[0.03]"></span>
-              <span class="inline-block w-2.5 h-2.5 rounded-sm bg-primary/25"></span>
-              <span class="inline-block w-2.5 h-2.5 rounded-sm bg-primary/50"></span>
-              <span class="inline-block w-2.5 h-2.5 rounded-sm bg-primary/75"></span>
-              <span x-ref="colorProbe" class="inline-block w-2.5 h-2.5 rounded-sm bg-primary"></span>
+                class="border-base-content/10 bg-base-content/[0.03] inline-block h-2.5 w-2.5 rounded-sm border"
+              ></span>
+              <span class="bg-primary/25 inline-block h-2.5 w-2.5 rounded-sm"></span>
+              <span class="bg-primary/50 inline-block h-2.5 w-2.5 rounded-sm"></span>
+              <span class="bg-primary/75 inline-block h-2.5 w-2.5 rounded-sm"></span>
+              <span x-ref="colorProbe" class="bg-primary inline-block h-2.5 w-2.5 rounded-sm"></span>
               <span>More</span>
             </div>
           </div>
         </div>
 
         <script th:inline="javascript">
-          document.addEventListener('alpine:init', () => {
-            Alpine.data('githubHeatmap', () => ({
+          document.addEventListener("alpine:init", () => {
+            Alpine.data("githubHeatmap", () => ({
               loading: true,
               error: false,
-              username: /*[[${githubUsername}]]*/ '',
+              username: /*[[${githubUsername}]]*/ "",
               _initialized: false,
 
               init() {
@@ -98,7 +109,7 @@
 
                 // 延迟加载热力图，不阻塞首屏
                 this.$nextTick(() => {
-                  if ('requestIdleCallback' in window) {
+                  if ("requestIdleCallback" in window) {
                     requestIdleCallback(() => this.loadImage(), { timeout: 3000 });
                   } else {
                     setTimeout(() => this.loadImage(), 200);
@@ -107,20 +118,20 @@
 
                 new MutationObserver(() => {
                   requestAnimationFrame(() => this.updateImageSrc());
-                }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+                }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
               },
 
               getPrimaryHex() {
                 const probe = this.$refs.colorProbe;
-                if (!probe) return '6366f1';
+                if (!probe) return "6366f1";
                 const color = getComputedStyle(probe).backgroundColor;
-                const canvas = document.createElement('canvas');
+                const canvas = document.createElement("canvas");
                 canvas.width = canvas.height = 1;
-                const ctx = canvas.getContext('2d');
+                const ctx = canvas.getContext("2d");
                 ctx.fillStyle = color;
                 ctx.fillRect(0, 0, 1, 1);
                 const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-                return [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+                return [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
               },
 
               getImageUrl() {
@@ -164,20 +175,21 @@
 
               retry() {
                 this.loadImage();
-              }
+              },
             }));
           });
         </script>
-
 
         <!-- 文章热力图 -->
         <th:block th:if="${showHeatmap and heatmapType == 'article'}">
           <!-- 获取最近的文章用于统计 -->
           <th:block th:with="recentPosts = ${postFinder.list({page: 1, size: 500})}">
             <div
-              class="heatmap-card rounded-[1.5rem] backdrop-blur-xl bg-base-100/70 border border-base-content/5 shadow-lg p-5 mb-8"
-              x-data="articleHeatmap()" x-init="init()" x-cloak>
-
+              class="heatmap-card bg-base-100/70 border-base-content/5 mb-8 rounded-[1.5rem] border p-5 shadow-lg backdrop-blur-xl"
+              x-data="articleHeatmap()"
+              x-init="init()"
+              x-cloak
+            >
               <!-- 热力图容器 -->
               <div x-ref="container" class="w-full overflow-x-auto"></div>
 
@@ -188,43 +200,47 @@
               </div>
 
               <!-- 底部信息栏 -->
-              <div x-show="!isEmpty" class="heatmap-footer flex items-center justify-between mt-3">
-                <span class="text-xs text-base-content/40">文章年度发布 · <span x-text="totalCount"></span> 篇</span>
-                <div class="heatmap-legend hidden sm:flex items-center gap-1 text-xs text-base-content/40">
+              <div x-show="!isEmpty" class="heatmap-footer mt-3 flex items-center justify-between">
+                <span class="text-base-content/40 text-xs">文章年度发布 · <span x-text="totalCount"></span> 篇</span>
+                <div class="heatmap-legend text-base-content/40 hidden items-center gap-1 text-xs sm:flex">
                   <span>Less</span>
-                  <span x-ref="level0"
-                    class="inline-block w-2.5 h-2.5 rounded-sm border border-base-content/10 bg-base-content/[0.03]"></span>
-                  <span x-ref="level1" class="inline-block w-2.5 h-2.5 rounded-sm bg-primary/25"></span>
-                  <span x-ref="level2" class="inline-block w-2.5 h-2.5 rounded-sm bg-primary/50"></span>
-                  <span x-ref="level3" class="inline-block w-2.5 h-2.5 rounded-sm bg-primary/75"></span>
-                  <span x-ref="level4" class="inline-block w-2.5 h-2.5 rounded-sm bg-primary"></span>
+                  <span
+                    x-ref="level0"
+                    class="border-base-content/10 bg-base-content/[0.03] inline-block h-2.5 w-2.5 rounded-sm border"
+                  ></span>
+                  <span x-ref="level1" class="bg-primary/25 inline-block h-2.5 w-2.5 rounded-sm"></span>
+                  <span x-ref="level2" class="bg-primary/50 inline-block h-2.5 w-2.5 rounded-sm"></span>
+                  <span x-ref="level3" class="bg-primary/75 inline-block h-2.5 w-2.5 rounded-sm"></span>
+                  <span x-ref="level4" class="bg-primary inline-block h-2.5 w-2.5 rounded-sm"></span>
                   <span>More</span>
                 </div>
               </div>
 
               <!-- 存储文章数据 - 仅统计公开文章 -->
-              <div x-ref="postsData" style="display:none;">
+              <div x-ref="postsData" style="display: none">
                 <th:block th:each="post : ${recentPosts.items}">
                   <span
                     th:if="${post.spec.publishTime != null and (post.spec.visible == null or post.spec.visible.name() == 'PUBLIC')}"
                     th:data-date="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd')}"
-                    th:data-title="${post.spec.title}" th:data-slug="${post.spec.slug}"></span>
+                    th:data-title="${post.spec.title}"
+                    th:data-slug="${post.spec.slug}"
+                  ></span>
                 </th:block>
               </div>
             </div>
 
             <!-- 自定义 Tooltip -->
-            <div x-ref="tooltip" class="heatmap-tooltip" style="display:none;"></div>
+            <div x-ref="tooltip" class="heatmap-tooltip" style="display: none"></div>
 
             <script>
-              document.addEventListener('alpine:init', () => {
-                Alpine.data('articleHeatmap', () => ({
+              document.addEventListener("alpine:init", () => {
+                Alpine.data("articleHeatmap", () => ({
                   totalCount: 0,
                   isEmpty: false,
                   data: new Map(),
                   postsByDate: new Map(),
-                  months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                  weekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                  months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                  weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
                   _initialized: false,
 
                   init() {
@@ -255,15 +271,15 @@
 
                     const oneYearAgo = new Date();
                     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-                    const oneYearAgoStr = oneYearAgo.toISOString().split('T')[0];
+                    const oneYearAgoStr = oneYearAgo.toISOString().split("T")[0];
 
                     // 使用 slug 去重，防止同一篇文章被多次统计
                     const seenSlugs = new Set();
 
-                    container.querySelectorAll('span[data-date]').forEach(span => {
-                      const date = span.getAttribute('data-date');
-                      const title = span.getAttribute('data-title') || '';
-                      const slug = span.getAttribute('data-slug') || '';
+                    container.querySelectorAll("span[data-date]").forEach((span) => {
+                      const date = span.getAttribute("data-date");
+                      const title = span.getAttribute("data-title") || "";
+                      const slug = span.getAttribute("data-slug") || "";
 
                       // 跳过一年前的文章
                       if (!date || date < oneYearAgoStr) return;
@@ -285,11 +301,11 @@
 
                   getColors() {
                     const colorToRgba = (el) => {
-                      if (!el) return 'rgba(128,128,128,0.1)';
+                      if (!el) return "rgba(128,128,128,0.1)";
                       const color = getComputedStyle(el).backgroundColor;
-                      const canvas = document.createElement('canvas');
+                      const canvas = document.createElement("canvas");
                       canvas.width = canvas.height = 1;
-                      const ctx = canvas.getContext('2d');
+                      const ctx = canvas.getContext("2d");
                       ctx.fillStyle = color;
                       ctx.fillRect(0, 0, 1, 1);
                       const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
@@ -301,7 +317,7 @@
                       1: colorToRgba(this.$refs.level1),
                       2: colorToRgba(this.$refs.level2),
                       3: colorToRgba(this.$refs.level3),
-                      4: colorToRgba(this.$refs.level4)
+                      4: colorToRgba(this.$refs.level4),
                     };
                   },
 
@@ -340,13 +356,15 @@
                         const month = d.getMonth();
                         if (month !== lastMonth) {
                           const x = labelWidth + w * (cellSize + cellGap);
-                          monthLabels.push(`<text x="${x}" y="10" class="heatmap-month-label">${this.months[month]}</text>`);
+                          monthLabels.push(
+                            `<text x="${x}" y="10" class="heatmap-month-label">${this.months[month]}</text>`,
+                          );
                           lastMonth = month;
                         }
                       }
 
                       // 生成星期标签
-                      const weekLabels = [1, 3, 5].map(d => {
+                      const weekLabels = [1, 3, 5].map((d) => {
                         const y = monthLabelHeight + d * (cellSize + cellGap) + cellSize * 0.75;
                         return `<text x="0" y="${y}" class="heatmap-label">${this.weekdays[d]}</text>`;
                       });
@@ -359,7 +377,7 @@
 
                         if (date > today) continue;
 
-                        const dateStr = date.toISOString().split('T')[0];
+                        const dateStr = date.toISOString().split("T")[0];
                         const count = this.data.get(dateStr) || 0;
                         const level = count === 0 ? 0 : count === 1 ? 1 : count === 2 ? 2 : count === 3 ? 3 : 4;
 
@@ -369,7 +387,7 @@
                         const y = monthLabelHeight + day * (cellSize + cellGap);
                         const fillColor = colors[level];
                         const delay = Math.min(i * 3, 800);
-                        const hasPostsClass = count > 0 ? 'has-posts' : '';
+                        const hasPostsClass = count > 0 ? "has-posts" : "";
 
                         cells.push(`<rect 
                         x="${x}" y="${y}" 
@@ -384,9 +402,9 @@
                       }
 
                       container.innerHTML = `<svg class="article-heatmap-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
-                      <g>${monthLabels.join('')}</g>
-                      <g>${weekLabels.join('')}</g>
-                      <g>${cells.join('')}</g>
+                      <g>${monthLabels.join("")}</g>
+                      <g>${weekLabels.join("")}</g>
+                      <g>${cells.join("")}</g>
                     </svg>`;
 
                       // 绑定事件
@@ -399,12 +417,12 @@
                     const tooltip = this.$refs.tooltip;
                     if (!container || !tooltip) return;
 
-                    const cells = container.querySelectorAll('.article-heatmap-cell');
+                    const cells = container.querySelectorAll(".article-heatmap-cell");
 
-                    cells.forEach(cell => {
-                      cell.addEventListener('mouseenter', (e) => this.showTooltip(e, cell));
-                      cell.addEventListener('mouseleave', () => this.hideTooltip());
-                      cell.addEventListener('click', () => this.handleClick(cell));
+                    cells.forEach((cell) => {
+                      cell.addEventListener("mouseenter", (e) => this.showTooltip(e, cell));
+                      cell.addEventListener("mouseleave", () => this.hideTooltip());
+                      cell.addEventListener("click", () => this.handleClick(cell));
                     });
                   },
 
@@ -412,8 +430,8 @@
                     const tooltip = this.$refs.tooltip;
                     if (!tooltip) return;
 
-                    const dateStr = cell.getAttribute('data-date');
-                    const count = parseInt(cell.getAttribute('data-count') || '0');
+                    const dateStr = cell.getAttribute("data-date");
+                    const count = parseInt(cell.getAttribute("data-count") || "0");
                     const posts = this.postsByDate.get(dateStr) || [];
 
                     const date = new Date(dateStr);
@@ -424,17 +442,17 @@
 
                     if (posts.length > 0) {
                       html += '<div class="heatmap-tooltip-posts">';
-                      posts.slice(0, 3).forEach(post => {
+                      posts.slice(0, 3).forEach((post) => {
                         html += `<span class="heatmap-tooltip-post">${post.title}</span>`;
                       });
                       if (posts.length > 3) {
                         html += `<span class="heatmap-tooltip-post">还有 ${posts.length - 3} 篇...</span>`;
                       }
-                      html += '</div>';
+                      html += "</div>";
                     }
 
                     tooltip.innerHTML = html;
-                    tooltip.style.display = 'block';
+                    tooltip.style.display = "block";
 
                     const rect = cell.getBoundingClientRect();
                     const tooltipRect = tooltip.getBoundingClientRect();
@@ -448,32 +466,32 @@
                       left = window.innerWidth - tooltipRect.width - 8;
                     }
 
-                    tooltip.style.left = left + 'px';
-                    tooltip.style.top = top + 'px';
+                    tooltip.style.left = left + "px";
+                    tooltip.style.top = top + "px";
 
-                    requestAnimationFrame(() => tooltip.classList.add('visible'));
+                    requestAnimationFrame(() => tooltip.classList.add("visible"));
                   },
 
                   hideTooltip() {
                     const tooltip = this.$refs.tooltip;
                     if (!tooltip) return;
 
-                    tooltip.classList.remove('visible');
+                    tooltip.classList.remove("visible");
                     setTimeout(() => {
-                      tooltip.style.display = 'none';
+                      tooltip.style.display = "none";
                     }, 150);
                   },
 
                   handleClick(cell) {
-                    const dateStr = cell.getAttribute('data-date');
-                    const count = parseInt(cell.getAttribute('data-count') || '0');
+                    const dateStr = cell.getAttribute("data-date");
+                    const count = parseInt(cell.getAttribute("data-count") || "0");
                     if (count > 0) {
                       window.location.href = `/archives?date=${dateStr}`;
                     }
                   },
 
                   setupResizeObserver() {
-                    if (typeof ResizeObserver === 'undefined') return;
+                    if (typeof ResizeObserver === "undefined") return;
 
                     let timeout;
                     new ResizeObserver(() => {
@@ -487,15 +505,14 @@
                       requestAnimationFrame(() => this.render());
                     }).observe(document.documentElement, {
                       attributes: true,
-                      attributeFilter: ['data-theme']
+                      attributeFilter: ["data-theme"],
                     });
-                  }
+                  },
                 }));
               });
             </script>
           </th:block>
         </th:block>
-
 
         <div x-data="{ tab: 'site' }">
           <!-- Tab 切换块 -->
@@ -504,22 +521,30 @@
             <th:block th:case="'pills'">
               <div class="mb-8">
                 <div class="flex flex-wrap items-center gap-2">
-                  <button @click="tab = 'site'"
+                  <button
+                    @click="tab = 'site'"
                     :class="tab === 'site' ? 'bg-base-100 text-base-content shadow-sm border-base-content/10' : 'bg-base-100/60 text-base-content/60 border-base-content/5 hover:bg-base-100 hover:text-base-content hover:shadow-sm hover:border-base-content/10'"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer">
-                    <span class="icon-[heroicons--home] w-3.5 h-3.5"></span>
+                    class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all duration-200"
+                  >
+                    <span class="icon-[heroicons--home] h-3.5 w-3.5"></span>
                     站内动态
                   </button>
-                  <button @click="tab = 'friends'" th:if="${showFriendsTab}"
+                  <button
+                    @click="tab = 'friends'"
+                    th:if="${showFriendsTab}"
                     :class="tab === 'friends' ? 'bg-base-100 text-base-content shadow-sm border-base-content/10' : 'bg-base-100/60 text-base-content/60 border-base-content/5 hover:bg-base-100 hover:text-base-content hover:shadow-sm hover:border-base-content/10'"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer">
-                    <span class="icon-[heroicons--users] w-3.5 h-3.5"></span>
+                    class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all duration-200"
+                  >
+                    <span class="icon-[heroicons--users] h-3.5 w-3.5"></span>
                     朋友动态
                   </button>
-                  <button @click="tab = 'moments'" th:if="${showMomentsTab}"
+                  <button
+                    @click="tab = 'moments'"
+                    th:if="${showMomentsTab}"
                     :class="tab === 'moments' ? 'bg-base-100 text-base-content shadow-sm border-base-content/10' : 'bg-base-100/60 text-base-content/60 border-base-content/5 hover:bg-base-100 hover:text-base-content hover:shadow-sm hover:border-base-content/10'"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 cursor-pointer">
-                    <span class="icon-[heroicons--chat-bubble-left-ellipsis] w-3.5 h-3.5"></span>
+                    class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-all duration-200"
+                  >
+                    <span class="icon-[heroicons--chat-bubble-left-ellipsis] h-3.5 w-3.5"></span>
                     瞬间说说
                   </button>
                 </div>
@@ -529,46 +554,72 @@
             <th:block th:case="'chips'">
               <div class="mb-8">
                 <div
-                  class="inline-flex p-1 bg-base-200/50 backdrop-blur-sm rounded-xl border border-base-content/10 dark:bg-base-300/40 dark:border-base-content/10">
-                  <button @click="tab = 'site'"
+                  class="bg-base-200/50 border-base-content/10 dark:bg-base-300/40 dark:border-base-content/10 inline-flex rounded-xl border p-1 backdrop-blur-sm"
+                >
+                  <button
+                    @click="tab = 'site'"
                     :class="tab === 'site' ? 'bg-base-100 shadow-md text-base-content dark:bg-base-100/95' : 'text-base-content/60 hover:text-base-content hover:bg-base-100/40'"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                    <span class="icon-[heroicons--squares-2x2] w-4 h-4"></span>站内动态</button>
-                  <button @click="tab = 'friends'" th:if="${showFriendsTab}"
+                    class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200"
+                  >
+                    <span class="icon-[heroicons--squares-2x2] h-4 w-4"></span>站内动态
+                  </button>
+                  <button
+                    @click="tab = 'friends'"
+                    th:if="${showFriendsTab}"
                     :class="tab === 'friends' ? 'bg-base-100 shadow-md text-base-content dark:bg-base-100/95' : 'text-base-content/60 hover:text-base-content hover:bg-base-100/40'"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                    <span class="icon-[heroicons--users] w-4 h-4"></span>朋友动态</button>
-                  <button @click="tab = 'moments'" th:if="${showMomentsTab}"
+                    class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200"
+                  >
+                    <span class="icon-[heroicons--users] h-4 w-4"></span>朋友动态
+                  </button>
+                  <button
+                    @click="tab = 'moments'"
+                    th:if="${showMomentsTab}"
                     :class="tab === 'moments' ? 'bg-base-100 shadow-md text-base-content dark:bg-base-100/95' : 'text-base-content/60 hover:text-base-content hover:bg-base-100/40'"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
-                    <span class="icon-[heroicons--chat-bubble-left-ellipsis] w-4 h-4"></span>瞬间说说</button>
+                    class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200"
+                  >
+                    <span class="icon-[heroicons--chat-bubble-left-ellipsis] h-4 w-4"></span>瞬间说说
+                  </button>
                 </div>
               </div>
             </th:block>
             <!-- 下划线风格 -->
             <th:block th:case="'underline'">
-              <div class="mb-8 border-b border-base-200">
-                <div class="flex flex-wrap items-center gap-1 -mb-px">
-                  <button @click="tab = 'site'"
+              <div class="border-base-200 mb-8 border-b">
+                <div class="-mb-px flex flex-wrap items-center gap-1">
+                  <button
+                    @click="tab = 'site'"
                     :class="tab === 'site' ? 'text-primary' : 'text-base-content/60 hover:text-base-content'"
-                    class="relative px-4 py-3 text-sm font-medium transition-colors duration-200">
+                    class="relative px-4 py-3 text-sm font-medium transition-colors duration-200"
+                  >
                     站内动态
-                    <span x-show="tab === 'site'"
-                      class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"></span>
+                    <span
+                      x-show="tab === 'site'"
+                      class="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-full"
+                    ></span>
                   </button>
-                  <button @click="tab = 'friends'" th:if="${showFriendsTab}"
+                  <button
+                    @click="tab = 'friends'"
+                    th:if="${showFriendsTab}"
                     :class="tab === 'friends' ? 'text-primary' : 'text-base-content/60 hover:text-base-content'"
-                    class="relative px-4 py-3 text-sm font-medium transition-colors duration-200">
+                    class="relative px-4 py-3 text-sm font-medium transition-colors duration-200"
+                  >
                     朋友动态
-                    <span x-show="tab === 'friends'"
-                      class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"></span>
+                    <span
+                      x-show="tab === 'friends'"
+                      class="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-full"
+                    ></span>
                   </button>
-                  <button @click="tab = 'moments'" th:if="${showMomentsTab}"
+                  <button
+                    @click="tab = 'moments'"
+                    th:if="${showMomentsTab}"
                     :class="tab === 'moments' ? 'text-primary' : 'text-base-content/60 hover:text-base-content'"
-                    class="relative px-4 py-3 text-sm font-medium transition-colors duration-200">
+                    class="relative px-4 py-3 text-sm font-medium transition-colors duration-200"
+                  >
                     瞬间说说
-                    <span x-show="tab === 'moments'"
-                      class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"></span>
+                    <span
+                      x-show="tab === 'moments'"
+                      class="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-full"
+                    ></span>
                   </button>
                 </div>
               </div>
@@ -577,15 +628,29 @@
             <th:block th:case="'glass'">
               <div class="mb-8">
                 <div class="flex flex-wrap items-center gap-2">
-                  <button @click="tab = 'site'"
+                  <button
+                    @click="tab = 'site'"
                     :class="tab === 'site' ? 'bg-base-100/90 text-base-content shadow-md dark:bg-base-100/95' : 'text-base-content/60 hover:bg-base-100/50 hover:text-base-content'"
-                    class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300">站内动态</button>
-                  <button @click="tab = 'friends'" th:if="${showFriendsTab}"
+                    class="rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300"
+                  >
+                    站内动态
+                  </button>
+                  <button
+                    @click="tab = 'friends'"
+                    th:if="${showFriendsTab}"
                     :class="tab === 'friends' ? 'bg-base-100/90 text-base-content shadow-md dark:bg-base-100/95' : 'text-base-content/60 hover:bg-base-100/50 hover:text-base-content'"
-                    class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300">朋友动态</button>
-                  <button @click="tab = 'moments'" th:if="${showMomentsTab}"
+                    class="rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300"
+                  >
+                    朋友动态
+                  </button>
+                  <button
+                    @click="tab = 'moments'"
+                    th:if="${showMomentsTab}"
                     :class="tab === 'moments' ? 'bg-base-100/90 text-base-content shadow-md dark:bg-base-100/95' : 'text-base-content/60 hover:bg-base-100/50 hover:text-base-content'"
-                    class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300">瞬间说说</button>
+                    class="rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300"
+                  >
+                    瞬间说说
+                  </button>
                 </div>
               </div>
             </th:block>
@@ -593,15 +658,29 @@
             <th:block th:case="*">
               <div class="mb-8">
                 <div class="flex flex-wrap items-center gap-3">
-                  <button @click="tab = 'site'"
+                  <button
+                    @click="tab = 'site'"
                     :class="tab === 'site' ? 'bg-primary text-primary-content shadow-lg shadow-primary/30' : 'bg-base-200/80 text-base-content/70 hover:bg-base-300 hover:text-base-content hover:shadow-md'"
-                    class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300">站内动态</button>
-                  <button @click="tab = 'friends'" th:if="${showFriendsTab}"
+                    class="rounded-full px-5 py-2 text-sm font-medium transition-all duration-300"
+                  >
+                    站内动态
+                  </button>
+                  <button
+                    @click="tab = 'friends'"
+                    th:if="${showFriendsTab}"
                     :class="tab === 'friends' ? 'bg-primary text-primary-content shadow-lg shadow-primary/30' : 'bg-base-200/80 text-base-content/70 hover:bg-base-300 hover:text-base-content hover:shadow-md'"
-                    class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300">朋友动态</button>
-                  <button @click="tab = 'moments'" th:if="${showMomentsTab}"
+                    class="rounded-full px-5 py-2 text-sm font-medium transition-all duration-300"
+                  >
+                    朋友动态
+                  </button>
+                  <button
+                    @click="tab = 'moments'"
+                    th:if="${showMomentsTab}"
                     :class="tab === 'moments' ? 'bg-primary text-primary-content shadow-lg shadow-primary/30' : 'bg-base-200/80 text-base-content/70 hover:bg-base-300 hover:text-base-content hover:shadow-md'"
-                    class="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300">瞬间说说</button>
+                    class="rounded-full px-5 py-2 text-sm font-medium transition-all duration-300"
+                  >
+                    瞬间说说
+                  </button>
                 </div>
               </div>
             </th:block>
@@ -609,8 +688,6 @@
 
           <!-- 站内动态 -->
           <div x-show="tab === 'site'" th:with="sitePosts = ${postFinder.list({page: 1, size: postCount})}">
-
-
             <th:block th:switch="${listStyle}">
               <th:block th:case="'modern'">
                 <th:block th:replace="~{modules/categories/list-modern :: modern(${sitePosts}, ${postSettings})}" />
@@ -629,47 +706,63 @@
               </th:block>
             </th:block>
             <div class="mt-10 text-center">
-              <a href="/archives"
-                class="group inline-flex items-center gap-1.5 text-sm font-medium text-base-content/50 hover:text-primary transition-colors duration-300">
+              <a
+                href="/archives"
+                class="group text-base-content/50 hover:text-primary inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-300"
+              >
                 View All
                 <span
-                  class="icon-[heroicons--arrow-right] w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></span>
+                  class="icon-[heroicons--arrow-right] h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                ></span>
               </a>
             </div>
           </div>
 
           <!-- 朋友动态 -->
           <th:block th:if="${showFriendsTab and friendFinder != null}">
-            <div x-show="tab === 'friends'" x-cloak th:with="friendPosts = ${friendFinder.list({page: 1, size: friendsCount})},
-                       linkGroups = ${linkFinder.groupBy()}">
-
+            <div
+              x-show="tab === 'friends'"
+              x-cloak
+              th:with="friendPosts = ${friendFinder.list({page: 1, size: friendsCount})},
+                       linkGroups = ${linkFinder.groupBy()}"
+            >
               <!-- 两列样式 - Bento Grid Style -->
               <div th:if="${friendsListStyle == 'two_columns'}" class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <th:block th:each="friend : ${friendPosts.items}" th:with="spec = ${friend.spec}">
                   <article
-                    class="card group relative bg-base-100/80 backdrop-blur-xl border border-base-content/5 shadow-lg rounded-[1.5rem] p-5 hover:shadow-2xl hover:scale-[1.01] hover:bg-base-100 transition-all duration-300 cursor-pointer overflow-hidden">
-
+                    class="card group bg-base-100/80 border-base-content/5 hover:bg-base-100 relative cursor-pointer overflow-hidden rounded-[1.5rem] border p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:scale-[1.01] hover:shadow-2xl"
+                  >
                     <!-- 顶部元信息 -->
-                    <div class="flex items-center gap-3 mb-4">
+                    <div class="mb-4 flex items-center gap-3">
                       <div class="relative">
-                        <img th:src="${spec.logo}" th:alt="${spec.author}"
-                          class="w-10 h-10 rounded-xl object-cover ring-2 ring-base-content/10 group-hover:ring-primary/50 transition-all"
-                          loading="lazy" />
+                        <img
+                          th:src="${spec.logo}"
+                          th:alt="${spec.author}"
+                          class="ring-base-content/10 group-hover:ring-primary/50 h-10 w-10 rounded-xl object-cover ring-2 transition-all"
+                          loading="lazy"
+                        />
                         <div
-                          class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-base-100 flex items-center justify-center">
-                          <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+                          class="bg-base-100 absolute -right-1 -bottom-1 flex h-4 w-4 items-center justify-center rounded-full"
+                        >
+                          <span class="bg-success h-2 w-2 animate-pulse rounded-full"></span>
                         </div>
                       </div>
-                      <div class="flex-1 min-w-0">
-                        <a th:href="${spec.authorUrl}" target="_blank"
-                          class="text-sm font-bold text-base-content truncate block" th:text="${spec.author}">作者</a>
-                        <div class="flex items-center gap-1.5 text-xs text-base-content/40">
+                      <div class="min-w-0 flex-1">
+                        <a
+                          th:href="${spec.authorUrl}"
+                          target="_blank"
+                          class="text-base-content block truncate text-sm font-bold"
+                          th:text="${spec.author}"
+                          >作者</a
+                        >
+                        <div class="text-base-content/40 flex items-center gap-1.5 text-xs">
                           <span th:text="${#temporals.format(spec.pubDate, 'MM-dd HH:mm')}">时间</span>
                           <!-- 动态匹配分组 -->
                           <th:block th:each="group : ${linkGroups}">
                             <th:block th:each="link : ${group.links}">
                               <th:block
-                                th:if="${link.spec.url == spec.authorUrl || link.spec.url == spec.authorUrl + '/' || spec.authorUrl == link.spec.url + '/'}">
+                                th:if="${link.spec.url == spec.authorUrl || link.spec.url == spec.authorUrl + '/' || spec.authorUrl == link.spec.url + '/'}"
+                              >
                                 <span>·</span>
                                 <span th:text="${group.spec.displayName}">分组</span>
                               </th:block>
@@ -681,19 +774,27 @@
 
                     <!-- 内容区域 -->
                     <div class="relative z-10">
-                      <h3 class="text-base font-bold text-base-content leading-snug mb-2 line-clamp-2">
+                      <h3 class="text-base-content mb-2 line-clamp-2 text-base leading-snug font-bold">
                         <a th:href="${spec.postLink}" target="_blank" th:text="${spec.title}">标题</a>
                       </h3>
-                      <p th:if="${spec.description != null and !spec.description.isEmpty()}"
-                        class="text-sm text-base-content/60 line-clamp-2 leading-relaxed mb-4"
-                        th:text="${spec.description}">描述...</p>
+                      <p
+                        th:if="${spec.description != null and !spec.description.isEmpty()}"
+                        class="text-base-content/60 mb-4 line-clamp-2 text-sm leading-relaxed"
+                        th:text="${spec.description}"
+                      >
+                        描述...
+                      </p>
 
                       <!-- 底部链接 -->
-                      <a th:href="${spec.postLink}" target="_blank"
-                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-base-content/40 group-hover:text-primary transition-colors">
+                      <a
+                        th:href="${spec.postLink}"
+                        target="_blank"
+                        class="text-base-content/40 group-hover:text-primary inline-flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                      >
                         阅读原文
                         <span
-                          class="icon-[heroicons--arrow-right] w-3 h-3 group-hover:translate-x-0.5 transition-transform"></span>
+                          class="icon-[heroicons--arrow-right] h-3 w-3 transition-transform group-hover:translate-x-0.5"
+                        ></span>
                       </a>
                     </div>
                   </article>
@@ -704,60 +805,87 @@
               <div th:if="${friendsListStyle == 'single_column'}" class="space-y-4">
                 <th:block th:each="friend : ${friendPosts.items}" th:with="spec = ${friend.spec}">
                   <article
-                    class="card group bg-base-100/80 backdrop-blur-xl border border-base-content/5 shadow-lg rounded-[1.5rem] p-5 hover:shadow-xl hover:bg-base-100 transition-all duration-300">
+                    class="card group bg-base-100/80 border-base-content/5 hover:bg-base-100 rounded-[1.5rem] border p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:shadow-xl"
+                  >
                     <div class="flex items-start gap-4">
                       <!-- 左侧头像 -->
-                      <a th:href="${spec.authorUrl}" target="_blank" rel="noopener" class="shrink-0 relative top-1">
-                        <img th:src="${spec.logo}" th:alt="|${spec.author} 头像|"
-                          class="w-12 h-12 rounded-xl object-cover ring-2 ring-base-content/10 group-hover:ring-primary/50 transition-all"
-                          loading="lazy" />
+                      <a th:href="${spec.authorUrl}" target="_blank" rel="noopener" class="relative top-1 shrink-0">
+                        <img
+                          th:src="${spec.logo}"
+                          th:alt="|${spec.author} 头像|"
+                          class="ring-base-content/10 group-hover:ring-primary/50 h-12 w-12 rounded-xl object-cover ring-2 transition-all"
+                          loading="lazy"
+                        />
                       </a>
 
                       <!-- 右侧内容 -->
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
+                      <div class="min-w-0 flex-1">
+                        <div class="mb-1 flex items-center justify-between">
                           <div class="flex items-center gap-2">
-                            <a th:href="${spec.authorUrl}" target="_blank" rel="noopener"
-                              class="text-sm font-bold text-base-content" th:text="${spec.author}">作者</a>
+                            <a
+                              th:href="${spec.authorUrl}"
+                              target="_blank"
+                              rel="noopener"
+                              class="text-base-content text-sm font-bold"
+                              th:text="${spec.author}"
+                              >作者</a
+                            >
                             <!-- 动态匹配分组 (单列) -->
                             <th:block th:each="group : ${linkGroups}">
                               <th:block th:each="link : ${group.links}">
                                 <th:block
-                                  th:if="${link.spec.url == spec.authorUrl || link.spec.url == spec.authorUrl + '/' || spec.authorUrl == link.spec.url + '/'}">
-                                  <span class="text-[10px] bg-base-200/50 px-1.5 py-0.5 rounded text-base-content/40"
-                                    th:text="${group.spec.displayName}">分组</span>
+                                  th:if="${link.spec.url == spec.authorUrl || link.spec.url == spec.authorUrl + '/' || spec.authorUrl == link.spec.url + '/'}"
+                                >
+                                  <span
+                                    class="bg-base-200/50 text-base-content/40 rounded px-1.5 py-0.5 text-[10px]"
+                                    th:text="${group.spec.displayName}"
+                                    >分组</span
+                                  >
                                 </th:block>
                               </th:block>
                             </th:block>
                           </div>
-                          <time class="text-xs text-base-content/40 font-medium"
-                            th:text="${#temporals.format(spec.pubDate, 'yyyy-MM-dd')}">2023-01-01</time>
+                          <time
+                            class="text-base-content/40 text-xs font-medium"
+                            th:text="${#temporals.format(spec.pubDate, 'yyyy-MM-dd')}"
+                            >2023-01-01</time
+                          >
                         </div>
 
-                        <h3 class="text-base font-bold text-base-content mb-1.5 line-clamp-1">
-                          <a th:href="${spec.postLink}" target="_blank" rel="noopener" th:text="${spec.title}">文章标题</a>
+                        <h3 class="text-base-content mb-1.5 line-clamp-1 text-base font-bold">
+                          <a th:href="${spec.postLink}" target="_blank" rel="noopener" th:text="${spec.title}"
+                            >文章标题</a
+                          >
                         </h3>
 
-                        <p th:if="${spec.description != null and !spec.description.isEmpty()}"
-                          class="text-sm text-base-content/50 line-clamp-2 leading-relaxed"
-                          th:text="${spec.description}">文章描述</p>
+                        <p
+                          th:if="${spec.description != null and !spec.description.isEmpty()}"
+                          class="text-base-content/50 line-clamp-2 text-sm leading-relaxed"
+                          th:text="${spec.description}"
+                        >
+                          文章描述
+                        </p>
                       </div>
                     </div>
                   </article>
                 </th:block>
               </div>
 
-
-              <div th:if="${friendPosts.items == null or friendPosts.items.isEmpty()}"
-                class="py-16 text-center text-base-content/40 text-sm">
+              <div
+                th:if="${friendPosts.items == null or friendPosts.items.isEmpty()}"
+                class="text-base-content/40 py-16 text-center text-sm"
+              >
                 暂无朋友动态
               </div>
               <div th:if="${friendPosts.items != null and !friendPosts.items.isEmpty()}" class="mt-10 text-center">
-                <a href="/friends"
-                  class="group inline-flex items-center gap-1.5 text-sm font-medium text-base-content/50 hover:text-primary transition-colors duration-300">
+                <a
+                  href="/friends"
+                  class="group text-base-content/50 hover:text-primary inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-300"
+                >
                   View All
                   <span
-                    class="icon-[heroicons--arrow-right] w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></span>
+                    class="icon-[heroicons--arrow-right] h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                  ></span>
                 </a>
               </div>
             </div>
@@ -765,74 +893,121 @@
 
           <!-- 瞬间说说 -->
           <th:block th:if="${showMomentsTab and momentFinder != null}">
-            <div x-show="tab === 'moments'" x-cloak th:with="momentsResult = ${momentFinder.list(1, momentsCount)},
-                          momentsList = ${momentsResult.items}">
-
+            <div
+              x-show="tab === 'moments'"
+              x-cloak
+              th:with="momentsResult = ${momentFinder.list(1, momentsCount)},
+                          momentsList = ${momentsResult.items}"
+            >
               <!-- 两列样式 -->
               <div th:if="${momentsListStyle == 'two_columns'}" class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <th:block th:each="moment : ${momentsList}">
-                  <article th:with="content = ${moment.spec.content}"
-                    class="card group relative bg-base-100/80 backdrop-blur-xl border border-base-content/5 shadow-lg rounded-[1.5rem] overflow-hidden hover:shadow-2xl hover:scale-[1.01] hover:bg-base-100 transition-all duration-300 cursor-pointer">
-
+                  <article
+                    th:with="content = ${moment.spec.content}"
+                    class="card group bg-base-100/80 border-base-content/5 hover:bg-base-100 relative cursor-pointer overflow-hidden rounded-[1.5rem] border shadow-lg backdrop-blur-xl transition-all duration-300 hover:scale-[1.01] hover:shadow-2xl"
+                  >
                     <!-- 头部信息 -->
                     <div class="p-5 pb-3">
-                      <div class="flex items-center gap-3 mb-3">
+                      <div class="mb-3 flex items-center gap-3">
                         <div class="relative">
-                          <a th:href="@{/authors/{name}(name=${moment.owner.name})}" class="block group/avatar"
-                            th:if="${moment.owner != null}">
-                            <img th:if="${moment.owner.avatar != null}" th:src="${moment.owner.avatar}"
+                          <a
+                            th:href="@{/authors/{name}(name=${moment.owner.name})}"
+                            class="group/avatar block"
+                            th:if="${moment.owner != null}"
+                          >
+                            <img
+                              th:if="${moment.owner.avatar != null}"
+                              th:src="${moment.owner.avatar}"
                               th:alt="|${moment.owner.displayName} 头像|"
-                              class="w-10 h-10 rounded-xl object-cover ring-2 ring-base-content/10 group-hover/avatar:ring-primary/50 transition-all"
-                              loading="lazy" />
-                            <div th:unless="${moment.owner.avatar != null}"
-                              class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                              <span class="icon-[heroicons--user] w-5 h-5 text-primary/60"></span>
+                              class="ring-base-content/10 group-hover/avatar:ring-primary/50 h-10 w-10 rounded-xl object-cover ring-2 transition-all"
+                              loading="lazy"
+                            />
+                            <div
+                              th:unless="${moment.owner.avatar != null}"
+                              class="from-primary/20 to-accent/20 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br"
+                            >
+                              <span class="icon-[heroicons--user] text-primary/60 h-5 w-5"></span>
                             </div>
                           </a>
-                          <div th:if="${moment.owner == null}"
-                            class="w-10 h-10 rounded-xl bg-base-200 flex items-center justify-center">
-                            <span class="icon-[heroicons--user] w-5 h-5 text-base-content/40"></span>
+                          <div
+                            th:if="${moment.owner == null}"
+                            class="bg-base-200 flex h-10 w-10 items-center justify-center rounded-xl"
+                          >
+                            <span class="icon-[heroicons--user] text-base-content/40 h-5 w-5"></span>
                           </div>
                           <!-- 在线状态点 -->
                           <div
-                            class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-base-100 flex items-center justify-center">
-                            <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+                            class="bg-base-100 absolute -right-1 -bottom-1 flex h-4 w-4 items-center justify-center rounded-full"
+                          >
+                            <span class="bg-success h-2 w-2 animate-pulse rounded-full"></span>
                           </div>
                         </div>
-                        <div class="flex-1 min-w-0">
-                          <a th:if="${moment.owner != null}" th:href="@{/authors/{name}(name=${moment.owner.name})}"
-                            class="text-sm font-bold text-base-content block truncate hover:text-primary transition-colors"
-                            th:text="${moment.owner.displayName}">用户</a>
-                          <span th:if="${moment.owner == null}"
-                            class="text-sm font-bold text-base-content block truncate whitespace-nowrap">匿名用户</span>
-                          <time class="text-xs text-base-content/40"
-                            th:text="${#temporals.format(moment.spec.releaseTime, 'MM-dd HH:mm')}">01-01 12:00</time>
+                        <div class="min-w-0 flex-1">
+                          <a
+                            th:if="${moment.owner != null}"
+                            th:href="@{/authors/{name}(name=${moment.owner.name})}"
+                            class="text-base-content hover:text-primary block truncate text-sm font-bold transition-colors"
+                            th:text="${moment.owner.displayName}"
+                            >用户</a
+                          >
+                          <span
+                            th:if="${moment.owner == null}"
+                            class="text-base-content block truncate text-sm font-bold whitespace-nowrap"
+                            >匿名用户</span
+                          >
+                          <time
+                            class="text-base-content/40 text-xs"
+                            th:text="${#temporals.format(moment.spec.releaseTime, 'MM-dd HH:mm')}"
+                            >01-01 12:00</time
+                          >
                         </div>
                       </div>
 
                       <!-- 文字内容 -->
-                      <div th:if="${content.html != null and !#strings.isEmpty(content.html)}"
-                        class="text-sm text-base-content/80 leading-relaxed line-clamp-4" th:utext="${content.html}">
-                        内容...</div>
+                      <div
+                        th:if="${content.html != null and !#strings.isEmpty(content.html)}"
+                        class="text-base-content/80 line-clamp-4 text-sm leading-relaxed"
+                        th:utext="${content.html}"
+                      >
+                        内容...
+                      </div>
                     </div>
 
                     <!-- 媒体区域 -->
                     <div th:if="${content.medium != null and !content.medium.isEmpty()}" class="px-5 pb-3">
-                      <div class="rounded-xl overflow-hidden"
-                        th:classappend="${#lists.size(content.medium) > 1} ? 'grid grid-cols-2 gap-1' : ''">
+                      <div
+                        class="overflow-hidden rounded-xl"
+                        th:classappend="${#lists.size(content.medium) > 1} ? 'grid grid-cols-2 gap-1' : ''"
+                      >
                         <th:block th:each="medium, mStat : ${content.medium}" th:if="${mStat.index < 4}">
-                          <div th:if="${medium.type.name == 'PHOTO'}"
-                            class="relative aspect-square bg-base-200 overflow-hidden">
-                            <img th:src="${medium.url}" alt="瞬间图片" class="w-full h-full object-cover" loading="lazy" />
-                            <div th:if="${mStat.index == 3 and #lists.size(content.medium) > 4}"
-                              class="absolute inset-0 bg-black/50 flex items-center justify-center">
-                              <span class="text-white font-semibold"
-                                th:text="'+' + (${#lists.size(content.medium)} - 4)">+2</span>
+                          <div
+                            th:if="${medium.type.name == 'PHOTO'}"
+                            class="bg-base-200 relative aspect-square overflow-hidden"
+                          >
+                            <img
+                              th:src="${medium.url}"
+                              alt="瞬间图片"
+                              class="h-full w-full object-cover"
+                              loading="lazy"
+                            />
+                            <div
+                              th:if="${mStat.index == 3 and #lists.size(content.medium) > 4}"
+                              class="absolute inset-0 flex items-center justify-center bg-black/50"
+                            >
+                              <span
+                                class="font-semibold text-white"
+                                th:text="'+' + (${#lists.size(content.medium)} - 4)"
+                                >+2</span
+                              >
                             </div>
                           </div>
                           <div th:if="${medium.type.name == 'VIDEO' and mStat.index == 0}" class="col-span-2">
-                            <video th:src="${medium.url}" controls preload="metadata"
-                              class="w-full rounded-lg max-h-48"></video>
+                            <video
+                              th:src="${medium.url}"
+                              controls
+                              preload="metadata"
+                              class="max-h-48 w-full rounded-lg"
+                            ></video>
                           </div>
                         </th:block>
                       </div>
@@ -840,21 +1015,24 @@
 
                     <!-- 互动信息 -->
                     <div
-                      class="px-5 py-3 border-t border-base-content/5 flex items-center justify-between text-xs text-base-content/40">
+                      class="border-base-content/5 text-base-content/40 flex items-center justify-between border-t px-5 py-3 text-xs"
+                    >
                       <div class="flex items-center gap-4">
                         <span class="flex items-center gap-1.5">
-                          <span class="icon-[heroicons--heart] w-4 h-4"></span>
+                          <span class="icon-[heroicons--heart] h-4 w-4"></span>
                           <span th:text="${moment.stats?.upvote ?: 0}">0</span>
                         </span>
                         <span class="flex items-center gap-1.5">
-                          <span class="icon-[heroicons--chat-bubble-left] w-4 h-4"></span>
+                          <span class="icon-[heroicons--chat-bubble-left] h-4 w-4"></span>
                           <span th:text="${moment.stats?.totalComment ?: 0}">0</span>
                         </span>
                       </div>
-                      <a th:href="@{'/moments/' + ${moment.metadata.name}}"
-                        class="flex items-center gap-1 text-primary hover:underline">
+                      <a
+                        th:href="@{'/moments/' + ${moment.metadata.name}}"
+                        class="text-primary flex items-center gap-1 hover:underline"
+                      >
                         <span>查看详情</span>
-                        <span class="icon-[heroicons--arrow-right] w-3.5 h-3.5"></span>
+                        <span class="icon-[heroicons--arrow-right] h-3.5 w-3.5"></span>
                       </a>
                     </div>
                   </article>
@@ -864,87 +1042,116 @@
               <!-- 单列样式 -->
               <div th:if="${momentsListStyle == 'single_column'}" class="space-y-4">
                 <th:block th:each="moment : ${momentsList}">
-                  <article th:with="content = ${moment.spec.content}"
-                    class="card group bg-base-100/80 backdrop-blur-xl border border-base-content/5 shadow-lg rounded-[1.5rem] overflow-hidden hover:shadow-xl hover:bg-base-100 transition-all duration-300">
-
+                  <article
+                    th:with="content = ${moment.spec.content}"
+                    class="card group bg-base-100/80 border-base-content/5 hover:bg-base-100 overflow-hidden rounded-[1.5rem] border shadow-lg backdrop-blur-xl transition-all duration-300 hover:shadow-xl"
+                  >
                     <div class="p-5">
                       <!-- 头部 -->
-                      <div class="flex items-center gap-3 mb-4">
+                      <div class="mb-4 flex items-center gap-3">
                         <div class="relative shrink-0">
-                          <img th:if="${moment.owner?.avatar != null}" th:src="${moment.owner.avatar}"
+                          <img
+                            th:if="${moment.owner?.avatar != null}"
+                            th:src="${moment.owner.avatar}"
                             th:alt="|${moment.owner.displayName} 头像|"
-                            class="w-12 h-12 rounded-xl object-cover ring-2 ring-base-content/10 group-hover:ring-primary/50 transition-all"
-                            loading="lazy" />
-                          <div th:unless="${moment.owner?.avatar != null}"
-                            class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                            <span class="icon-[heroicons--user] w-6 h-6 text-primary/60"></span>
+                            class="ring-base-content/10 group-hover:ring-primary/50 h-12 w-12 rounded-xl object-cover ring-2 transition-all"
+                            loading="lazy"
+                          />
+                          <div
+                            th:unless="${moment.owner?.avatar != null}"
+                            class="from-primary/20 to-accent/20 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br"
+                          >
+                            <span class="icon-[heroicons--user] text-primary/60 h-6 w-6"></span>
                           </div>
                           <!-- 在线状态点 -->
                           <div
-                            class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-base-100 flex items-center justify-center">
-                            <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+                            class="bg-base-100 absolute -right-1 -bottom-1 flex h-4 w-4 items-center justify-center rounded-full"
+                          >
+                            <span class="bg-success h-2 w-2 animate-pulse rounded-full"></span>
                           </div>
                         </div>
-                        <div class="flex-1 min-w-0">
+                        <div class="min-w-0 flex-1">
                           <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-base-content"
-                              th:text="${moment.owner?.displayName ?: '匿名用户'}">用户</span>
+                            <span
+                              class="text-base-content text-sm font-bold"
+                              th:text="${moment.owner?.displayName ?: '匿名用户'}"
+                              >用户</span
+                            >
                           </div>
-                          <time class="text-xs text-base-content/40"
-                            th:text="${#temporals.format(moment.spec.releaseTime, 'yyyy-MM-dd HH:mm')}">2024-01-01</time>
+                          <time
+                            class="text-base-content/40 text-xs"
+                            th:text="${#temporals.format(moment.spec.releaseTime, 'yyyy-MM-dd HH:mm')}"
+                            >2024-01-01</time
+                          >
                         </div>
                       </div>
 
                       <!-- 内容 -->
-                      <div th:if="${content.html != null and !#strings.isEmpty(content.html)}"
-                        class="text-base text-base-content/80 leading-relaxed mb-4" th:utext="${content.html}">内容...
+                      <div
+                        th:if="${content.html != null and !#strings.isEmpty(content.html)}"
+                        class="text-base-content/80 mb-4 text-base leading-relaxed"
+                        th:utext="${content.html}"
+                      >
+                        内容...
                       </div>
 
                       <!-- 媒体 -->
                       <div th:if="${content.medium != null and !content.medium.isEmpty()}" class="mb-4">
-                        <div class="rounded-xl overflow-hidden"
-                          th:classappend="${#lists.size(content.medium) > 1} ? 'grid grid-cols-3 gap-1' : ''">
+                        <div
+                          class="overflow-hidden rounded-xl"
+                          th:classappend="${#lists.size(content.medium) > 1} ? 'grid grid-cols-3 gap-1' : ''"
+                        >
                           <th:block th:each="medium, mStat : ${content.medium}" th:if="${mStat.index < 9}">
-                            <div th:if="${medium.type.name == 'PHOTO'}"
-                              class="relative aspect-square bg-base-200 overflow-hidden">
-                              <img th:src="${medium.url}"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform cursor-pointer"
-                                loading="lazy" />
+                            <div
+                              th:if="${medium.type.name == 'PHOTO'}"
+                              class="bg-base-200 relative aspect-square overflow-hidden"
+                            >
+                              <img
+                                th:src="${medium.url}"
+                                class="h-full w-full cursor-pointer object-cover transition-transform hover:scale-105"
+                                loading="lazy"
+                              />
                             </div>
                           </th:block>
                         </div>
                       </div>
 
                       <!-- 互动 -->
-                      <div class="flex items-center justify-between text-sm text-base-content/50">
+                      <div class="text-base-content/50 flex items-center justify-between text-sm">
                         <div class="flex items-center gap-4">
                           <span class="flex items-center gap-1.5">
-                            <span class="icon-[heroicons--heart] w-4 h-4"></span>
+                            <span class="icon-[heroicons--heart] h-4 w-4"></span>
                             <span th:text="${moment.stats?.upvote ?: 0}">0</span>
                           </span>
                           <span class="flex items-center gap-1.5">
-                            <span class="icon-[heroicons--chat-bubble-left] w-4 h-4"></span>
+                            <span class="icon-[heroicons--chat-bubble-left] h-4 w-4"></span>
                             <span th:text="${moment.stats?.totalComment ?: 0}">0</span>
                           </span>
                         </div>
-                        <a th:href="@{'/moments/' + ${moment.metadata.name}}" class="text-primary hover:underline">查看详情
-                          →</a>
+                        <a th:href="@{'/moments/' + ${moment.metadata.name}}" class="text-primary hover:underline"
+                          >查看详情 →</a
+                        >
                       </div>
                     </div>
                   </article>
                 </th:block>
               </div>
 
-              <div th:if="${momentsList == null or momentsList.isEmpty()}"
-                class="py-16 text-center text-base-content/40 text-sm">
+              <div
+                th:if="${momentsList == null or momentsList.isEmpty()}"
+                class="text-base-content/40 py-16 text-center text-sm"
+              >
                 暂无瞬间说说
               </div>
               <div th:if="${momentsList != null and !momentsList.isEmpty()}" class="mt-10 text-center">
-                <a href="/moments"
-                  class="group inline-flex items-center gap-1.5 text-sm font-medium text-base-content/50 hover:text-primary transition-colors duration-300">
+                <a
+                  href="/moments"
+                  class="group text-base-content/50 hover:text-primary inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-300"
+                >
                   View All
                   <span
-                    class="icon-[heroicons--arrow-right] w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></span>
+                    class="icon-[heroicons--arrow-right] h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                  ></span>
                 </a>
               </div>
             </div>
@@ -953,7 +1160,7 @@
       </section>
 
       <!-- 右侧：侧边栏 -->
-      <aside th:if="${showSidebar}" class="w-80 shrink-0 space-y-6 hidden lg:block sticky top-20 self-start">
+      <aside th:if="${showSidebar}" class="sticky top-20 hidden w-80 shrink-0 space-y-6 self-start lg:block">
         <!-- 动态小工具 -->
         <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${sidebarCfg})}" />
       </aside>
@@ -963,37 +1170,54 @@
 
     <!-- 图库模块 -->
     <th:block th:with="gallerySettings = ${theme.config.index.gallery_settings}">
-      <section th:if="${gallerySettings != null and gallerySettings.enable_gallery == true}"
-        class="card bg-base-100/80 backdrop-blur-xl shadow-lg border border-base-content/5 rounded-[1.5rem] p-6 sm:p-8 mt-16">
-        <div class="flex items-center justify-between mb-6">
+      <section
+        th:if="${gallerySettings != null and gallerySettings.enable_gallery == true}"
+        class="card bg-base-100/80 border-base-content/5 mt-16 rounded-[1.5rem] border p-6 shadow-lg backdrop-blur-xl sm:p-8"
+      >
+        <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-              <span class="icon-[heroicons--photo] w-5 h-5 text-primary"></span>
+              class="from-primary/20 to-primary/10 flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br"
+            >
+              <span class="icon-[heroicons--photo] text-primary h-5 w-5"></span>
             </div>
             <div>
-              <h2 class="text-xl font-bold text-base-content tracking-tight"
-                th:text="${gallerySettings?.gallery_title} ?: '图库'">图库</h2>
-              <p class="text-xs text-base-content/40 font-medium mt-0.5"
-                th:text="${gallerySettings?.gallery_subtitle} ?: 'Focus Moments'">Focus Moments</p>
+              <h2
+                class="text-base-content text-xl font-bold tracking-tight"
+                th:text="${gallerySettings?.gallery_title} ?: '图库'"
+              >
+                图库
+              </h2>
+              <p
+                class="text-base-content/40 mt-0.5 text-xs font-medium"
+                th:text="${gallerySettings?.gallery_subtitle} ?: 'Focus Moments'"
+              >
+                Focus Moments
+              </p>
             </div>
           </div>
-          <a href="/photos"
-            class="group inline-flex items-center gap-1.5 text-sm font-medium text-base-content/50 hover:text-primary transition-colors duration-300">
+          <a
+            href="/photos"
+            class="group text-base-content/50 hover:text-primary inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-300"
+          >
             View All
             <span
-              class="icon-[heroicons--arrow-right] w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></span>
+              class="icon-[heroicons--arrow-right] h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+            ></span>
           </a>
         </div>
 
         <!-- 未安装插件时的提醒 -->
         <th:block th:unless="${pluginFinder.available('PluginPhotos')}">
-          <div class="text-center py-12 bg-base-100/50 rounded-3xl border border-base-content/5 border-dashed">
-            <span class="icon-[heroicons--photo] w-12 h-12 mx-auto text-base-content/20 mb-4 block"></span>
+          <div class="bg-base-100/50 border-base-content/5 rounded-3xl border border-dashed py-12 text-center">
+            <span class="icon-[heroicons--photo] text-base-content/20 mx-auto mb-4 block h-12 w-12"></span>
             <p class="text-base-content/60 mb-4">需要安装图库插件来展示照片</p>
-            <a href="https://www.halo.run/store/apps/app-BmQJW" target="_blank"
-              class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg text-primary hover:bg-primary/20 transition-colors duration-300">
-              <span class="icon-[material-symbols--download] w-4 h-4"></span>
+            <a
+              href="https://www.halo.run/store/apps/app-BmQJW"
+              target="_blank"
+              class="bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 inline-flex items-center gap-2 rounded-lg border px-4 py-2 transition-colors duration-300"
+            >
+              <span class="icon-[material-symbols--download] h-4 w-4"></span>
               <span>下载图库插件</span>
             </a>
           </div>
@@ -1002,47 +1226,65 @@
         <!-- 已安装插件时显示内容 -->
         <th:block th:if="${pluginFinder.available('PluginPhotos')}">
           <th:block th:with="groups = ${photoFinder.groupBy()}">
-            <div th:if="${groups != null && !groups.isEmpty()}"
-              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              <a th:each="group : ${groups}" th:href="|/photos?group=${group.metadata.name}|"
-                class="group relative aspect-[4/3] rounded-[1.25rem] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 ease-out cursor-pointer ring-1 ring-base-content/5 hover:ring-primary/30">
-
+            <div
+              th:if="${groups != null && !groups.isEmpty()}"
+              class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4"
+            >
+              <a
+                th:each="group : ${groups}"
+                th:href="|/photos?group=${group.metadata.name}|"
+                class="group ring-base-content/5 hover:ring-primary/30 relative aspect-[4/3] cursor-pointer overflow-hidden rounded-[1.25rem] shadow-md ring-1 transition-all duration-500 ease-out hover:shadow-2xl"
+              >
                 <!-- 背景图容器 -->
-                <div class="absolute inset-0 bg-base-200 overflow-hidden">
-                  <img th:if="${group.photos != null && !group.photos.isEmpty()}" th:src="${group.photos[0].spec.url}"
+                <div class="bg-base-200 absolute inset-0 overflow-hidden">
+                  <img
+                    th:if="${group.photos != null && !group.photos.isEmpty()}"
+                    th:src="${group.photos[0].spec.url}"
                     th:alt="${group.spec.displayName}"
-                    class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    loading="lazy" />
-                  <div th:if="${group.photos == null || group.photos.isEmpty()}"
-                    class="w-full h-full flex items-center justify-center bg-gradient-to-br from-base-200 to-base-300">
-                    <span class="icon-[heroicons--photo] w-12 h-12 text-base-content/15"></span>
+                    class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div
+                    th:if="${group.photos == null || group.photos.isEmpty()}"
+                    class="from-base-200 to-base-300 flex h-full w-full items-center justify-center bg-gradient-to-br"
+                  >
+                    <span class="icon-[heroicons--photo] text-base-content/15 h-12 w-12"></span>
                   </div>
                 </div>
 
                 <!-- 渐变遮罩 & 文字内容 -->
                 <div
-                  class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300">
-                  <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-                    <p class="text-white font-bold text-base sm:text-lg tracking-wide drop-shadow-lg truncate"
-                      th:text="${group.spec.displayName}">分组名称</p>
-                    <div class="flex items-center gap-2 mt-2">
+                  class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent opacity-90 transition-opacity duration-300 group-hover:opacity-100"
+                >
+                  <div class="absolute right-0 bottom-0 left-0 p-4 sm:p-5">
+                    <p
+                      class="truncate text-base font-bold tracking-wide text-white drop-shadow-lg sm:text-lg"
+                      th:text="${group.spec.displayName}"
+                    >
+                      分组名称
+                    </p>
+                    <div class="mt-2 flex items-center gap-2">
                       <span
-                        class="text-white/90 text-xs font-medium backdrop-blur-md bg-white/15 px-2.5 py-1 rounded-full border border-white/10"
-                        th:text="|${group.status.photoCount ?: 0} 张照片|">0 张照片</span>
+                        class="rounded-full border border-white/10 bg-white/15 px-2.5 py-1 text-xs font-medium text-white/90 backdrop-blur-md"
+                        th:text="|${group.status.photoCount ?: 0} 张照片|"
+                        >0 张照片</span
+                      >
                     </div>
                   </div>
                 </div>
 
                 <!-- 玻璃高光效果 -->
                 <div
-                  class="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/8 to-transparent pointer-events-none">
-                </div>
+                  class="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/8 to-transparent"
+                ></div>
               </a>
             </div>
             <!-- 空状态 -->
-            <div th:if="${groups == null || groups.isEmpty()}"
-              class="text-center py-16 bg-base-100/50 rounded-3xl border border-base-content/5 border-dashed">
-              <span class="icon-[heroicons--photo] w-12 h-12 mx-auto text-base-content/20 mb-3"></span>
+            <div
+              th:if="${groups == null || groups.isEmpty()}"
+              class="bg-base-100/50 border-base-content/5 rounded-3xl border border-dashed py-16 text-center"
+            >
+              <span class="icon-[heroicons--photo] text-base-content/20 mx-auto mb-3 h-12 w-12"></span>
               <p class="text-base-content/40 font-medium">暂无图库分组</p>
             </div>
           </th:block>
@@ -1050,41 +1292,56 @@
       </section>
     </th:block>
 
-
-
     <!-- 友情链接模块 -->
     <th:block th:with="linksSettings = ${theme.config.index.links_settings}">
-      <section th:if="${linksSettings != null and linksSettings.enable_links == true}"
-        class="card bg-base-100/80 backdrop-blur-xl shadow-lg border border-base-content/5 rounded-[1.5rem] p-6 sm:p-8 mt-16">
-        <div class="flex items-center justify-between mb-6">
+      <section
+        th:if="${linksSettings != null and linksSettings.enable_links == true}"
+        class="card bg-base-100/80 border-base-content/5 mt-16 rounded-[1.5rem] border p-6 shadow-lg backdrop-blur-xl sm:p-8"
+      >
+        <div class="mb-6 flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 rounded-2xl bg-gradient-to-br from-secondary/20 to-secondary/10 flex items-center justify-center">
-              <span class="icon-[heroicons--link] w-5 h-5 text-secondary"></span>
+              class="from-secondary/20 to-secondary/10 flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br"
+            >
+              <span class="icon-[heroicons--link] text-secondary h-5 w-5"></span>
             </div>
             <div>
-              <h2 class="text-xl font-bold text-base-content tracking-tight"
-                th:text="${linksSettings?.links_title} ?: '友情链接'">友情链接</h2>
-              <p class="text-xs text-base-content/40 font-medium mt-0.5"
-                th:text="${linksSettings?.links_subtitle} ?: 'Friends & Partners'">Friends & Partners</p>
+              <h2
+                class="text-base-content text-xl font-bold tracking-tight"
+                th:text="${linksSettings?.links_title} ?: '友情链接'"
+              >
+                友情链接
+              </h2>
+              <p
+                class="text-base-content/40 mt-0.5 text-xs font-medium"
+                th:text="${linksSettings?.links_subtitle} ?: 'Friends & Partners'"
+              >
+                Friends & Partners
+              </p>
             </div>
           </div>
-          <a href="/links"
-            class="group inline-flex items-center gap-1.5 text-sm font-medium text-base-content/50 hover:text-primary transition-colors duration-300">
+          <a
+            href="/links"
+            class="group text-base-content/50 hover:text-primary inline-flex items-center gap-1.5 text-sm font-medium transition-colors duration-300"
+          >
             View All
             <span
-              class="icon-[heroicons--arrow-right] w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></span>
+              class="icon-[heroicons--arrow-right] h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+            ></span>
           </a>
         </div>
 
         <!-- 未安装插件时的提醒 -->
         <th:block th:unless="${pluginFinder.available('PluginLinks')}">
-          <div class="text-center py-12 bg-base-100/50 rounded-3xl border border-base-content/5 border-dashed">
-            <span class="icon-[heroicons--link] w-12 h-12 mx-auto text-base-content/20 mb-4 block"></span>
+          <div class="bg-base-100/50 border-base-content/5 rounded-3xl border border-dashed py-12 text-center">
+            <span class="icon-[heroicons--link] text-base-content/20 mx-auto mb-4 block h-12 w-12"></span>
             <p class="text-base-content/60 mb-4">需要安装友链插件来展示链接</p>
-            <a href="https://www.halo.run/store/apps/app-hfbQg" target="_blank"
-              class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg text-primary hover:bg-primary/20 transition-colors duration-300">
-              <span class="icon-[material-symbols--download] w-4 h-4"></span>
+            <a
+              href="https://www.halo.run/store/apps/app-hfbQg"
+              target="_blank"
+              class="bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 inline-flex items-center gap-2 rounded-lg border px-4 py-2 transition-colors duration-300"
+            >
+              <span class="icon-[material-symbols--download] h-4 w-4"></span>
               <span>下载友链插件</span>
             </a>
           </div>
@@ -1093,47 +1350,69 @@
         <!-- 已安装插件时显示内容 -->
         <th:block th:if="${pluginFinder.available('PluginLinks')}">
           <th:block th:with="groups = ${linkFinder.groupBy()}">
-            <div th:if="${groups != null && !groups.isEmpty()}"
-              class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              <th:block th:each="group : ${groups}"
-                th:if="${linksSettings.links_groups == null || linksSettings.links_groups.isEmpty() || #lists.contains(linksSettings.links_groups, group.metadata.name)}">
-                <a th:each="link : ${group.links}" th:href="${link.spec.url}" target="_blank" rel="noopener"
+            <div
+              th:if="${groups != null && !groups.isEmpty()}"
+              class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+            >
+              <th:block
+                th:each="group : ${groups}"
+                th:if="${linksSettings.links_groups == null || linksSettings.links_groups.isEmpty() || #lists.contains(linksSettings.links_groups, group.metadata.name)}"
+              >
+                <a
+                  th:each="link : ${group.links}"
+                  th:href="${link.spec.url}"
+                  target="_blank"
+                  rel="noopener"
                   th:title="${link.spec.description}"
-                  class="group flex flex-col items-center text-center gap-3 p-2 rounded-xl transition-opacity hover:opacity-80">
-
+                  class="group flex flex-col items-center gap-3 rounded-xl p-2 text-center transition-opacity hover:opacity-80"
+                >
                   <!-- 头像容器 -->
                   <div class="relative transition-transform duration-300 group-hover:scale-105">
                     <!-- 阴影 -->
                     <div
-                      class="absolute inset-2 bg-black/20 rounded-full blur-md translate-y-2 opacity-0 group-hover:opacity-40 transition-opacity duration-300">
-                    </div>
+                      class="absolute inset-2 translate-y-2 rounded-full bg-black/20 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-40"
+                    ></div>
                     <!-- 头像主体 -->
                     <div
-                      class="relative w-16 h-16 rounded-[1.25rem] bg-base-100 shadow-sm overflow-hidden ring-1 ring-base-content/5">
-                      <img th:if="${link.spec.logo != null && !link.spec.logo.isEmpty()}" th:src="${link.spec.logo}"
-                        th:alt="${link.spec.displayName}" class="w-full h-full object-cover bg-base-200"
-                        loading="lazy" />
-                      <div th:if="${link.spec.logo == null || link.spec.logo.isEmpty()}"
-                        class="w-full h-full flex items-center justify-center bg-gradient-to-br from-base-200 to-base-300 text-base-content/40">
-                        <span class="text-xl font-bold"
-                          th:text="${#strings.substring(link.spec.displayName,0,1)}">L</span>
+                      class="bg-base-100 ring-base-content/5 relative h-16 w-16 overflow-hidden rounded-[1.25rem] shadow-sm ring-1"
+                    >
+                      <img
+                        th:if="${link.spec.logo != null && !link.spec.logo.isEmpty()}"
+                        th:src="${link.spec.logo}"
+                        th:alt="${link.spec.displayName}"
+                        class="bg-base-200 h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                      <div
+                        th:if="${link.spec.logo == null || link.spec.logo.isEmpty()}"
+                        class="from-base-200 to-base-300 text-base-content/40 flex h-full w-full items-center justify-center bg-gradient-to-br"
+                      >
+                        <span class="text-xl font-bold" th:text="${#strings.substring(link.spec.displayName,0,1)}"
+                          >L</span
+                        >
                       </div>
                     </div>
                   </div>
 
-                  <div class="flex flex-col gap-0.5 w-full px-1">
-                    <span class="text-xs font-semibold text-base-content/90 truncate w-full"
-                      th:text="${link.spec.displayName}">链接名</span>
-                    <span class="text-[10px] text-base-content/40 truncate w-full"
-                      th:text="${link.spec.description ?: 'No description'}">描述</span>
+                  <div class="flex w-full flex-col gap-0.5 px-1">
+                    <span
+                      class="text-base-content/90 w-full truncate text-xs font-semibold"
+                      th:text="${link.spec.displayName}"
+                      >链接名</span
+                    >
+                    <span
+                      class="text-base-content/40 w-full truncate text-[10px]"
+                      th:text="${link.spec.description ?: 'No description'}"
+                      >描述</span
+                    >
                   </div>
                 </a>
               </th:block>
             </div>
             <!-- 空状态 -->
-            <div th:if="${groups == null || groups.isEmpty()}" class="text-center py-12">
-              <div class="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-base-200/50 mb-4">
-                <span class="icon-[heroicons--link] w-8 h-8 text-base-content/30"></span>
+            <div th:if="${groups == null || groups.isEmpty()}" class="py-12 text-center">
+              <div class="bg-base-200/50 mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl">
+                <span class="icon-[heroicons--link] text-base-content/30 h-8 w-8"></span>
               </div>
               <p class="text-base-content/40 font-medium">暂无友情链接</p>
             </div>
@@ -1141,8 +1420,5 @@
         </th:block>
       </section>
     </th:block>
-
   </div>
-
-
 </th:block>

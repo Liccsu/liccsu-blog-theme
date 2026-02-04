@@ -77,7 +77,9 @@
 #link-submit-modal .input,
 #link-submit-modal .textarea,
 #link-submit-modal .select {
-  transition: border-color 0.1s ease, box-shadow 0.1s ease;
+  transition:
+    border-color 0.1s ease,
+    box-shadow 0.1s ease;
 }
 
 /* 输入框聚焦时 - 主题色发光效果 */
@@ -89,8 +91,9 @@
 #link-submit-modal .select:focus-visible {
   outline: none !important;
   border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-primary) 25%, transparent),
-              0 0 12px color-mix(in oklch, var(--color-primary) 15%, transparent) !important;
+  box-shadow:
+    0 0 0 3px color-mix(in oklch, var(--color-primary) 25%, transparent),
+    0 0 12px color-mix(in oklch, var(--color-primary) 15%, transparent) !important;
 }
 
 /* 模态框背景 - 毛玻璃遮蔽效果 */

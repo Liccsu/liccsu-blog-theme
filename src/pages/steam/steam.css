@@ -26,9 +26,11 @@
 .steam-avatar-img,
 .steam-badge-img,
 .steam-game-img {
-  background: linear-gradient(135deg, 
+  background: linear-gradient(
+    135deg,
     color-mix(in srgb, var(--color-base-content) 5%, transparent) 0%,
-    color-mix(in srgb, var(--color-base-content) 8%, transparent) 100%);
+    color-mix(in srgb, var(--color-base-content) 8%, transparent) 100%
+  );
   transition: opacity 0.3s ease;
 }
 
@@ -46,7 +48,8 @@
 
 /* 骨架屏动画 */
 @keyframes steam-skeleton {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -55,7 +58,7 @@
 }
 
 .steam-game-card-image::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
@@ -84,11 +87,11 @@
 }
 
 /* 亮色主题下增强动态游戏背景可见度 */
-[data-color-scheme="light"] body>.fixed.inset-0>img {
+[data-color-scheme="light"] body > .fixed.inset-0 > img {
   opacity: 0.55 !important;
 }
 
-[data-color-scheme="light"] body>.fixed.inset-0>.absolute {
+[data-color-scheme="light"] body > .fixed.inset-0 > .absolute {
   background: linear-gradient(to bottom, transparent 0%, var(--color-base-100) 70%, var(--color-base-100) 100%);
 }
 
@@ -177,7 +180,6 @@
 }
 
 @keyframes playing-pulse {
-
   0%,
   100% {
     box-shadow:
@@ -206,8 +208,6 @@
   color: var(--color-base-content);
   line-height: 1.2;
 }
-
-
 
 /* New Header Layout */
 .steam-profile-title-row {
@@ -257,8 +257,6 @@
   flex-direction: column;
 }
 
-
-
 /* 热力图容器 - 采用深度透明玻璃感 */
 .steam-heatmap-inline {
   background: color-mix(in srgb, var(--color-base-content) 4%, transparent);
@@ -268,7 +266,6 @@
   transition: all 0.3s ease;
   max-width: 100%;
 }
-
 
 .heatmap-container {
   position: relative;
@@ -313,8 +310,6 @@
   border: 1px solid color-mix(in srgb, var(--color-base-content) 5%, transparent);
 }
 
-
-
 /* ========================================== */
 /*     最近游玩 - 大封面卡片布局              */
 /* ========================================== */
@@ -350,7 +345,7 @@
 }
 
 .steam-recent-card.playing::before {
-  content: '正在玩';
+  content: "正在玩";
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
@@ -605,8 +600,6 @@
   padding-left: 1rem;
 }
 
-
-
 /* 统计卡片 - 夏日浪漫风格 */
 .steam-stat-card {
   position: relative;
@@ -628,7 +621,7 @@
 
 /* 渐变边框伪元素 */
 .steam-stat-card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -671,7 +664,7 @@
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.1;
-  background: linear-gradient(135deg, #F5A9B8 0%, #B8A9DE 50%, #A9D4F5 100%);
+  background: linear-gradient(135deg, #f5a9b8 0%, #b8a9de 50%, #a9d4f5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -706,7 +699,7 @@
   padding: 0.5rem;
   border-radius: 0.75rem;
   background: linear-gradient(135deg, rgba(245, 169, 184, 0.1), rgba(184, 169, 222, 0.1), rgba(169, 212, 245, 0.1));
-  color: #B8A9DE;
+  color: #b8a9de;
   opacity: 0.6;
   transition: all 0.3s ease;
 }
@@ -917,16 +910,20 @@
 }
 
 .steam-section-icon.recent {
-  background: linear-gradient(135deg,
-      color-mix(in oklch, var(--color-success) 20%, transparent) 0%,
-      color-mix(in oklch, var(--color-success) 10%, transparent) 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklch, var(--color-success) 20%, transparent) 0%,
+    color-mix(in oklch, var(--color-success) 10%, transparent) 100%
+  );
   color: var(--color-success);
 }
 
 .steam-section-icon.library {
-  background: linear-gradient(135deg,
-      color-mix(in oklch, var(--color-primary) 20%, transparent) 0%,
-      color-mix(in oklch, var(--color-primary) 10%, transparent) 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklch, var(--color-primary) 20%, transparent) 0%,
+    color-mix(in oklch, var(--color-primary) 10%, transparent) 100%
+  );
   color: var(--color-primary);
 }
 
@@ -1083,12 +1080,14 @@
 }
 
 .steam-game-card-playtime::before {
-  content: '';
+  content: "";
   width: 14px;
   height: 14px;
   background: currentColor;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z' clip-rule='evenodd'/%3E%3C/svg%3E") center/contain no-repeat;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z' clip-rule='evenodd'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z' clip-rule='evenodd'/%3E%3C/svg%3E")
+    center/contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z' clip-rule='evenodd'/%3E%3C/svg%3E")
+    center/contain no-repeat;
   flex-shrink: 0;
 }
 
@@ -1261,7 +1260,6 @@
 }
 
 @keyframes steam-float {
-
   0%,
   100% {
     transform: translateY(0);
@@ -1478,7 +1476,6 @@
 }
 
 @media (max-width: 480px) {
-
   /* 超小屏幕：侧边栏单栏 */
   .steam-sidebar {
     grid-template-columns: 1fr;

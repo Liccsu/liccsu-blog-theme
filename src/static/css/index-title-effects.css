@@ -21,7 +21,7 @@
 .effect-particles span::after,
 .effect-particles span span::before,
 .effect-particles span span::after {
-  content: '';
+  content: "";
   position: absolute;
   border-radius: 50%;
   z-index: -1;
@@ -32,7 +32,10 @@
   width: 8px;
   height: 8px;
   background: radial-gradient(circle, #fff, var(--color-primary));
-  box-shadow: 0 0 10px #fff, 0 0 20px var(--color-primary), 0 0 30px var(--color-primary);
+  box-shadow:
+    0 0 10px #fff,
+    0 0 20px var(--color-primary),
+    0 0 30px var(--color-primary);
   top: -15px;
   right: 10%;
   animation: particle-orbit-1 6s linear infinite;
@@ -43,7 +46,10 @@
   width: 6px;
   height: 6px;
   background: radial-gradient(circle, #fff, var(--color-secondary));
-  box-shadow: 0 0 8px #fff, 0 0 16px var(--color-secondary), 0 0 24px var(--color-secondary);
+  box-shadow:
+    0 0 8px #fff,
+    0 0 16px var(--color-secondary),
+    0 0 24px var(--color-secondary);
   bottom: -12px;
   left: 15%;
   animation: particle-orbit-2 5s linear infinite reverse;
@@ -54,7 +60,10 @@
   width: 5px;
   height: 5px;
   background: radial-gradient(circle, #fff, var(--color-accent));
-  box-shadow: 0 0 6px #fff, 0 0 12px var(--color-accent), 0 0 18px var(--color-accent);
+  box-shadow:
+    0 0 6px #fff,
+    0 0 12px var(--color-accent),
+    0 0 18px var(--color-accent);
   top: -20px;
   left: 50%;
   animation: particle-orbit-3 4s linear infinite;
@@ -65,7 +74,10 @@
   width: 4px;
   height: 4px;
   background: radial-gradient(circle, #fff, var(--color-primary));
-  box-shadow: 0 0 5px #fff, 0 0 10px var(--color-primary), 0 0 15px var(--color-primary);
+  box-shadow:
+    0 0 5px #fff,
+    0 0 10px var(--color-primary),
+    0 0 15px var(--color-primary);
   bottom: -8px;
   left: 60%;
   animation: particle-orbit-4 4.5s linear infinite reverse;
@@ -76,7 +88,10 @@
   width: 3px;
   height: 3px;
   background: radial-gradient(circle, #fff, var(--color-secondary));
-  box-shadow: 0 0 4px #fff, 0 0 8px var(--color-secondary), 0 0 12px var(--color-secondary);
+  box-shadow:
+    0 0 4px #fff,
+    0 0 8px var(--color-secondary),
+    0 0 12px var(--color-secondary);
   top: -6px;
   right: 20%;
   animation: particle-orbit-5 3s linear infinite;
@@ -87,7 +102,10 @@
   width: 2px;
   height: 2px;
   background: radial-gradient(circle, #fff, var(--color-accent));
-  box-shadow: 0 0 3px #fff, 0 0 6px var(--color-accent), 0 0 9px var(--color-accent);
+  box-shadow:
+    0 0 3px #fff,
+    0 0 6px var(--color-accent),
+    0 0 9px var(--color-accent);
   bottom: -5px;
   left: 15%;
   animation: particle-orbit-6 4s linear infinite reverse;
@@ -95,39 +113,81 @@
 }
 
 @keyframes particle-orbit-1 {
-  0%, 100% { transform: translateX(0) translateY(0) scale(1); }
-  25% { transform: translateX(100%) translateY(-20px) scale(1.1); }
-  50% { transform: translateX(120%) translateY(5px) scale(1.2); }
-  75% { transform: translateX(30%) translateY(15px) scale(1.1); }
+  0%,
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  25% {
+    transform: translateX(100%) translateY(-20px) scale(1.1);
+  }
+  50% {
+    transform: translateX(120%) translateY(5px) scale(1.2);
+  }
+  75% {
+    transform: translateX(30%) translateY(15px) scale(1.1);
+  }
 }
 
 @keyframes particle-orbit-2 {
-  0%, 100% { transform: translateX(0) translateY(0) scale(1); }
-  25% { transform: translateX(-80%) translateY(15px) scale(1.1); }
-  50% { transform: translateX(-100%) translateY(-5px) scale(1.2); }
-  75% { transform: translateX(-30%) translateY(-15px) scale(1.1); }
+  0%,
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  25% {
+    transform: translateX(-80%) translateY(15px) scale(1.1);
+  }
+  50% {
+    transform: translateX(-100%) translateY(-5px) scale(1.2);
+  }
+  75% {
+    transform: translateX(-30%) translateY(-15px) scale(1.1);
+  }
 }
 
 @keyframes particle-orbit-3 {
-  0%, 100% { transform: translateX(0) translateY(0) scale(1); }
-  33% { transform: translateX(50%) translateY(10px) scale(1.2); }
-  66% { transform: translateX(-50%) translateY(15px) scale(1.1); }
+  0%,
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  33% {
+    transform: translateX(50%) translateY(10px) scale(1.2);
+  }
+  66% {
+    transform: translateX(-50%) translateY(15px) scale(1.1);
+  }
 }
 
 @keyframes particle-orbit-4 {
-  0%, 100% { transform: translateX(0) translateY(0) scale(1); }
-  33% { transform: translateX(40%) translateY(-10px) scale(1.2); }
-  66% { transform: translateX(-30%) translateY(-5px) scale(1.1); }
+  0%,
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  33% {
+    transform: translateX(40%) translateY(-10px) scale(1.2);
+  }
+  66% {
+    transform: translateX(-30%) translateY(-5px) scale(1.1);
+  }
 }
 
 @keyframes particle-orbit-5 {
-  0%, 100% { transform: translateX(0) translateY(0) scale(1); }
-  50% { transform: translateX(-15px) translateY(10px) scale(1.3); }
+  0%,
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-15px) translateY(10px) scale(1.3);
+  }
 }
 
 @keyframes particle-orbit-6 {
-  0%, 100% { transform: translateX(0) translateY(0) scale(1); }
-  50% { transform: translateX(15px) translateY(-8px) scale(1.3); }
+  0%,
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(15px) translateY(-8px) scale(1.3);
+  }
 }
 
 /**
@@ -144,28 +204,68 @@
 .effect-starlight span::after,
 .effect-starlight span span::before,
 .effect-starlight span span::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 2px;
   height: 2px;
   background: #fff;
   border-radius: 50%;
-  box-shadow: 0 0 4px #fff, 0 0 8px var(--color-secondary), 0 0 12px var(--color-primary);
+  box-shadow:
+    0 0 4px #fff,
+    0 0 8px var(--color-secondary),
+    0 0 12px var(--color-primary);
   opacity: 0;
   z-index: -1;
   pointer-events: none;
 }
 
-.effect-starlight::before { top: -12px; left: 5%; animation: star-twinkle 3s infinite; }
-.effect-starlight::after { bottom: -10px; right: 5%; animation: star-twinkle 2.5s infinite 0.5s; }
-.effect-starlight span::before { top: -18px; left: 65%; width: 3px; height: 3px; animation: star-twinkle 4s infinite 1s; }
-.effect-starlight span::after { bottom: -15px; left: 35%; animation: star-twinkle 3.5s infinite 1.5s; }
-.effect-starlight span span::before { top: -8px; right: 15%; width: 1px; height: 1px; animation: star-twinkle 3s infinite 0.7s; }
-.effect-starlight span span::after { bottom: -6px; left: 15%; width: 1px; height: 1px; animation: star-twinkle 2s infinite 0.3s; }
+.effect-starlight::before {
+  top: -12px;
+  left: 5%;
+  animation: star-twinkle 3s infinite;
+}
+.effect-starlight::after {
+  bottom: -10px;
+  right: 5%;
+  animation: star-twinkle 2.5s infinite 0.5s;
+}
+.effect-starlight span::before {
+  top: -18px;
+  left: 65%;
+  width: 3px;
+  height: 3px;
+  animation: star-twinkle 4s infinite 1s;
+}
+.effect-starlight span::after {
+  bottom: -15px;
+  left: 35%;
+  animation: star-twinkle 3.5s infinite 1.5s;
+}
+.effect-starlight span span::before {
+  top: -8px;
+  right: 15%;
+  width: 1px;
+  height: 1px;
+  animation: star-twinkle 3s infinite 0.7s;
+}
+.effect-starlight span span::after {
+  bottom: -6px;
+  left: 15%;
+  width: 1px;
+  height: 1px;
+  animation: star-twinkle 2s infinite 0.3s;
+}
 
 @keyframes star-twinkle {
-  0%, 100% { opacity: 0; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1.2); }
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
 /* ===================================================
@@ -205,7 +305,7 @@
  */
 .gradient-flow {
   background: linear-gradient(
-    90deg, 
+    90deg,
     var(--title-color, var(--color-primary)) 0%,
     color-mix(in srgb, var(--title-color, var(--color-primary)) 70%, white 30%) 25%,
     var(--title-color, var(--color-primary)) 50%,
@@ -220,8 +320,12 @@
 }
 
 @keyframes shimmer-flow {
-  0% { background-position: 0% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 /**
@@ -238,14 +342,10 @@
 
 /* 使用伪元素叠加光晕层，通过opacity控制呼吸效果 */
 .stroke-glow::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: -30px;
-  background: radial-gradient(
-    ellipse 120% 100% at 50% 50%,
-    var(--title-color, var(--color-primary)),
-    transparent 70%
-  );
+  background: radial-gradient(ellipse 120% 100% at 50% 50%, var(--title-color, var(--color-primary)), transparent 70%);
   filter: blur(25px);
   opacity: 0.4;
   z-index: -1;
@@ -254,7 +354,8 @@
 }
 
 @keyframes glow-breath {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
     transform: scale(1);
   }

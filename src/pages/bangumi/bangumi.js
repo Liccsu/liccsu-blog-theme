@@ -2,38 +2,38 @@
  * 追番页面脚本 - Bilibili Bangumi
  */
 
-import './bangumi.css';
+import "./bangumi.css";
 
 /**
  * 鼠标悬停切换背景
  */
 function initHoverBackground() {
-  const bgImg = document.getElementById('bangumi-bg-img');
+  const bgImg = document.getElementById("bangumi-bg-img");
   if (!bgImg) return;
 
   const originalSrc = bgImg.src;
   let currentSrc = originalSrc;
 
   // 监听所有番剧卡片的悬停
-  document.querySelectorAll('.bangumi-card').forEach(card => {
-    const coverImg = card.querySelector('.bangumi-cover img');
+  document.querySelectorAll(".bangumi-card").forEach((card) => {
+    const coverImg = card.querySelector(".bangumi-cover img");
     if (!coverImg) return;
 
-    card.addEventListener('mouseenter', () => {
-      const newSrc = coverImg.getAttribute('src');
+    card.addEventListener("mouseenter", () => {
+      const newSrc = coverImg.getAttribute("src");
       if (newSrc && newSrc !== currentSrc) {
         // 淡出
-        bgImg.style.opacity = '0';
-        
+        bgImg.style.opacity = "0";
+
         // 切换图片
         setTimeout(() => {
           bgImg.src = newSrc;
           currentSrc = newSrc;
         }, 200);
-        
+
         // 淡入
         setTimeout(() => {
-          bgImg.style.opacity = '0.4';
+          bgImg.style.opacity = "0.4";
         }, 250);
       }
     });
@@ -54,4 +54,4 @@ function initHoverBackground() {
   // });
 }
 
-document.addEventListener('DOMContentLoaded', initHoverBackground);
+document.addEventListener("DOMContentLoaded", initHoverBackground);

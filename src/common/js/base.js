@@ -37,7 +37,7 @@ window.SkyUtils = {
       if (!inThrottle) {
         func.apply(this, args);
         inThrottle = true;
-        setTimeout(() => inThrottle = false, limit);
+        setTimeout(() => (inThrottle = false), limit);
       }
     };
   },
@@ -48,16 +48,13 @@ window.SkyUtils = {
    * @param {string} format 格式
    * @returns {string} 格式化后的日期字符串
    */
-  formatDate(date, format = 'YYYY-MM-DD') {
+  formatDate(date, format = "YYYY-MM-DD") {
     const d = new Date(date);
     const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
 
-    return format
-      .replace('YYYY', year)
-      .replace('MM', month)
-      .replace('DD', day);
+    return format.replace("YYYY", year).replace("MM", month).replace("DD", day);
   },
 
   /**
@@ -78,7 +75,7 @@ window.SkyUtils = {
     if (days > 0) return `${days}天前`;
     if (hours > 0) return `${hours}小时前`;
     if (minutes > 0) return `${minutes}分钟前`;
-    return '刚刚';
+    return "刚刚";
   },
 
   /**
@@ -92,11 +89,11 @@ window.SkyUtils = {
       return true;
     } catch {
       // 降级方案
-      const textArea = document.createElement('textarea');
+      const textArea = document.createElement("textarea");
       textArea.value = text;
       document.body.appendChild(textArea);
       textArea.select();
-      const success = document.execCommand('copy');
+      const success = document.execCommand("copy");
       document.body.removeChild(textArea);
       return success;
     }
@@ -108,7 +105,7 @@ window.SkyUtils = {
    * @param {number} offset 偏移量
    */
   scrollToElement(target, offset = 0) {
-    const element = typeof target === 'string' ? document.querySelector(target) : target;
+    const element = typeof target === "string" ? document.querySelector(target) : target;
     if (!element) return;
 
     const elementPosition = element.getBoundingClientRect().top;
@@ -116,9 +113,9 @@ window.SkyUtils = {
 
     window.scrollTo({
       top: offsetPosition,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
-  }
+  },
 };
 
 /**
@@ -127,22 +124,42 @@ window.SkyUtils = {
 window.SkyLoadingScreen = {
   startTime: Date.now(),
   isHidden: false,
+  isWaitingForWeather: false, // 是否正在等待天气数据
+
+  /**
+   * 设置等待天气数据模式（首页专用）
+   */
+  waitForWeather() {
+    this.isWaitingForWeather = true;
+
+    // 监听天气效果准备就绪事件
+    window.addEventListener(
+      "sky-weather-effect-ready",
+      () => {
+        this.isWaitingForWeather = false;
+        this.hide();
+      },
+      { once: true },
+    );
+  },
 
   /**
    * 隐藏加载屏幕
    */
   hide() {
+    // 如果正在等待天气数据，不隐藏
+    if (this.isWaitingForWeather) return;
     if (this.isHidden) return;
 
-    const loadingScreen = document.getElementById('loading-screen');
+    const loadingScreen = document.getElementById("loading-screen");
     if (!loadingScreen) return;
 
-    const minDuration = parseInt(loadingScreen.dataset.minDuration || '500');
+    const minDuration = parseInt(loadingScreen.dataset.minDuration || "500");
     const elapsed = Date.now() - this.startTime;
     const delay = Math.max(0, minDuration - elapsed);
 
     setTimeout(() => {
-      loadingScreen.classList.add('loaded');
+      loadingScreen.classList.add("loaded");
       this.isHidden = true;
 
       // 动画结束后从 DOM 中移除
@@ -152,7 +169,7 @@ window.SkyLoadingScreen = {
         }
       }, 300);
     }, delay);
-  }
+  },
 };
 
 /**
@@ -163,7 +180,6 @@ window.SkyEvents = {
    * 页面加载完成事件
    */
   onPageLoad() {
-
     // 初始化懒加载图片
     this.initLazyImages();
 
@@ -178,26 +194,26 @@ window.SkyEvents = {
    * 初始化懒加载图片
    */
   initLazyImages() {
-    const images = document.querySelectorAll('img[data-src]');
+    const images = document.querySelectorAll("img[data-src]");
 
-    if ('IntersectionObserver' in window) {
+    if ("IntersectionObserver" in window) {
       const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const img = entry.target;
             img.src = img.dataset.src;
-            img.classList.remove('lazy');
+            img.classList.remove("lazy");
             imageObserver.unobserve(img);
           }
         });
       });
 
-      images.forEach(img => imageObserver.observe(img));
+      images.forEach((img) => imageObserver.observe(img));
     } else {
       // 降级方案
-      images.forEach(img => {
+      images.forEach((img) => {
         img.src = img.dataset.src;
-        img.classList.remove('lazy');
+        img.classList.remove("lazy");
       });
     }
   },
@@ -207,10 +223,10 @@ window.SkyEvents = {
    */
   initExternalLinks() {
     const links = document.querySelectorAll('a[href^="http"]');
-    links.forEach(link => {
+    links.forEach((link) => {
       if (!link.hostname.includes(window.location.hostname)) {
-        link.setAttribute('target', '_blank');
-        link.setAttribute('rel', 'noopener noreferrer');
+        link.setAttribute("target", "_blank");
+        link.setAttribute("rel", "noopener noreferrer");
       }
     });
   },
@@ -220,99 +236,113 @@ window.SkyEvents = {
    * 监听页面元素进入视口，添加 .visible 类触发淡入动画
    */
   initLazyAnimations() {
-    const animElements = document.querySelectorAll('.lazy-anim');
+    const animElements = document.querySelectorAll(".lazy-anim");
     if (animElements.length === 0) return;
 
-    if ('IntersectionObserver' in window) {
-      const animObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            // 添加 visible 类触发 CSS 动画
-            entry.target.classList.add('visible');
-            animObserver.unobserve(entry.target);
-          }
-        });
-      }, {
-        rootMargin: '200px 0px', // 提前 200px 触发，确保长页面也能触发
-        threshold: 0 // 只要有一点进入就触发
-      });
+    if ("IntersectionObserver" in window) {
+      const animObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              // 添加 visible 类触发 CSS 动画
+              entry.target.classList.add("visible");
+              animObserver.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          rootMargin: "200px 0px", // 提前 200px 触发，确保长页面也能触发
+          threshold: 0, // 只要有一点进入就触发
+        },
+      );
 
-      animElements.forEach(el => animObserver.observe(el));
-      
+      animElements.forEach((el) => animObserver.observe(el));
+
       // 备用方案：3秒后强制显示所有未触发的元素
       setTimeout(() => {
-        animElements.forEach(el => {
-          if (!el.classList.contains('visible')) {
-            el.classList.add('visible');
+        animElements.forEach((el) => {
+          if (!el.classList.contains("visible")) {
+            el.classList.add("visible");
           }
         });
       }, 3000);
     } else {
       // 降级方案：不支持 Observer 直接显示
-      animElements.forEach(el => el.classList.add('visible'));
+      animElements.forEach((el) => el.classList.add("visible"));
     }
-  }
+  },
 };
 
 // 页面加载完成后执行初始化
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   window.SkyEvents.onPageLoad();
-  
+
   // 图片懒加载优化 - 添加 loaded 类实现淡入效果
   const observeImages = () => {
     const images = document.querySelectorAll('img[loading="lazy"]');
-    images.forEach(img => {
+    images.forEach((img) => {
       if (img.complete && img.naturalHeight !== 0) {
-        img.classList.add('loaded');
+        img.classList.add("loaded");
       } else {
-        img.addEventListener('load', function() {
-          this.classList.add('loaded');
-        }, { once: true });
-        img.addEventListener('error', function() {
-          this.classList.add('loaded'); // 即使失败也显示，避免空白
-        }, { once: true });
+        img.addEventListener(
+          "load",
+          function () {
+            this.classList.add("loaded");
+          },
+          { once: true },
+        );
+        img.addEventListener(
+          "error",
+          function () {
+            this.classList.add("loaded"); // 即使失败也显示，避免空白
+          },
+          { once: true },
+        );
       }
     });
   };
-  
+
   observeImages();
-  
+
   // 监听动态加载的图片（如无限滚动）
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType === 1) {
           const imgs = node.querySelectorAll ? node.querySelectorAll('img[loading="lazy"]') : [];
-          imgs.forEach(img => {
+          imgs.forEach((img) => {
             if (img.complete && img.naturalHeight !== 0) {
-              img.classList.add('loaded');
+              img.classList.add("loaded");
             } else {
-              img.addEventListener('load', function() {
-                this.classList.add('loaded');
-              }, { once: true });
+              img.addEventListener(
+                "load",
+                function () {
+                  this.classList.add("loaded");
+                },
+                { once: true },
+              );
             }
           });
         }
       });
     });
   });
-  
+
   observer.observe(document.body, { childList: true, subtree: true });
 });
 
 // 监听 Alpine.js 初始化完成
-document.addEventListener('alpine:init', () => {
+document.addEventListener("alpine:init", () => {
   if (window.SkyLoadingScreen) {
     window.SkyLoadingScreen.hide();
   }
 });
 
 // 降级方案：如果没有使用 Alpine 或加载失败，在 window.load 时隐藏
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
   setTimeout(() => {
     if (window.SkyLoadingScreen && !window.SkyLoadingScreen.isHidden) {
       window.SkyLoadingScreen.hide();
     }
   }, 100);
 });
-

@@ -1,4 +1,4 @@
-import './default.css';
+import "./default.css";
 
 /**
  * Default Auth Theme

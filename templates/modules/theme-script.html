@@ -1,59 +1,117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="https://www.thymeleaf.org">
+  <!-- ========================================== -->
+  <!--          主题切换内联脚本（防闪烁）          -->
+  <!-- ========================================== -->
 
-<!-- ========================================== -->
-<!--          主题切换内联脚本（防闪烁）          -->
-<!-- ========================================== -->
-
-<!--
+  <!--
   此脚本必须在 <head> 中尽早执行，在页面渲染前应用主题
   避免页面加载时的主题闪烁问题
-  
+
   优先级逻辑：
   1. 如果前端开关开启 && localStorage 有缓存 → 使用缓存主题
   2. 否则 → 使用默认配置主题
 -->
-<script th:fragment="inline-script" th:inline="javascript">
-  (function () {
-    // === 主题初始化 ===
-    const showThemeToggle = /*[[${theme.config.nav.theme_settings.show_theme_toggle}]]*/ true;
-    const savedTheme = localStorage.getItem('theme-mode');
-    const defaultTheme = /*[[${theme.config.nav.theme_settings.default_theme}]]*/ 'dark_theme';
-    const lightTheme = /*[[${theme.config.nav.theme_settings.light_theme}]]*/ 'light';
-    const darkTheme = /*[[${theme.config.nav.theme_settings.dark_theme}]]*/ 'dark';
 
-    // 如果前端开关关闭，忽略 localStorage，强制使用默认主题
-    const isDark = showThemeToggle && savedTheme
-      ? (savedTheme === 'dark_theme')
-      : (defaultTheme === 'dark_theme');
-    const themeName = isDark ? darkTheme : lightTheme;
-    const themeMode = isDark ? 'dark' : 'light';
+  <!-- 移动端状态栏颜色 - Safari 使用 media 属性跟随系统主题 -->
+  <th:block th:fragment="theme-color-meta">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1f2937" media="(prefers-color-scheme: dark)" />
+  </th:block>
 
-    document.documentElement.setAttribute('data-theme', themeName);
-    document.documentElement.setAttribute('data-color-scheme', themeMode);
+  <script th:fragment="inline-script" th:inline="javascript">
+    (function () {
+      // === 主题初始化 ===
+      const showThemeToggle = /*[[${theme.config.nav.theme_settings.show_theme_toggle}]]*/ true;
+      const savedTheme = localStorage.getItem("theme-mode");
+      const defaultTheme = /*[[${theme.config.nav.theme_settings.default_theme}]]*/ "system";
+      const lightTheme = /*[[${theme.config.nav.theme_settings.light_theme}]]*/ "light";
+      const darkTheme = /*[[${theme.config.nav.theme_settings.dark_theme}]]*/ "dark";
 
-    // === 全局字体按需加载 ===
-    const bodyFont = /*[[${theme.config.general.font_settings.body_font}]]*/ 'font-default';
-    const fontCdn = /*[[${theme.config.general.font_settings.font_cdn}]]*/ 'https://cdn.5ee.net/fonts';
-    
-    // 加载字体文件
-    if (bodyFont === 'font-lxgw-wenkai-bright') {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = fontCdn + '/LXGWBright-SemiLight/result.css';
-      document.head.appendChild(link);
-    } else if (bodyFont === 'font-siyuan-songti') {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = fontCdn + '/思源屏显臻宋/result.css';
-      document.head.appendChild(link);
-    }
-    
-    // 应用字体类到 html 元素（全局生效）
-    if (bodyFont && bodyFont !== 'font-default') {
-      document.documentElement.classList.add(bodyFont);
-    }
-  })();
-</script>
+      // 向后兼容：旧值映射
+      let mode = savedTheme;
+      if (mode === "light_theme") mode = "light";
+      if (mode === "dark_theme") mode = "dark";
 
+      // 无缓存或前端开关关闭时使用默认值
+      if (!mode || !showThemeToggle) {
+        if (defaultTheme === "light_theme") mode = "light";
+        else if (defaultTheme === "dark_theme") mode = "dark";
+        else mode = defaultTheme; // 'system'
+      }
+
+      // 计算 isDark 状态
+      let isDark;
+      if (mode === "system") {
+        isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      } else {
+        isDark = mode === "dark";
+      }
+
+      const themeName = isDark ? darkTheme : lightTheme;
+      const themeMode = isDark ? "dark" : "light";
+
+      document.documentElement.setAttribute("data-theme", themeName);
+      document.documentElement.setAttribute("data-color-scheme", themeMode);
+
+      // === 更新移动端状态栏颜色 ===
+      // Safari: 使用 media 属性的 meta 标签跟随系统主题（JS 动态修改无效）
+      // Chrome Android 等: 支持 JS 动态修改，会更新无 media 属性的 meta 标签
+      (function updateThemeColor() {
+        requestAnimationFrame(function () {
+          // 创建临时元素获取计算后的颜色
+          var temp = document.createElement("div");
+          temp.style.cssText = "position:absolute;visibility:hidden;background-color:oklch(var(--b1))";
+          document.body.appendChild(temp);
+          var computedColor = getComputedStyle(temp).backgroundColor;
+          temp.remove();
+
+          // 将 rgb/rgba 转换为 HEX
+          var hexColor = isDark ? "#1f2937" : "#ffffff";
+          var match = computedColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+          if (match) {
+            var r = parseInt(match[1]).toString(16).padStart(2, "0");
+            var g = parseInt(match[2]).toString(16).padStart(2, "0");
+            var b = parseInt(match[3]).toString(16).padStart(2, "0");
+            hexColor = "#" + r + g + b;
+          }
+
+          // 更新带 media 属性的 meta 标签颜色（用于页面加载时）
+          var lightMeta = document.querySelector('meta[name="theme-color"][media*="light"]');
+          var darkMeta = document.querySelector('meta[name="theme-color"][media*="dark"]');
+
+          // 为支持动态更新的浏览器（如 Chrome Android）添加/更新无 media 属性的 meta 标签
+          var dynamicMeta = document.querySelector('meta[name="theme-color"]:not([media])');
+          if (!dynamicMeta) {
+            dynamicMeta = document.createElement("meta");
+            dynamicMeta.name = "theme-color";
+            document.head.appendChild(dynamicMeta);
+          }
+          dynamicMeta.content = hexColor;
+        });
+      })();
+
+      // === 全局字体按需加载 ===
+      const bodyFont = /*[[${theme.config.general.font_settings.body_font}]]*/ "font-default";
+      const fontCdn = /*[[${theme.config.general.font_settings.font_cdn}]]*/ "https://cdn.5ee.net/fonts";
+
+      // 加载字体文件
+      if (bodyFont === "font-lxgw-wenkai-bright") {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = fontCdn + "/LXGWBright-SemiLight/result.css";
+        document.head.appendChild(link);
+      } else if (bodyFont === "font-siyuan-songti") {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = fontCdn + "/思源屏显臻宋/result.css";
+        document.head.appendChild(link);
+      }
+
+      // 应用字体类到 html 元素（全局生效）
+      if (bodyFont && bodyFont !== "font-default") {
+        document.documentElement.classList.add(bodyFont);
+      }
+    })();
+  </script>
 </html>

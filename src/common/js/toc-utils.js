@@ -57,39 +57,39 @@ export function buildDynamicTocTree(headingElements, minLevel) {
  */
 export function createDynamicTocHTML(tocTree, options = {}) {
   const {
-    addTooltip = false,  // 是否添加 tooltip
-    onClick = null       // 点击回调函数
+    addTooltip = false, // 是否添加 tooltip
+    onClick = null, // 点击回调函数
   } = options;
 
-  const ol = document.createElement('ol');
-  ol.className = 'toc-list';
+  const ol = document.createElement("ol");
+  ol.className = "toc-list";
 
   tocTree.forEach((item) => {
-    const li = document.createElement('li');
-    li.className = 'toc-item-wrapper';
+    const li = document.createElement("li");
+    li.className = "toc-item-wrapper";
 
     // 设置动态缩进级别
-    li.style.setProperty('--toc-indent-multiplier', item.relativeLevel.toString());
+    li.style.setProperty("--toc-indent-multiplier", item.relativeLevel.toString());
 
     // 创建目录链接
-    const linkElement = document.createElement('a');
+    const linkElement = document.createElement("a");
     linkElement.href = `#${item.id}`;
     linkElement.textContent = item.text;
-    linkElement.className = addTooltip ? 'toc-link tooltip tooltip-right' : 'toc-link';
+    linkElement.className = addTooltip ? "toc-link tooltip tooltip-right" : "toc-link";
 
     // 设置数据属性
-    linkElement.setAttribute('data-relative-level', item.relativeLevel.toString());
-    linkElement.setAttribute('data-absolute-level', item.absoluteLevel.toString());
-    linkElement.setAttribute('data-heading-id', item.id);
+    linkElement.setAttribute("data-relative-level", item.relativeLevel.toString());
+    linkElement.setAttribute("data-absolute-level", item.absoluteLevel.toString());
+    linkElement.setAttribute("data-heading-id", item.id);
 
     // 添加 tooltip
     if (addTooltip) {
-      linkElement.setAttribute('data-tip', item.text);
+      linkElement.setAttribute("data-tip", item.text);
     }
 
     // 添加点击事件
     if (onClick) {
-      linkElement.addEventListener('click', (event) => {
+      linkElement.addEventListener("click", (event) => {
         event.preventDefault();
         onClick(item.element, event);
       });
@@ -121,7 +121,7 @@ export function smoothScrollToHeading(headingElement, offset = 80) {
 
   window.scrollTo({
     top: targetPosition,
-    behavior: 'smooth'
+    behavior: "smooth",
   });
 }
 
@@ -134,7 +134,7 @@ export function analyzeHeadingHierarchy(headingElements) {
   const headingArray = Array.from(headingElements);
 
   // 获取所有标题的级别
-  const levels = headingArray.map(heading => parseInt(heading.tagName.charAt(1)));
+  const levels = headingArray.map((heading) => parseInt(heading.tagName.charAt(1)));
 
   // 找到最小级别（最高级标题）
   const minLevel = Math.min(...levels);
@@ -143,7 +143,7 @@ export function analyzeHeadingHierarchy(headingElements) {
   const maxDisplayLevel = minLevel + 2;
 
   // 过滤标题：只保留前3个相对层级
-  const filteredHeadings = headingArray.filter(heading => {
+  const filteredHeadings = headingArray.filter((heading) => {
     const level = parseInt(heading.tagName.charAt(1));
     return level <= maxDisplayLevel;
   });
@@ -152,6 +152,6 @@ export function analyzeHeadingHierarchy(headingElements) {
     filteredHeadings,
     minLevel,
     maxDisplayLevel,
-    totalLevels: levels.length > 0 ? Math.max(...levels) - minLevel + 1 : 0
+    totalLevels: levels.length > 0 ? Math.max(...levels) - minLevel + 1 : 0,
   };
 }
