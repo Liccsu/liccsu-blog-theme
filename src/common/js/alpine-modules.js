@@ -525,24 +525,30 @@ function createThemeToggle() {
 
     /**
      * 触发 Safari 状态栏颜色更新
-     * 方法：创建临时遮罩层模拟 SearchWidget 的关闭行为
+     * 原理暂不明确
      */
     triggerSafariStatusBarUpdate() {
-      // 创建临时遮罩层（模拟 SearchWidget 的背景遮罩）
+      // 根据当前主题选择遮罩层颜色（浅色主题用白色，深色主题用黑色）
+      const bgColor = this.isDark ? "rgba(0, 0, 0, 0.01)" : "rgba(255, 255, 255, 0.01)";
+
+      // 创建临时遮罩层（尺寸 6px，透明度 0.01，用户几乎无感）
       const backdrop = document.createElement("div");
       backdrop.style.cssText = `
         position: fixed;
-        inset: 0;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
         z-index: 99999;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: ${bgColor};
         pointer-events: none;
       `;
       document.body.appendChild(backdrop);
 
-      // 延迟后移除遮罩层
+      // 延迟后移除遮罩层，触发 Safari 重新计算状态栏颜色
       setTimeout(() => {
         backdrop.remove();
-      }, 50);
+      }, 1);
     },
 
     /**
