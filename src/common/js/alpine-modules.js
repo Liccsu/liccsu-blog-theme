@@ -518,6 +518,31 @@ function createThemeToggle() {
 
       // 更新移动端状态栏颜色
       this.updateThemeColor();
+
+      // Safari 状态栏颜色修复：模拟 drawer-side 关闭
+      this.triggerSafariStatusBarUpdate();
+    },
+
+    /**
+     * 触发 Safari 状态栏颜色更新
+     * 方法：创建临时遮罩层模拟 SearchWidget 的关闭行为
+     */
+    triggerSafariStatusBarUpdate() {
+      // 创建临时遮罩层（模拟 SearchWidget 的背景遮罩）
+      const backdrop = document.createElement("div");
+      backdrop.style.cssText = `
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background-color: rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+      `;
+      document.body.appendChild(backdrop);
+
+      // 延迟后移除遮罩层
+      setTimeout(() => {
+        backdrop.remove();
+      }, 50);
     },
 
     /**
