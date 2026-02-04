@@ -1,5 +1,9 @@
 # Liccsu Blog Theme
 
+<p align="center">
+  <img src="logo.png" alt="Liccsu Blog Theme Logo" width="400">
+</p>
+
 > 基于 [Sky Blog Theme](https://github.com/sky121666/halo-theme-sky-blog-1) 的 Halo 2.0 博客主题衍生版本
 
 [![Halo](https://img.shields.io/badge/Halo-2.22.9+-blue)](https://halo.run)

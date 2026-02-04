@@ -268,6 +268,17 @@
   );
 }
 
+/* 行内代码 - 深色主题背景适配 */
+[data-color-scheme="dark"] #article-content code {
+  background: color-mix(in srgb, var(--color-primary) 20%, var(--color-base-100));
+  border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+
+/* 高亮 mark - 深色主题背景适配 */
+[data-color-scheme="dark"] #article-content mark {
+  background: linear-gradient(transparent 55%, color-mix(in srgb, var(--color-warning) 50%, transparent) 55%);
+}
+
 /* ===================================================
  * 5. 段落和文本 - 中文排版优化
  * ==================================================*/
@@ -323,10 +334,10 @@
 
 /* 高亮 - 荧光笔效果 */
 #article-content mark {
-  background: linear-gradient(transparent 55%, color-mix(in srgb, var(--color-primary) 25%, transparent) 55%);
+  background: linear-gradient(transparent 55%, color-mix(in srgb, var(--color-warning) 40%, transparent) 55%);
   padding: 0.05em 0.15em;
   border-radius: 3px;
-  color: inherit;
+  color: #1d4ed8 !important; /* 更亮的蓝色 */
 }
 
 /* 上下标 */
@@ -445,7 +456,7 @@
   border: 1px solid color-mix(in srgb, var(--color-primary) 15%, transparent);
   border-radius: 0.5em;
   font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Monaco, monospace;
-  color: var(--color-primary);
+  color: #c2410c; /* 更深更红的橘红色 */
   font-weight: 500;
   white-space: nowrap;
 }

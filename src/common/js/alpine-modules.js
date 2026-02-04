@@ -430,6 +430,7 @@ function createThemeToggle() {
     lightTheme: "",
     darkTheme: "",
     mediaQuery: null,
+    _safariBackdrop: null, // Safari 状态栏修复用的临时遮罩层引用
 
     init() {
       // 读取主题配置
@@ -525,9 +526,15 @@ function createThemeToggle() {
 
     /**
      * 触发 Safari 状态栏颜色更新
-     * 原理暂不明确
+     * 通过创建并移除临时遮罩层，触发 Safari 重新读取 theme-color
      */
     triggerSafariStatusBarUpdate() {
+      // 如果已有遮罩层，先移除（防止竞态条件）
+      if (this._safariBackdrop) {
+        this._safariBackdrop.remove();
+        this._safariBackdrop = null;
+      }
+
       // 根据当前主题选择遮罩层颜色（浅色主题用白色，深色主题用黑色）
       const bgColor = this.isDark ? "rgba(0, 0, 0, 0.01)" : "rgba(255, 255, 255, 0.01)";
 
@@ -544,10 +551,14 @@ function createThemeToggle() {
         pointer-events: none;
       `;
       document.body.appendChild(backdrop);
+      this._safariBackdrop = backdrop;
 
       // 延迟后移除遮罩层，触发 Safari 重新计算状态栏颜色
       setTimeout(() => {
-        backdrop.remove();
+        if (this._safariBackdrop === backdrop) {
+          backdrop.remove();
+          this._safariBackdrop = null;
+        }
       }, 1);
     },
 
