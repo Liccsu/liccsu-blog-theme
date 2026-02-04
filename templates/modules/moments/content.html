@@ -4,19 +4,21 @@
 <th:block th:fragment="content">
 
   <th:block th:with="
-    cfg=${theme.config.moments_settings},
+    rootCfg=${theme.config.moments_settings},
+    cfg=${rootCfg.basic_info},
+    sidebarCfg=${rootCfg.sidebar_settings},
     pageTitle=${cfg?.page_title ?: '瞬间'},
     enableUpvote=${cfg?.enable_upvote != false},
     enableComment=${cfg?.enable_comment != false},
-    publishSettings=${cfg?.publish_settings},
+    publishSettings=${rootCfg?.publish_settings},
     enablePublish=${publishSettings?.enable_publish != false},
     enableImageUpload=${enablePublish && (publishSettings?.enable_image_upload != false)},
     enableVideoUpload=${enablePublish && (publishSettings?.enable_video_upload != false)},
     enableAudioUpload=${enablePublish && (publishSettings?.enable_audio_upload != false)},
-    showSidebar=${cfg?.show_sidebar == true},
+    showSidebar=${sidebarCfg?.show_sidebar == true},
     globalSidebarCfg = ${theme.config.general.sidebar_settings},
-    useCustomSidebar = ${cfg?.enable_custom_sidebar == true},
-    sidebarPosition = ${useCustomSidebar ? (cfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}
+    useCustomSidebar = ${sidebarCfg?.enable_custom_sidebar == true},
+    sidebarPosition = ${useCustomSidebar ? (sidebarCfg?.sidebar_position ?: 'right') : (globalSidebarCfg?.position ?: 'right')}
   ">
 
     <div class="mx-auto px-4 py-6 md:py-10" th:classappend="${showSidebar} ? 'max-w-5xl' : 'max-w-2xl'">
@@ -198,7 +200,7 @@
 
         <!-- 右侧边栏 -->
         <aside th:if="${showSidebar}" class="w-80 space-y-6 hidden lg:block shrink-0 sticky top-20 self-start">
-          <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${cfg})}" />
+          <th:block th:replace="~{modules/widgets/sidebar :: dynamic(${sidebarCfg})}" />
         </aside>
 
       </div>
@@ -253,8 +255,7 @@
             <!-- 输入区 -->
             <textarea id="moment-content"
               class="w-full bg-transparent text-base-content placeholder-base-content/40 resize-none border-0 focus:outline-none text-base leading-relaxed min-h-24"
-              placeholder="分享新鲜事..." maxlength="1000"
-              oninput="updateCharCount(this)"></textarea>
+              placeholder="分享新鲜事..." maxlength="1000" oninput="updateCharCount(this)"></textarea>
 
             <!-- 标签显示区 -->
             <div id="moment-tags-display" class="hidden mt-3">
@@ -387,13 +388,13 @@
           // 验证 URL 安全性
           function validateUrl(url) {
             if (!url) return false;
-            
+
             // 禁止危险协议
             const lower = url.toLowerCase();
             if (lower.startsWith('javascript:') || lower.startsWith('data:')) {
               return false;
             }
-            
+
             return true;
           }
 
@@ -436,7 +437,7 @@
                   errors.push(`${file.name}: ${error.message}`);
                 }
               }
-              
+
               updateMediaPreview();
 
               // 显示错误信息
@@ -476,7 +477,7 @@
           async function uploadFile(file, category) {
             const formData = new FormData();
             formData.append('file', file);
-            
+
             // 使用 UC API 上传
             const response = await fetch('/apis/uc.api.storage.halo.run/v1alpha1/attachments/-/upload', {
               method: 'POST',
@@ -494,10 +495,10 @@
             }
 
             const attachment = await response.json();
-            
+
             // 获取 URL
             let url = attachment.status?.permalink || attachment.spec?.permalink;
-            
+
             // 如果没有 permalink，轮询获取（最多 5 次）
             if (!url && attachment.metadata?.name) {
               for (let i = 0; i < 5; i++) {
@@ -543,18 +544,18 @@
             }
 
             container.classList.remove('hidden');
-            
+
             // 清空现有内容
             list.innerHTML = '';
-            
+
             const mediaCount = uploadedMedia.length;
-            
+
             // 单个媒体：大图展示（与展示效果一致）
             if (mediaCount === 1) {
               const media = uploadedMedia[0];
               const wrapper = document.createElement('div');
               wrapper.className = 'relative rounded-xl overflow-hidden bg-base-200 group';
-              
+
               if (media.type === 'PHOTO') {
                 const img = document.createElement('img');
                 img.src = media.url;
@@ -568,7 +569,7 @@
                 video.className = 'rounded-xl max-h-72 w-full';
                 video.preload = 'metadata';
                 wrapper.appendChild(video);
-                
+
                 const overlay = document.createElement('div');
                 overlay.className = 'absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none';
                 overlay.innerHTML = '<span class="icon-[heroicons--play-circle] w-16 h-16 text-white"></span>';
@@ -581,7 +582,7 @@
                 audio.className = 'w-full';
                 wrapper.appendChild(audio);
               }
-              
+
               // 删除按钮
               const deleteBtn = document.createElement('button');
               deleteBtn.type = 'button';
@@ -589,19 +590,19 @@
               deleteBtn.innerHTML = '<span class="icon-[heroicons--x-mark] w-5 h-5"></span>';
               deleteBtn.onclick = () => removeMedia(0);
               wrapper.appendChild(deleteBtn);
-              
+
               list.appendChild(wrapper);
-            } 
+            }
             // 多个媒体：网格展示（2/4张=2列，其他=3列）
             else {
               // 确定网格列数
               const gridCols = (mediaCount === 2 || mediaCount === 4) ? 2 : 3;
               list.className = `grid gap-1 rounded-xl overflow-hidden grid-cols-${gridCols}`;
-              
+
               uploadedMedia.forEach((media, index) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'aspect-square relative bg-base-200 overflow-hidden group';
-                
+
                 if (media.type === 'PHOTO') {
                   const img = document.createElement('img');
                   img.src = media.url;
@@ -615,7 +616,7 @@
                   video.className = 'w-full h-full object-cover';
                   video.preload = 'metadata';
                   wrapper.appendChild(video);
-                  
+
                   const overlay = document.createElement('div');
                   overlay.className = 'absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none';
                   overlay.innerHTML = '<span class="icon-[heroicons--play-circle] w-10 h-10 text-white"></span>';
@@ -625,13 +626,13 @@
                   const icon = document.createElement('span');
                   icon.className = 'icon-[heroicons--musical-note] w-10 h-10 text-base-content/40 mb-1';
                   wrapper.appendChild(icon);
-                  
+
                   const fileName = document.createElement('div');
                   fileName.className = 'text-xs text-base-content/60 truncate w-full text-center px-1';
                   fileName.textContent = media.fileName || '音频';
                   wrapper.appendChild(fileName);
                 }
-                
+
                 // 删除按钮
                 const deleteBtn = document.createElement('button');
                 deleteBtn.type = 'button';
@@ -639,7 +640,7 @@
                 deleteBtn.innerHTML = '<span class="icon-[heroicons--x-mark] w-4 h-4"></span>';
                 deleteBtn.onclick = () => removeMedia(index);
                 wrapper.appendChild(deleteBtn);
-                
+
                 list.appendChild(wrapper);
               });
             }
@@ -656,7 +657,7 @@
             const count = textarea.value.length;
             const counter = document.getElementById('moment-char-count');
             counter.textContent = count + '/1000';
-            
+
             // 超出限制时变红
             if (count > 1000) {
               counter.classList.add('text-error');
@@ -680,29 +681,29 @@
           window.addMomentTag = function () {
             const input = document.getElementById('moment-tags');
             const tag = input.value.trim();
-            
+
             // 安全验证
             if (!tag) return;
-            
+
             // 限制标签长度
             if (tag.length > 50) {
               alert('标签长度不能超过 50 个字符');
               return;
             }
-            
+
             // 限制标签数量
             if (selectedTags.length >= 10) {
               alert('最多只能添加 10 个标签');
               return;
             }
-            
+
             // 过滤特殊字符（防止 XSS）
             const safeTag = tag.replace(/[<>'"&]/g, '');
             if (safeTag.length === 0) {
               alert('标签包含非法字符');
               return;
             }
-            
+
             if (!selectedTags.includes(safeTag)) {
               selectedTags.push(safeTag);
               updateTagsDisplay();
@@ -727,24 +728,24 @@
             }
 
             container.classList.remove('hidden');
-            
+
             // 使用 DOM API 创建元素（防止 XSS）
             list.innerHTML = '';
             selectedTags.forEach((tag, index) => {
               const badge = document.createElement('span');
               badge.className = 'badge badge-primary badge-outline gap-1';
-              
+
               const tagText = document.createElement('span');
               tagText.textContent = '#' + tag; // textContent 自动转义
               badge.appendChild(tagText);
-              
+
               const removeBtn = document.createElement('button');
               removeBtn.type = 'button';
               removeBtn.textContent = '×';
               removeBtn.className = 'hover:text-error';
               removeBtn.onclick = () => removeMomentTag(index);
               badge.appendChild(removeBtn);
-              
+
               list.appendChild(badge);
             });
           }
@@ -759,10 +760,10 @@
 
             // 安全验证：媒体 URL
             const safeMedia = (media || []).filter(m => {
-              return m && 
-                     typeof m.url === 'string' && 
-                     validateUrl(m.url) &&
-                     ['PHOTO', 'VIDEO', 'AUDIO', 'POST'].includes(m.type);
+              return m &&
+                typeof m.url === 'string' &&
+                validateUrl(m.url) &&
+                ['PHOTO', 'VIDEO', 'AUDIO', 'POST'].includes(m.type);
             });
 
             const momentName = 'moment-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
