@@ -2,7 +2,7 @@
   "name": "liccsu-blog-theme",
   "type": "module",
   "license": "GPL-3.0",
-  "version": "1.1.0-dev.8",
+  "version": "1.1.0-dev.9",
   "scripts": {
     "build": "tsc && vite build && theme-package",
     "build-only": "tsc && vite build",
