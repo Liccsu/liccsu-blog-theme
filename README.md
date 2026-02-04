@@ -6,6 +6,8 @@
 [![License](https://img.shields.io/badge/License-GPL--3.0-green)](LICENSE)
 [![Node](https://img.shields.io/badge/Node-20+-brightgreen)](https://nodejs.org)
 
+**演示站点：[https://liccsu.com](https://liccsu.com)**
+
 ## 📖 简介
 
 Liccsu Blog Theme 是一款基于 [Sky Blog Theme](https://github.com/sky121666/halo-theme-sky-blog-1) 的 Halo 2.0 主题衍生版本，采用现代前端技术栈开发。

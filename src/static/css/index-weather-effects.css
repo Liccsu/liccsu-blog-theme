@@ -248,20 +248,21 @@
   height: 140px;
   z-index: 10;
   filter: drop-shadow(0 0 20px rgba(255, 200, 50, 0.6));
+  animation: float 6s ease-in-out infinite;
+  /* 整个太阳轻微浮动 */
 }
 
 .sun-rays {
   position: absolute;
   inset: 0;
   animation: spin 60s linear infinite;
-  /* 只有光芒旋转 */
+  /* 光芒旋转 */
 }
 
 .sun-body {
   position: absolute;
   inset: 0;
-  animation: float 6s ease-in-out infinite;
-  /* 脸部轻微浮动 */
+  /* 本体跟随容器浮动，无需单独动画 */
 }
 
 .sun-glow-outer {
