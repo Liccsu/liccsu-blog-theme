@@ -13,6 +13,7 @@
     background: var(--color-base-200);
     position: relative;
     overflow: hidden;
+    perspective: 1500px;
 }
 
 /* 基础卡片样式 */

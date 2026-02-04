@@ -3616,11 +3616,9 @@ spec:
               render-type: text
               size: 100
               gap: 10
-              value: none
+              value: 3d
               if: $get(auth_layout).value === 'centered'
               options:
-                - label: 无
-                  value: none
                 - label: 3D 倾斜
                   value: 3d
                 - label: 聚光灯

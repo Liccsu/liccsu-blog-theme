@@ -1,9 +1,8 @@
 <!doctype html>
 <html th:lang="${#locale.toLanguageTag}" th:fragment="layout (title,head,body)" th:with="authLayout = ${theme.config.auth?.auth_settings?.auth_layout ?: 'default'},
                brandStyle = ${theme.config.auth?.auth_settings?.brand_style ?: 'simple'},
-               cardEffect = ${theme.config.auth?.auth_settings?.card_effect ?: 'none'},
+               cardEffect = ${(theme.config.auth?.auth_settings?.card_effect == 'none' || theme.config.auth?.auth_settings?.card_effect == null) ? '3d' : theme.config.auth?.auth_settings?.card_effect},
                brandSlogan = ${theme.config.auth?.auth_settings?.brand_slogan ?: '探索、记录、分享'},
-               featuresWelcome = ${theme.config.auth?.auth_settings?.features_welcome ?: '欢迎来到'},
 
                featuresWelcome = ${theme.config.auth?.auth_settings?.style_features?.features_welcome ?: '欢迎来到'},
                feature1Title = ${theme.config.auth?.auth_settings?.style_features?.feature_1_title ?: '安全可靠'},
@@ -30,8 +29,7 @@
     <link rel="stylesheet" th:href="@{/assets/css/main.css?v={version}(version=${theme.spec.version})}" />
 
     <!-- Auth 布局 CSS -->
-    <link rel="stylesheet"
-        th:href="@{'/assets/css/auth-' + ${authLayout} + '.css?v=' + ${theme.spec.version}}" />
+    <link rel="stylesheet" th:href="@{'/assets/css/auth-' + ${authLayout} + '.css?v=' + ${theme.spec.version}}" />
 
     <th:block th:replace="~{gateway_fragments/common::basicStaticResources}"></th:block>
 
@@ -51,9 +49,8 @@
                 <!-- Logo -->
                 <div class="auth-logo-default">
                     <a href="/" class="flex items-center justify-center gap-3 group">
-                        <img th:if="${site.logo != null and !site.logo.isEmpty()}" 
-                             th:src="${site.logo}" th:alt="${site.title}"
-                             class="w-10 h-10 rounded-xl shadow-md" />
+                        <img th:if="${site.logo != null and !site.logo.isEmpty()}" th:src="${site.logo}"
+                            th:alt="${site.title}" class="w-10 h-10 rounded-xl shadow-md" />
                         <span class="text-2xl font-bold text-primary" th:text="${site.title}">Site</span>
                     </a>
                 </div>
@@ -145,52 +142,6 @@
     <!-- 布局 3: 居中卡片          -->
     <!-- ======================== -->
     <th:block th:if="${authLayout == 'centered'}">
-        <!-- 3D 效果脚本 -->
-        <script th:if="${cardEffect == '3d'}" th:inline="none">
-            document.addEventListener('DOMContentLoaded', function () {
-                var card = document.querySelector('.auth-card-3d');
-                if (card) {
-                    card.addEventListener('mousemove', function (e) {
-                        var rect = card.getBoundingClientRect();
-                        var x = e.clientX - rect.left;
-                        var y = e.clientY - rect.top;
-                        var rotateX = (y - rect.height / 2) / 25;
-                        var rotateY = (rect.width / 2 - x) / 25;
-                        card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateZ(10px)';
-                    });
-                    card.addEventListener('mouseleave', function () {
-                        card.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
-                    });
-                }
-            });
-        </script>
-
-        <!-- 聚光灯效果脚本 -->
-        <script th:if="${cardEffect == 'spotlight'}" th:inline="none">
-            document.addEventListener('DOMContentLoaded', function () {
-                var pageGlow = document.querySelector('.spotlight-page-glow');
-                var cardGlow = document.querySelector('.spotlight-card-glow');
-                var card = document.querySelector('.auth-card-spotlight');
-
-                if (pageGlow) {
-                    document.addEventListener('mousemove', function (e) {
-                        pageGlow.style.left = e.clientX + 'px';
-                        pageGlow.style.top = e.clientY + 'px';
-                    });
-                }
-
-                if (card && cardGlow) {
-                    card.addEventListener('mouseenter', function () { cardGlow.style.opacity = '1'; });
-                    card.addEventListener('mouseleave', function () { cardGlow.style.opacity = '0'; });
-                    card.addEventListener('mousemove', function (e) {
-                        var rect = card.getBoundingClientRect();
-                        cardGlow.style.left = (e.clientX - rect.left) + 'px';
-                        cardGlow.style.top = (e.clientY - rect.top) + 'px';
-                    });
-                }
-            });
-        </script>
-
         <div class="auth-page-centered">
             <!-- 聚光灯页面光晕 -->
             <div th:if="${cardEffect == 'spotlight'}" class="spotlight-page-glow"></div>
@@ -213,11 +164,56 @@
                 <span>©</span><a href="/" class="ml-1" th:text="${site.title}">Site</a>
             </div>
         </div>
+
+        <!-- 3D 效果脚本 - 放在 DOM 之后确保元素存在 -->
+        <script th:if="${cardEffect == '3d'}" th:inline="none">
+            (function () {
+                var card = document.querySelector('.auth-card-3d');
+                if (card) {
+                    card.addEventListener('mousemove', function (e) {
+                        var rect = card.getBoundingClientRect();
+                        var x = e.clientX - rect.left;
+                        var y = e.clientY - rect.top;
+                        var rotateX = (y - rect.height / 2) / 25;
+                        var rotateY = (rect.width / 2 - x) / 25;
+                        card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateZ(10px)';
+                    });
+                    card.addEventListener('mouseleave', function () {
+                        card.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
+                    });
+                }
+            })();
+        </script>
+
+        <!-- 聚光灯效果脚本 - 放在 DOM 之后确保元素存在 -->
+        <script th:if="${cardEffect == 'spotlight'}" th:inline="none">
+            (function () {
+                var pageGlow = document.querySelector('.spotlight-page-glow');
+                var cardGlow = document.querySelector('.spotlight-card-glow');
+                var card = document.querySelector('.auth-card-spotlight');
+
+                if (pageGlow) {
+                    document.addEventListener('mousemove', function (e) {
+                        pageGlow.style.left = e.clientX + 'px';
+                        pageGlow.style.top = e.clientY + 'px';
+                    });
+                }
+
+                if (card && cardGlow) {
+                    card.addEventListener('mouseenter', function () { cardGlow.style.opacity = '1'; });
+                    card.addEventListener('mouseleave', function () { cardGlow.style.opacity = '0'; });
+                    card.addEventListener('mousemove', function (e) {
+                        var rect = card.getBoundingClientRect();
+                        cardGlow.style.left = (e.clientX - rect.left) + 'px';
+                        cardGlow.style.top = (e.clientY - rect.top) + 'px';
+                    });
+                }
+            })();
+        </script>
     </th:block>
 
     <!-- Auth 布局 JS -->
-    <script type="module"
-        th:src="@{'/assets/js/auth-' + ${authLayout} + '.js?v=' + ${theme.spec.version}}"></script>
+    <script type="module" th:src="@{'/assets/js/auth-' + ${authLayout} + '.js?v=' + ${theme.spec.version}}"></script>
 </body>
 
 </html>
