@@ -63,4 +63,4 @@ Dark, Synthwave, Halloween, Forest, Aqua, Black, Luxury, Dracula, Business, Nigh
 | **登录按钮** | 是否显示登录/用户菜单按钮 |
 | **登录按钮图标** | 自定义登录按钮图标 |
 
-> **💡 提示**：搜索功能需安装 `PluginSearchWidget` 插件才能使用。
+> **💡 提示**：搜索功能需安装 `PluginSearchWidget` 插件才能使用。主题已为搜索组件适配了**极简列表风格 (Command Palette)**，提供更沉浸的搜索体验。
