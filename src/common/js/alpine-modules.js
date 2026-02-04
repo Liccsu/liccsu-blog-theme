@@ -536,16 +536,16 @@ function createThemeToggle() {
       }
 
       // 根据当前主题选择遮罩层颜色（浅色主题用白色，深色主题用黑色）
-      const bgColor = this.isDark ? "rgba(0, 0, 0, 0.01)" : "rgba(255, 255, 255, 0.01)";
+      const bgColor = this.isDark ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)";
 
-      // 创建临时遮罩层（尺寸 6px，透明度 0.01，用户几乎无感）
+      // 创建临时遮罩层
       const backdrop = document.createElement("div");
       backdrop.style.cssText = `
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        height: 6px;
+        height: 16px;
         z-index: 99999;
         background-color: ${bgColor};
         pointer-events: none;
@@ -559,7 +559,7 @@ function createThemeToggle() {
           backdrop.remove();
           this._safariBackdrop = null;
         }
-      }, 1);
+      }, 50);
     },
 
     /**
