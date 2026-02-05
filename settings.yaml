@@ -1340,7 +1340,7 @@ spec:
               insertControl: false
               removeControl: false
               addButton: false
-              children: 
+              children:
                 - $formkit: select
                   name: tab
                   label: ""
@@ -1789,6 +1789,38 @@ spec:
               help: 文章底部的评论按钮（展开内联评论区）
               value: true
         - $formkit: group
+          name: copyright_card
+          label: 文章版权声明
+          value:
+            enable: true
+            license_type: "cc-by-nc-sa"
+          children:
+            - $formkit: switch
+              id: copyright_card_enable
+              name: enable
+              label: 启用版权声明卡片
+              help: 在文章末尾显示版权声明信息
+              value: true
+            - $formkit: select
+              name: license_type
+              label: 版权协议
+              if: $get(copyright_card_enable).value
+              help: 选择文章使用的 Creative Commons 版权协议
+              value: "cc-by-nc-sa"
+              options:
+                - label: CC BY 4.0 (署名)
+                  value: cc-by
+                - label: CC BY-SA 4.0 (署名-相同方式共享)
+                  value: cc-by-sa
+                - label: CC BY-NC 4.0 (署名-非商业性使用)
+                  value: cc-by-nc
+                - label: CC BY-NC-SA 4.0 (署名-非商业性使用-相同方式共享)
+                  value: cc-by-nc-sa
+                - label: CC BY-ND 4.0 (署名-禁止演绎)
+                  value: cc-by-nd
+                - label: CC BY-NC-ND 4.0 (署名-非商业性使用-禁止演绎)
+                  value: cc-by-nc-nd
+        - $formkit: group
           name: dock_settings
           label: 悬浮控制栏
           value:
@@ -1884,7 +1916,7 @@ spec:
                   value: underline
                 - label: 玻璃拟态
                   value: glass
-        
+
         # ===== 侧边栏设置 =====
         - $formkit: group
           name: sidebar_settings
@@ -2064,7 +2096,7 @@ spec:
                   value: underline
                 - label: 玻璃拟态
                   value: glass
-        
+
         # ===== 侧边栏设置 =====
         - $formkit: group
           name: sidebar_settings
@@ -2213,7 +2245,7 @@ spec:
               label: 启用评论
               help: 在归档页面底部显示评论区
               value: false
-        
+
         # ===== 侧边栏设置 =====
         - $formkit: group
           name: sidebar_settings
@@ -3788,7 +3820,7 @@ spec:
           label: 插件配置提示
           help: 需要安装「Equipment 装备管理」插件
           children: []
-        
+
         # ===== 基础信息 =====
         - $formkit: group
           name: basic_info
@@ -3814,7 +3846,7 @@ spec:
               value: "分享我日常使用的硬件与软件"
               placeholder: "页面描述信息"
               rows: 2
-        
+
         # ===== 风格设置 =====
         - $formkit: group
           name: style_settings
@@ -3867,7 +3899,6 @@ spec:
               accepts:
                 - "image/*"
 
-        
         # ===== 功能设置 =====
         - $formkit: group
           name: feature_settings
@@ -3880,7 +3911,7 @@ spec:
               label: 启用评论
               help: 在装备页面底部显示评论区
               value: true
-        
+
         # ===== 侧边栏设置 =====
         - $formkit: group
           name: sidebar_settings
@@ -3943,7 +3974,7 @@ spec:
                   name: widget
                   label: 小工具类型
                   options: *widget_options
-        
+
         # ===== 悬浮控制栏设置 =====
         - $formkit: group
           name: floating_dock

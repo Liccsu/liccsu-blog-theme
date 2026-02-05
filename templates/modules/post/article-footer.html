@@ -5,6 +5,102 @@
   <!-- ========================================== -->
 
   <th:block th:fragment="footer" th:with="postCursor = ${postFinder.cursor(post.metadata.name)}">
+    <!-- 版权声明卡片 -->
+    <th:block
+      th:if="${theme.config.article.copyright_card?.enable != false}"
+      th:with="licenseType = ${theme.config.article.copyright_card?.license_type ?: 'cc-by-nc-sa'}"
+    >
+      <div
+        class="card bg-base-100/80 border-base-content/5 border-l-primary mt-8 overflow-hidden rounded-2xl border border-l-4 shadow-lg backdrop-blur-xl"
+      >
+        <div class="card-body p-4 sm:p-6">
+          <div class="flex flex-col gap-2 text-sm">
+            <!-- 文章作者 -->
+            <div class="flex items-start gap-2">
+              <span class="text-base-content/60 shrink-0">文章作者：</span>
+              <span class="text-base-content font-medium" th:text="${post.owner.displayName}">作者名</span>
+            </div>
+            <!-- 文章链接 -->
+            <div class="flex items-start gap-2">
+              <span class="text-base-content/60 shrink-0">文章链接：</span>
+              <a
+                th:href="${site.url + post.status.permalink}"
+                th:text="${site.url + post.status.permalink}"
+                class="text-primary break-all hover:underline"
+              ></a>
+            </div>
+            <!-- 版权声明 -->
+            <div class="flex flex-wrap items-center gap-1">
+              <span class="text-base-content/60 shrink-0">版权声明：</span>
+              <span>本文采用</span>
+              <!-- CC 协议链接 -->
+              <th:block th:switch="${licenseType}">
+                <a
+                  th:case="'cc-by'"
+                  href="https://creativecommons.org/licenses/by/4.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary hover:underline"
+                  >CC BY 4.0</a
+                >
+                <a
+                  th:case="'cc-by-sa'"
+                  href="https://creativecommons.org/licenses/by-sa/4.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary hover:underline"
+                  >CC BY-SA 4.0</a
+                >
+                <a
+                  th:case="'cc-by-nc'"
+                  href="https://creativecommons.org/licenses/by-nc/4.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary hover:underline"
+                  >CC BY-NC 4.0</a
+                >
+                <a
+                  th:case="'cc-by-nc-sa'"
+                  href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary hover:underline"
+                  >CC BY-NC-SA 4.0</a
+                >
+                <a
+                  th:case="'cc-by-nd'"
+                  href="https://creativecommons.org/licenses/by-nd/4.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary hover:underline"
+                  >CC BY-ND 4.0</a
+                >
+                <a
+                  th:case="'cc-by-nc-nd'"
+                  href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary hover:underline"
+                  >CC BY-NC-ND 4.0</a
+                >
+                <!-- 默认值 -->
+                <a
+                  th:case="*"
+                  href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary hover:underline"
+                  >CC BY-NC-SA 4.0</a
+                >
+              </th:block>
+              <span>许可协议，转载请注明来自</span>
+              <a th:href="${site.url}" th:text="${site.title}" class="text-primary hover:underline"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+
     <!-- 互动卡片 - 使用 DaisyUI card -->
     <div
       class="card bg-base-100/80 border-base-content/5 mt-8 rounded-2xl border shadow-lg backdrop-blur-xl"
