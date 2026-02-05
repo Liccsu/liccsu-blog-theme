@@ -306,14 +306,12 @@
         "enable_share": true,
         "enable_comment": true,
         "share_settings": {
-          "share_item_ids": [
-            "wechat",
-            "qq",
-            "qzone",
-            "weibo",
-            "native"
-          ]
+          "share_item_ids": ["wechat", "qq", "qzone", "weibo", "native"]
         }
+      },
+      "copyright_card": {
+        "enable": true,
+        "license_type": "cc-by-nc-sa"
       },
       "dock_settings": {
         "enable_custom_dock": false,
@@ -631,13 +629,7 @@
         }
       ],
       "share_settings": {
-        "share_item_ids": [
-          "wechat",
-          "qq",
-          "qzone",
-          "weibo",
-          "native"
-        ]
+        "share_item_ids": ["wechat", "qq", "qzone", "weibo", "native"]
       },
       "floating_dock": {
         "enable_custom_dock": false,
@@ -689,13 +681,7 @@
       "doc_settings": {
         "enable_share": true,
         "share_settings": {
-          "share_item_ids": [
-            "wechat",
-            "qq",
-            "qzone",
-            "weibo",
-            "native"
-          ]
+          "share_item_ids": ["wechat", "qq", "qzone", "weibo", "native"]
         },
         "enable_custom_dock": false,
         "dock_style": "bottom",
