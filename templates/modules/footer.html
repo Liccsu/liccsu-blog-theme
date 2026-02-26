@@ -110,7 +110,11 @@
           </div>
 
           <!-- 快速导航 -->
-          <div class="text-center md:text-left" th:fragment="navigation-section" th:if="${theme.config.footer.navigation_settings.show_quick_nav}">
+          <div
+            class="text-center md:text-left"
+            th:fragment="navigation-section"
+            th:if="${theme.config.footer.navigation_settings.show_quick_nav}"
+          >
             <h4
               class="text-base-content mb-4 text-sm font-semibold"
               th:text="${theme.config.footer.navigation_settings.nav_title}"
@@ -126,7 +130,11 @@
           </div>
 
           <!-- 关注我们 -->
-          <div class="text-center md:text-left" th:fragment="social-section" th:if="${theme.config.footer.social_settings.show_social_links}">
+          <div
+            class="text-center md:text-left"
+            th:fragment="social-section"
+            th:if="${theme.config.footer.social_settings.show_social_links}"
+          >
             <h4
               class="text-base-content mb-4 text-sm font-semibold"
               th:text="${theme.config.footer.social_settings.social_title}"
