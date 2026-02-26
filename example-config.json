@@ -1,6 +1,6 @@
 {
   "themeName": "liccsu-blog-theme",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "settingName": "liccsu-blog-theme-setting",
   "configMapName": "liccsu-blog-theme-configMap",
   "configs": {
