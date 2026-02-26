@@ -19,6 +19,7 @@
     'bg-base-100/80 hover:border-primary/20': !weatherBg
   }"
     x-data="welcomeWeatherCard()"
+    th:attr="data-weather-key=${theme.config.general.weather_settings?.seniverse_api_key ?: ''}"
   >
     <!-- 动态背景装饰 -->
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
