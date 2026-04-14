@@ -18,7 +18,9 @@
     <th:block th:replace="~{modules/theme-script :: inline-script}" />
 
     <!-- 页面标题 -->
-    <title th:text="${singlePage.spec.title} + ' - ' + ${site.title}"></title>
+    <title
+      th:text="${singlePage.spec.title} + ' - ' + ${site.title} + (${site.subtitle != null and !#strings.isEmpty(site.subtitle)} ? ' - ' + ${site.subtitle} : '')">
+    </title>
 
     <!-- 字体 -->
     <th:block th:replace="~{modules/font-loader :: fonts}" />

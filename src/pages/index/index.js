@@ -2,29 +2,35 @@
  * Sky Theme - 首页特定脚本
  */
 
-import "./index.css";
+import './index.css';
 
 /**
- * 天气联动背景效果 - 终极卡通真实感融合版 (V4)
- * 新增：双层叠加过渡、等待天气数据、定时刷新
+ * 天气联动背景效果 - 终极卡通真实感融合版 (V3)
+ * 修复太阳旋转诡异问题，增强云朵可见性与动态感
  */
 (function () {
-  "use strict";
+  'use strict';
 
-  const CACHE_KEY = "sky_weather_cache_v12";
-  const WEATHER_WAIT_TIMEOUT = 3000; // 等待天气数据超时时间（毫秒）
-  const WEATHER_REFRESH_INTERVAL = 30 * 60 * 1000; // 天气刷新间隔（30分钟）
-  const TRANSITION_DURATION = 400; // 过渡动画时长（毫秒）
+  // 天气引擎专属控制台拦截器
+  const WTLogger = {
+    info: (...args) => {
+      if (window.SYS_WEATHER_DEBUG) {
+        console.log('[BG]', ...args);
+      }
+    },
+    warn: (...args) => console.warn('[BG]', ...args)
+  };
 
+  const CACHE_KEY = 'sky_weather_cache_v13';
   const weatherNameMap = {
-    sunny: "☀️ 晴天",
-    cloudy: "☁️ 多云",
-    "night-clear": "🌙 晴朗夜晚",
-    "night-cloudy": "🌥️ 多云夜晚",
-    foggy: "🌫️ 雾天",
-    rainy: "🌧️ 雨天",
-    snowy: "❄️ 雪天",
-    stormy: "⛈️ 雷暴",
+    'sunny': '☀️ 晴天',
+    'cloudy': '☁️ 多云',
+    'night-clear': '🌙 晴朗夜晚',
+    'night-cloudy': '🌥️ 多云夜晚',
+    'foggy': '🌫️ 雾天',
+    'rainy': '🌧️ 雨天',
+    'snowy': '❄️ 雪天',
+    'stormy': '⛈️ 雷暴'
   };
 
   // SVG 资源库 - 纯 SVG 字符串
@@ -69,286 +75,251 @@ import "./index.css";
     fog: `<svg viewBox="0 0 1000 100" class="w-full h-full fill-current text-gray-200" preserveAspectRatio="none">
             <path d="M0,50 Q250,0 500,50 T1000,50 L1000,100 L0,100 Z" opacity="0.5"/>
             <path d="M0,70 Q250,20 500,70 T1000,70 L1000,100 L0,100 Z" opacity="0.3"/>
-          </svg>`,
+          </svg>`
   };
 
   let currentState = {
-    type: "sunny",
-    temp: 20,
+    type: 'sunny',
+    temp: 20
   };
 
   let container = null;
   let effectLayer = null;
-  let isFirstRender = true; // 是否首次渲染
-  let weatherDataReceived = false; // 是否已收到天气数据
-  let refreshIntervalId = null; // 定时刷新 ID
 
-  /**
-   * 标准化天气类型
-   */
-  function normalizeWeatherType(type) {
-    if (type === "rain") return "rainy";
-    if (type === "snow") return "snowy";
-    if (type === "fog") return "foggy";
-    return type;
-  }
-
-  /**
-   * 初始化天气效果
-   */
   function init() {
-    container = document.getElementById("weather-effect-root");
-    if (!container) return;
+    WTLogger.info('init() 开始执行');
+    container = document.getElementById('weather-effect-root');
+    if (!container) {
+      WTLogger.warn('❌ weather-effect-root 元素不存在，背景类型可能未设为「天气联动」');
+      return;
+    }
+    WTLogger.info('✅ weather-effect-root 找到');
 
-    effectLayer = container.querySelector(".weather-effect-layer");
-    if (!effectLayer) return;
+    effectLayer = container.querySelector('.weather-effect-layer');
+    if (!effectLayer) {
+      WTLogger.warn('❌ .weather-effect-layer 不存在');
+      return;
+    }
+    WTLogger.info('✅ effectLayer 找到');
 
-    // 加载缓存数据（用于确定初始状态）
+    // 第一阶段：立即渲染（使用缓存或默认晴天）
     loadWeatherData();
-
-    // 立即渲染初始效果（使用缓存/默认值），避免背景空白
+    WTLogger.info('初始渲染，currentState.type =', currentState.type);
     renderEffect();
-
-    // 设置等待天气数据的超时
-    const waitTimeout = setTimeout(() => {
-      if (!weatherDataReceived) {
-        // 超时后直接隐藏加载屏幕（效果已经渲染好了）
-        notifyLoadingScreenReady();
-        isFirstRender = false;
-      }
-    }, WEATHER_WAIT_TIMEOUT);
-
-    // 监听天气数据更新事件
-    window.addEventListener("sky-weather-updated", (event) => {
-      const newBg = event.detail?.weatherBg;
-      if (!newBg) return;
-
-      const normalizedBg = normalizeWeatherType(newBg);
-
-      if (isFirstRender) {
-        // 首次收到真实数据
-        clearTimeout(waitTimeout);
-        weatherDataReceived = true;
-
-        if (normalizedBg !== currentState.type) {
-          // 天气类型不同，使用双层过渡切换
-          currentState.type = normalizedBg;
-          transitionToNewEffect();
-        }
-        // 通知加载屏幕可以隐藏
-        notifyLoadingScreenReady();
-        isFirstRender = false;
-      } else if (normalizedBg !== currentState.type) {
-        // 后续更新：使用双层叠加过渡
-        currentState.type = normalizedBg;
-        transitionToNewEffect();
-      }
-    });
-
     setupScrollListener();
 
-    // 启动定时刷新
-    startWeatherRefresh();
-  }
+    // 第二阶段：监听天气数据更新事件（来自天气卡片的真实数据）
+    window.addEventListener('sky-weather-updated', (event) => {
+      const newBg = event.detail?.weatherBg;
+      const rawData = event.detail?.rawData; // 获取附加的物理参数
+      WTLogger.info('收到 sky-weather-updated 事件，weatherBg =', newBg, 'rawData =', rawData);
 
-  /**
-   * 通知加载屏幕可以隐藏
-   */
-  function notifyLoadingScreenReady() {
-    window.dispatchEvent(new CustomEvent("sky-weather-effect-ready"));
-  }
+      if (!newBg) return;
 
-  /**
-   * 启动定时刷新天气
-   */
-  function startWeatherRefresh() {
-    // 清除已有的定时器
-    if (refreshIntervalId) {
-      clearInterval(refreshIntervalId);
-    }
+      let normalizedBg = newBg;
+      if (newBg === 'rain') normalizedBg = 'rainy';
+      if (newBg === 'snow') normalizedBg = 'snowy';
+      if (newBg === 'fog') normalizedBg = 'foggy';
 
-    // 每 30 分钟触发一次天气刷新
-    refreshIntervalId = setInterval(() => {
-      // 触发天气卡片重新获取数据
-      window.dispatchEvent(new CustomEvent("sky-weather-refresh-request"));
-    }, WEATHER_REFRESH_INTERVAL);
-  }
+      WTLogger.info('切换背景 →', normalizedBg);
+      currentState.type = normalizedBg;
 
-  /**
-   * 双层叠加过渡效果
-   */
-  function transitionToNewEffect() {
-    if (!effectLayer) return;
-
-    // 1. 保存旧层引用
-    const oldLayer = effectLayer;
-
-    // 2. 创建新层
-    const newLayer = document.createElement("div");
-    newLayer.className = "weather-effect-layer";
-    newLayer.style.cssText = "position: absolute; inset: 0; opacity: 0; transition: opacity " + TRANSITION_DURATION + "ms ease-in-out;";
-
-    // 3. 将新层插入到旧层后面
-    oldLayer.parentNode.insertBefore(newLayer, oldLayer.nextSibling);
-
-    // 4. 切换 effectLayer 引用到新层
-    effectLayer = newLayer;
-
-    // 5. 在新层上渲染新效果
-    renderEffectContent();
-
-    // 6. 更新 weather-effect 类名
-    const weatherEffect = container.querySelector(".weather-effect");
-    if (weatherEffect) {
-      weatherEffect.className = "weather-effect weather-" + currentState.type;
-      weatherEffect.style.setProperty("--wind-force", 1.0);
-    }
-
-    // 7. 触发新层淡入
-    requestAnimationFrame(() => {
-      newLayer.style.opacity = "1";
-      oldLayer.style.transition = "opacity " + TRANSITION_DURATION + "ms ease-in-out";
-      oldLayer.style.opacity = "0";
-    });
-
-    // 8. 过渡完成后清理旧层
-    setTimeout(() => {
-      // 清理旧层的定时器等资源
-      cleanupLayer(oldLayer);
-      // 移除旧层
-      if (oldLayer.parentNode) {
-        oldLayer.parentNode.removeChild(oldLayer);
+      // 应用物理参数
+      if (rawData) {
+        applyPhysicsVariables(rawData);
       }
-      // 移除新层的内联样式，恢复正常
-      newLayer.style.cssText = "";
-    }, TRANSITION_DURATION + 50);
-  }
 
-  /**
-   * 清理效果层资源
-   */
-  function cleanupLayer(layer) {
-    if (!layer) return;
-
-    // 查找并调用所有清理函数
-    const elementsWithCleanup = layer.querySelectorAll("[data-has-cleanup]");
-    elementsWithCleanup.forEach((el) => {
-      if (typeof el._cleanup === "function") {
-        el._cleanup();
-      }
+      renderEffect();
     });
-
-    // 直接检查子元素的清理函数
-    Array.from(layer.children).forEach((child) => {
-      if (typeof child._cleanup === "function") {
-        child._cleanup();
-      }
-    });
+    WTLogger.info('事件监听器已注册，init() 完成');
   }
 
   function loadWeatherData() {
+    WTLogger.info('loadWeatherData() 开始，读取 key:', CACHE_KEY);
     try {
       const cached = localStorage.getItem(CACHE_KEY);
+      WTLogger.info('localStorage 原始值:', cached ? '有数据' : '无数据（null）');
 
       if (cached) {
         const data = JSON.parse(cached);
         const bg = data.weatherBg;
+        WTLogger.info('缓存中的 weatherBg:', bg, '| location:', data.location);
 
         if (bg) {
-          // 标准化天气类型
           let normalizedBg = bg;
-          if (bg === "rain") normalizedBg = "rainy";
-          if (bg === "snow") normalizedBg = "snowy";
-          if (bg === "fog") normalizedBg = "foggy";
+          if (bg === 'rain') normalizedBg = 'rainy';
+          if (bg === 'snow') normalizedBg = 'snowy';
+          if (bg === 'fog') normalizedBg = 'foggy';
 
           currentState.type = normalizedBg;
-          currentState.temp = parseFloat(data.weather?.temp || 20);
+          WTLogger.info('✅ 从缓存加载天气成功，type =', currentState.type);
+
+          if (data.weather) {
+            applyPhysicsVariables(data.weather);
+          } else {
+            // 缺失真实数据时的默认物理表现
+            applyPhysicsVariables({ temp: 20, humidity: 50, wind: '0 km/h' });
+          }
+
           return;
         }
       }
     } catch (e) {
-      // ignore
+      WTLogger.warn('localStorage 读取失败:', e);
     }
 
     const hour = new Date().getHours();
-    currentState.type = hour >= 18 || hour < 6 ? "night-clear" : "sunny";
+    currentState.type = (hour >= 18 || hour < 6) ? 'night-clear' : 'sunny';
+    applyPhysicsVariables({ temp: 20, humidity: 50, wind: '0 km/h' });
+    console.log('[BG] ⚠️ 无缓存，使用默认天气:', currentState.type);
   }
+
+  /**
+   * 核心物理引擎桥接：将真实气象数据解析为全局 CSS 变量挂载到容器树
+   */
+  function applyPhysicsVariables(rawData) {
+    if (!container || !rawData) return;
+    const weatherEffect = container.querySelector('.weather-effect');
+    if (!weatherEffect) return;
+
+    // 1. 获取温度 (Temp)，主要用于控制动画“生命力”表现(寒冷冻僵)
+    let temp = parseFloat(rawData.temp);
+    if (isNaN(temp)) temp = 20;
+    currentState.temp = temp;
+
+    // 计算生命力活跃系数 (0.1 ~ 1.0)
+    // 假设 20度为正常 1.0； < 5度逐渐冻僵
+    let lifeScale = 1.0;
+    if (temp < 10) {
+      lifeScale = Math.max(0.1, 1.0 - (10 - temp) * 0.1);
+    }
+    weatherEffect.style.setProperty('--life-scale', lifeScale.toFixed(2));
+
+    // 2. 解析风 (Wind Speed & Direction) -> Vector X 漂移方向和力道
+    // 通常 API 返回 "XX km/h"
+    let windSpeed = 0;
+    if (typeof rawData.wind === 'string') {
+      const match = rawData.wind.match(/(\d+(\.\d+)?)/);
+      if (match) windSpeed = parseFloat(match[1]);
+    } else if (typeof rawData.wind_speed === 'number') {
+      windSpeed = rawData.wind_speed;
+    }
+
+    // 提取风向 (0-360) 0 是北风向南吹，90 是东风向西吹 (X轴负方向)
+    let windDir = parseFloat(rawData.wind_direction) || 0;
+
+    // 风力映射：0是微风，20km/h是中风，50km/h是狂风
+    // x = 1.0 (正常速度), x = 0.2 (几乎停止), x = 4.0 (四倍速)
+    let windForce = Math.max(0.1, windSpeed / 10);
+    // 限制风速在极端情况下不要把动画吹穿帮
+    windForce = Math.min(windForce, 4.0);
+
+    // 判定左右方向（X轴正方向为向右吹）。
+    // 在气象学上，风向角是从北(0)经东(90)南(180)西(270)。
+    // 即：角在 0~180 (偏东风)，其实是往西吹，也就是向左（X轴负）。
+    // 角在 180~360 (偏西风)，是往东吹，也就是向右（X轴正）。
+    let vectorDirectionX = (windDir > 180 && windDir < 360) ? 1 : -1;
+    // 如果无风，默认向左慢飘（-1）
+    if (windSpeed === 0) vectorDirectionX = -1;
+
+    // x 轴向真正受到左右干预的风力
+    let windForceX = windForce * vectorDirectionX;
+
+    // 把纯风力标量和风偏移量X存入全局供后续 JS 使用
+    currentState.windForce = windForce;
+    currentState.windForceX = windForceX;
+
+    // 注入 CSS
+    weatherEffect.style.setProperty('--wind-force', windForce.toFixed(2));
+    weatherEffect.style.setProperty('--wind-force-x', windForceX.toFixed(2));
+  }
+
 
   function renderEffect() {
     if (!effectLayer) return;
 
-    // 清理旧场景
-    cleanupLayer(effectLayer);
-    effectLayer.innerHTML = "";
-
-    const weatherEffect = container.querySelector(".weather-effect");
-    if (weatherEffect) {
-      weatherEffect.className = "weather-effect weather-" + currentState.type;
-      weatherEffect.style.setProperty("--wind-force", 1.0); // 默认微风
+    // 清理旧场景（如果有清理函数）
+    if (effectLayer.lastElementChild && typeof effectLayer.lastElementChild._cleanup === 'function') {
+      effectLayer.lastElementChild._cleanup();
     }
 
-    renderEffectContent();
-  }
+    effectLayer.innerHTML = '';
 
-  /**
-   * 渲染效果内容（不清理，用于双层过渡）
-   */
-  function renderEffectContent() {
+    const weatherEffect = container.querySelector('.weather-effect');
+    if (weatherEffect) {
+      weatherEffect.className = 'weather-effect weather-' + currentState.type;
+      weatherEffect.style.setProperty('--wind-force', 1.0); // 默认微风
+    }
+
     createAtmosphere();
 
     switch (currentState.type) {
-      case "sunny":
-        renderSunny();
-        break;
-      case "cloudy":
-        renderCloudy(false);
-        break;
-      case "night-clear":
-        renderNightClear();
-        break;
-      case "night-cloudy":
-        renderCloudy(true);
-        break;
-      case "foggy":
-        renderFoggy();
-        break;
-      case "rainy":
-        renderRainy();
-        break;
-      case "snowy":
-        renderSnowy();
-        break;
-      case "stormy":
-        renderStormy();
-        break;
+      case 'sunny': renderSunny(); break;
+      case 'cloudy': renderCloudy(false); break;
+      case 'night-clear': renderNightClear(); break;
+      case 'night-cloudy': renderCloudy(true); break;
+      case 'foggy': renderFoggy(); break;
+      case 'rainy': renderRainy(); break;
+      case 'snowy': renderSnowy(); break;
+      case 'stormy': renderStormy(); break;
     }
 
-    const bottomFade = document.createElement("div");
-    bottomFade.className = "bottom-fade";
+    const bottomFade = document.createElement('div');
+    bottomFade.className = 'bottom-fade';
     effectLayer.appendChild(bottomFade);
   }
 
   function createAtmosphere() {
-    const atmosphere = document.createElement("div");
-    atmosphere.className = "atmosphere-glow";
+    const atmosphere = document.createElement('div');
+    atmosphere.className = 'atmosphere-glow';
     effectLayer.appendChild(atmosphere);
   }
 
   // ☀️ 晴天：阳光草坪 (Stylized Lawn)
   function renderSunny() {
+    buildDaytimeMeadow();
+
+    // 5. 太阳 (特有)
+    const sunContainer = document.createElement('div');
+    sunContainer.className = 'sun-container';
+
+    const rays = document.createElement('div');
+    rays.className = 'sun-rays';
+    rays.innerHTML = SVGS.sunRays;
+    sunContainer.appendChild(rays);
+
+    const body = document.createElement('div');
+    body.className = 'sun-body';
+    body.innerHTML = SVGS.sunBody;
+    sunContainer.appendChild(body);
+
+    const glow = document.createElement('div');
+    glow.className = 'sun-glow-outer';
+    sunContainer.appendChild(glow);
+
+    effectLayer.appendChild(sunContainer);
+
+    // 6. 漂浮光斑 (通常伴随强阳光)
+    for (let i = 0; i < 15; i++) {
+      createBokeh();
+    }
+  }
+
+  // 构建通用的白天草坪场景 (供 Sunny 和 Cloudy 复用)
+  function buildDaytimeMeadow() {
     // 1. 构建场景容器
-    const sceneContainer = document.createElement("div");
-    sceneContainer.className = "sunny-scene-container";
+    const sceneContainer = document.createElement('div');
+    sceneContainer.className = 'sunny-scene-container';
 
     // 2. 草坪地基
-    const lawn = document.createElement("div");
-    lawn.className = "sunny-lawn";
+    const lawn = document.createElement('div');
+    lawn.className = 'sunny-lawn';
     sceneContainer.appendChild(lawn);
 
     // 3. 密集装饰性草叶 (前景)
     for (let i = 0; i < 40; i++) {
-      const blade = document.createElement("div");
-      blade.className = "sunny-grass-blade";
+      const blade = document.createElement('div');
+      blade.className = 'sunny-grass-blade';
       blade.style.left = `${Math.random() * 100}%`;
       blade.style.height = `${15 + Math.random() * 25}px`;
       blade.style.animationDelay = `${-Math.random() * 4}s`;
@@ -356,15 +327,15 @@ import "./index.css";
     }
 
     // 4. 精致花朵 (多种类混合)
-    const flowerTypes = ["flower-type-tulip", "flower-type-daisy", "flower-type-sunflower"];
+    const flowerTypes = ['flower-type-tulip', 'flower-type-daisy', 'flower-type-sunflower'];
     for (let i = 0; i < 12; i++) {
-      const flower = document.createElement("div");
+      const flower = document.createElement('div');
       const typeClass = flowerTypes[Math.floor(Math.random() * flowerTypes.length)];
       flower.className = `sunny-flower-detailed ${typeClass}`;
 
       // 花冠
-      const head = document.createElement("div");
-      head.className = "flower-head";
+      const head = document.createElement('div');
+      head.className = 'flower-head';
       flower.appendChild(head);
 
       // 随机位置（草坪上）
@@ -377,36 +348,11 @@ import "./index.css";
     }
 
     effectLayer.appendChild(sceneContainer);
-
-    // 5. 太阳 (保留原逻辑)
-    const sunContainer = document.createElement("div");
-    sunContainer.className = "sun-container";
-
-    const rays = document.createElement("div");
-    rays.className = "sun-rays";
-    rays.innerHTML = SVGS.sunRays;
-    sunContainer.appendChild(rays);
-
-    const body = document.createElement("div");
-    body.className = "sun-body";
-    body.innerHTML = SVGS.sunBody;
-    sunContainer.appendChild(body);
-
-    const glow = document.createElement("div");
-    glow.className = "sun-glow-outer";
-    sunContainer.appendChild(glow);
-
-    effectLayer.appendChild(sunContainer);
-
-    // 6. 漂浮光斑 (保留)
-    for (let i = 0; i < 15; i++) {
-      createBokeh();
-    }
   }
 
   function createBokeh() {
-    const bokeh = document.createElement("div");
-    bokeh.className = "bokeh-particle";
+    const bokeh = document.createElement('div');
+    bokeh.className = 'bokeh-particle';
     const size = 20 + Math.random() * 60;
     bokeh.style.cssText = `
       width: ${size}px; height: ${size}px;
@@ -426,7 +372,7 @@ import "./index.css";
       renderStars(30, true);
       renderMoon(true);
     } else {
-      renderSunny(); // 白天多云：先渲染晴天场景
+      buildDaytimeMeadow(); // 白天多云：仅渲染通用的草地前景，不渲染太阳
     }
 
     // 生成卡通 SVG 云朵
@@ -437,18 +383,24 @@ import "./index.css";
   }
 
   function createCartoonCloud(isNight, index) {
-    const cloud = document.createElement("div");
-    cloud.className = "cloud-cartoon " + (isNight ? "night" : "day");
+    const cloud = document.createElement('div');
+    cloud.className = 'cloud-cartoon ' + (isNight ? 'night' : 'day');
     cloud.innerHTML = SVGS.cloud;
 
     // 缩放范围 (0.6x ~ 1.8x)
     const scale = 0.6 + Math.random() * 1.2;
     // 垂直分布范围
     const top = 5 + Math.random() * 50;
-    // 飘动时长：大云慢，小云快
-    const duration = 60 + (1.8 - scale) * 40 + Math.random() * 30;
+
+    // 物理映射: 风大则时间短，飘得快
+    const windForce = currentState.windForce || 1.0;
+    // 原本的时长：大云慢，小云快 (60~130s)
+    let baseDuration = 60 + (1.8 - scale) * 40 + Math.random() * 30;
+    // 受到风力影响
+    const duration = baseDuration / windForce;
+
     // 透明度
-    const opacity = isNight ? 0.3 + Math.random() * 0.2 : 0.85 + Math.random() * 0.15;
+    const opacity = isNight ? (0.3 + Math.random() * 0.2) : (0.85 + Math.random() * 0.15);
     // 随机起始偏移，让云朵交错出现
     const startOffset = Math.random() * 300;
 
@@ -461,7 +413,7 @@ import "./index.css";
       animation-duration: ${duration}s;
       animation-delay: ${-Math.random() * duration}s;
       z-index: ${20 + Math.floor(scale * 10)};
-      color: ${isNight ? "#a0a4b8" : "#ffffff"};
+      color: ${isNight ? '#a0a4b8' : '#ffffff'};
     `;
     effectLayer.appendChild(cloud);
   }
@@ -477,22 +429,22 @@ import "./index.css";
   // 提取夜晚基础场景 (山、树、眼、鬼火)
   function renderNightSceneBase() {
     // 1. 场景容器
-    const sceneContainer = document.createElement("div");
-    sceneContainer.className = "night-scene-container";
-    sceneContainer.id = "night-scene";
+    const sceneContainer = document.createElement('div');
+    sceneContainer.className = 'night-scene-container';
+    sceneContainer.id = 'night-scene';
 
     // 2. 恐怖远山 (Wolf Castle Vibes)
-    const mountains = ["sm-1", "sm-2"];
-    mountains.forEach((mClass) => {
-      const el = document.createElement("div");
+    const mountains = ['sm-1', 'sm-2'];
+    mountains.forEach(mClass => {
+      const el = document.createElement('div');
       el.className = `spooky-mountain ${mClass}`;
       sceneContainer.appendChild(el);
     });
 
     // 3. 扭曲怪树
     for (let i = 0; i < 6; i++) {
-      const tree = document.createElement("div");
-      tree.className = "spooky-tree";
+      const tree = document.createElement('div');
+      tree.className = 'spooky-tree';
       const height = 180 + Math.random() * 100;
       const width = height * 0.6;
       tree.style.cssText = `
@@ -509,12 +461,12 @@ import "./index.css";
 
     // 4. 黑暗中眨动的眼睛
     const createEyes = () => {
-      if (!document.getElementById("night-scene")) return;
+      if (!document.getElementById('night-scene')) return;
 
-      const eyes = document.createElement("div");
+      const eyes = document.createElement('div');
       // 偶尔出现黄色眼睛
       const isYellow = Math.random() > 0.7;
-      eyes.className = `spooky-eye-pair ${isYellow ? "eyes-yellow" : ""}`;
+      eyes.className = `spooky-eye-pair ${isYellow ? 'eyes-yellow' : ''}`;
 
       // 随机出现在树丛高度
       eyes.style.left = `${Math.random() * 100}%`;
@@ -531,10 +483,10 @@ import "./index.css";
 
     // 5. 幽灵鬼火
     const createGhostFirefly = () => {
-      if (!document.getElementById("night-scene")) return;
+      if (!document.getElementById('night-scene')) return;
 
-      const fly = document.createElement("div");
-      fly.className = "ghost-firefly";
+      const fly = document.createElement('div');
+      fly.className = 'ghost-firefly';
       fly.style.left = `${Math.random() * 100}%`;
       fly.style.bottom = `${Math.random() * 50}%`;
 
@@ -553,17 +505,17 @@ import "./index.css";
     };
   }
   function renderMoon(isCloudy) {
-    const moonContainer = document.createElement("div");
-    moonContainer.className = "moon-container";
-    if (isCloudy) moonContainer.classList.add("cloudy-moon");
+    const moonContainer = document.createElement('div');
+    moonContainer.className = 'moon-container';
+    if (isCloudy) moonContainer.classList.add('cloudy-moon');
 
-    const moonIcon = document.createElement("div");
-    moonIcon.className = "moon-icon";
+    const moonIcon = document.createElement('div');
+    moonIcon.className = 'moon-icon';
     moonIcon.innerHTML = SVGS.moon;
     moonContainer.appendChild(moonIcon);
 
-    const glow = document.createElement("div");
-    glow.className = "moon-glow";
+    const glow = document.createElement('div');
+    glow.className = 'moon-glow';
     moonContainer.appendChild(glow);
 
     effectLayer.appendChild(moonContainer);
@@ -571,9 +523,9 @@ import "./index.css";
 
   function renderStars(count, isDim = false) {
     for (let i = 0; i < count; i++) {
-      const star = document.createElement("div");
-      star.className = "star";
-      if (isDim) star.classList.add("dim");
+      const star = document.createElement('div');
+      star.className = 'star';
+      if (isDim) star.classList.add('dim');
 
       const size = 1 + Math.random() * 3;
       star.style.cssText = `
@@ -588,36 +540,36 @@ import "./index.css";
 
   // 🌫️ 雾天：清晨迷雾场景 (Misty Morning)
   function renderFoggy() {
-    const sceneContainer = document.createElement("div");
-    sceneContainer.className = "mist-scene-container";
-    sceneContainer.id = "mist-scene";
+    const sceneContainer = document.createElement('div');
+    sceneContainer.className = 'mist-scene-container';
+    sceneContainer.id = 'mist-scene';
 
     // 1. 太阳
-    const sun = document.createElement("div");
-    sun.className = "mist-sun";
+    const sun = document.createElement('div');
+    sun.className = 'mist-sun';
     sceneContainer.appendChild(sun);
 
     // 2. 远景山脉
-    const mountains = ["m-1", "m-2", "m-3"];
-    mountains.forEach((mClass) => {
-      const el = document.createElement("div");
+    const mountains = ['m-1', 'm-2', 'm-3'];
+    mountains.forEach(mClass => {
+      const el = document.createElement('div');
       el.className = `mist-mountain ${mClass}`;
       sceneContainer.appendChild(el);
     });
 
     // 3. 树木
-    const trees = ["t-1", "t-2", "t-3", "t-4"];
-    trees.forEach((tClass) => {
-      const el = document.createElement("div");
+    const trees = ['t-1', 't-2', 't-3', 't-4'];
+    trees.forEach(tClass => {
+      const el = document.createElement('div');
       el.className = `mist-tree ${tClass}`;
       sceneContainer.appendChild(el);
     });
 
     // 4. 流动雾气层 (SVG Background)
-    const layers = ["mist-layer-2", "mist-layer-1", "mist-layer-3"]; // 顺序决定层级
+    const layers = ['mist-layer-2', 'mist-layer-1', 'mist-layer-3']; // 顺序决定层级
     const layerEls = [];
-    layers.forEach((lClass) => {
-      const el = document.createElement("div");
+    layers.forEach(lClass => {
+      const el = document.createElement('div');
       el.className = `mist-fog-layer ${lClass}`;
       sceneContainer.appendChild(el);
       layerEls.push(el);
@@ -627,10 +579,10 @@ import "./index.css";
 
     // 5. 动态生成漂浮雾团 (JS)
     const createFogPuff = () => {
-      if (!document.getElementById("mist-scene")) return; // 元素被移除停止生成
+      if (!document.getElementById('mist-scene')) return; // 元素被移除停止生成
 
-      const puff = document.createElement("div");
-      puff.className = "mist-fog-puff";
+      const puff = document.createElement('div');
+      puff.className = 'mist-fog-puff';
 
       const size = Math.random() * 180 + 60;
       const topPos = Math.random() * 35 + 55; // 底部区域
@@ -643,19 +595,16 @@ import "./index.css";
       `;
 
       // 使用 Web Animations API
-      const animation = puff.animate(
-        [
-          { transform: "translate(0, 0) scale(0.5)", opacity: 0 },
-          { opacity: 0.5, offset: 0.2 },
-          { opacity: 0.5, offset: 0.8 },
-          { transform: `translate(${moveDistance}px, -80px) scale(1.8)`, opacity: 0 },
-        ],
-        {
-          duration: duration * 1000,
-          easing: "linear",
-          fill: "forwards",
-        },
-      );
+      const animation = puff.animate([
+        { transform: 'translate(0, 0) scale(0.5)', opacity: 0 },
+        { opacity: 0.5, offset: 0.2 },
+        { opacity: 0.5, offset: 0.8 },
+        { transform: `translate(${moveDistance}px, -80px) scale(1.8)`, opacity: 0 }
+      ], {
+        duration: duration * 1000,
+        easing: 'linear',
+        fill: 'forwards'
+      });
 
       sceneContainer.appendChild(puff);
 
@@ -673,12 +622,12 @@ import "./index.css";
       if (layerEls[0]) layerEls[0].style.transform = `translateX(${x * 20}px) scaleX(-1)`; // layer-2
       if (layerEls[2]) layerEls[2].style.transform = `translateX(${-x * 90}px)`; // layer-3
     };
-    document.addEventListener("mousemove", handleParallax);
+    document.addEventListener('mousemove', handleParallax);
 
     // 清理函数绑定到容器上，方便清除时调用
     sceneContainer._cleanup = () => {
       clearInterval(puffInterval);
-      document.removeEventListener("mousemove", handleParallax);
+      document.removeEventListener('mousemove', handleParallax);
     };
   }
 
@@ -704,36 +653,39 @@ import "./index.css";
     const baseCount = isStormy ? width / 10 : width / 25;
     const count = Math.min(isStormy ? 150 : 60, Math.max(20, Math.floor(baseCount)));
 
+    const windForce = currentState.windForce || 1.0;
+    const windForceX = currentState.windForceX || -1.0; // 带有方向的X轴位移
+
     const config = isStormy
-      ? { count: count, speedBase: 14, wind: -6, thickness: 3, color: "rgba(130, 180, 255, 0.8)" }
-      : { count: count, speedBase: 8, wind: -2, thickness: 2, color: "rgba(174, 217, 255, 0.6)" };
+      ? { count: count, speedBase: 14 * Math.max(1, windForce * 0.8), wind: 6 * windForceX, thickness: 3, color: 'rgba(130, 180, 255, 0.8)' }
+      : { count: count, speedBase: 8 * Math.max(1, Math.sqrt(windForce)), wind: 2 * windForceX, thickness: 2, color: 'rgba(174, 217, 255, 0.6)' };
 
     // 创建容器
-    const rainCanvas = document.createElement("canvas");
-    rainCanvas.className = "rain-canvas";
-    rainCanvas.id = "rain-canvas";
+    const rainCanvas = document.createElement('canvas');
+    rainCanvas.className = 'rain-canvas';
+    rainCanvas.id = 'rain-canvas';
     effectLayer.appendChild(rainCanvas);
 
-    const lightningCanvas = document.createElement("canvas");
-    lightningCanvas.className = "lightning-canvas";
-    lightningCanvas.id = "lightning-canvas";
+    const lightningCanvas = document.createElement('canvas');
+    lightningCanvas.className = 'lightning-canvas';
+    lightningCanvas.id = 'lightning-canvas';
     effectLayer.appendChild(lightningCanvas);
 
-    const flashOverlay = document.createElement("div");
-    flashOverlay.className = "flash-overlay";
-    flashOverlay.id = "flash-overlay";
+    const flashOverlay = document.createElement('div');
+    flashOverlay.className = 'flash-overlay';
+    flashOverlay.id = 'flash-overlay';
     effectLayer.appendChild(flashOverlay);
 
     // --- 地面组件生成：卡通雨中草原 (Cartoon Rainy Meadow) ---
-    const groundProps = document.createElement("div");
-    groundProps.className = "rain-ground-props";
+    const groundProps = document.createElement('div');
+    groundProps.className = 'rain-ground-props';
 
     // 构建草原场景
     buildCartoonMeadowScene(groundProps);
     effectLayer.appendChild(groundProps);
 
-    const ctxRain = rainCanvas.getContext("2d");
-    const ctxLight = lightningCanvas.getContext("2d");
+    const ctxRain = rainCanvas.getContext('2d');
+    const ctxLight = lightningCanvas.getContext('2d');
     let w, h;
     let drops = [];
     let splashes = [];
@@ -745,9 +697,7 @@ import "./index.css";
       w = rainCanvas.width = lightningCanvas.width = effectLayer.offsetWidth || window.innerWidth;
       h = rainCanvas.height = lightningCanvas.height = effectLayer.offsetHeight || window.innerHeight;
       // Resize 后需要重新生成雨滴位置防止溢出或空缺
-      drops.forEach((d) => {
-        if (d.x > w) d.x = Math.random() * w;
-      });
+      drops.forEach(d => { if (d.x > w) d.x = Math.random() * w; });
     }
     resize();
 
@@ -760,7 +710,7 @@ import "./index.css";
         // 如果宽度变化很大，可能需要重启系统以调整雨滴数量，这里简单处理只调尺寸
       }, 200);
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
     // 雨滴类
     class Drop {
@@ -777,8 +727,7 @@ import "./index.css";
       update() {
         this.x += this.vx;
         this.y += this.speed;
-        if (this.y > h - 40) {
-          // 稍微抬高一点作为“地面”
+        if (this.y > h - 40) { // 稍微抬高一点作为“地面”
           if (Math.random() > 0.85) splashes.push(new Splash(this.x, h - 40));
           this.reset();
         }
@@ -799,7 +748,7 @@ import "./index.css";
         ctxRain.lineTo(this.x - this.vx * 2, this.y - this.len);
         ctxRain.strokeStyle = config.color;
         ctxRain.lineWidth = this.thick;
-        ctxRain.lineCap = "round";
+        ctxRain.lineCap = 'round';
         ctxRain.stroke();
       }
     }
@@ -807,9 +756,7 @@ import "./index.css";
     // 水花类
     class Splash {
       constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.life = 8;
+        this.x = x; this.y = y; this.life = 8;
         this.particles = [];
         for (let i = 0; i < 3; i++) {
           this.particles.push({ vx: (Math.random() - 0.5) * 4, vy: -Math.random() * 3, px: 0, py: 0 });
@@ -817,16 +764,12 @@ import "./index.css";
       }
       update() {
         this.life--;
-        this.particles.forEach((p) => {
-          p.px += p.vx;
-          p.py += p.vy;
-          p.vy += 0.3;
-        });
+        this.particles.forEach(p => { p.px += p.vx; p.py += p.vy; p.vy += 0.3; });
       }
       draw() {
         const alpha = this.life / 8;
         ctxRain.fillStyle = `rgba(200, 230, 255, ${alpha})`;
-        this.particles.forEach((p) => {
+        this.particles.forEach(p => {
           ctxRain.beginPath();
           ctxRain.arc(this.x + p.px, this.y + p.py, 2, 0, Math.PI * 2);
           ctxRain.fill();
@@ -842,21 +785,19 @@ import "./index.css";
       ctxLight.clearRect(0, 0, w, h);
       ctxLight.beginPath();
       const startX = w * 0.2 + Math.random() * w * 0.6;
-      let x = startX,
-        y = 0;
+      let x = startX, y = 0;
       ctxLight.moveTo(x, y);
 
       while (y < h * 0.7) {
         const dx = (Math.random() - 0.5) * 80;
         const dy = 20 + Math.random() * 40;
-        x += dx;
-        y += dy;
+        x += dx; y += dy;
         ctxLight.lineTo(x, y);
       }
 
-      ctxLight.strokeStyle = "#fff";
+      ctxLight.strokeStyle = '#fff';
       ctxLight.shadowBlur = 25;
-      ctxLight.shadowColor = "#f1c40f";
+      ctxLight.shadowColor = '#f1c40f';
       ctxLight.lineWidth = 3;
       ctxLight.stroke();
       ctxLight.shadowBlur = 0;
@@ -866,32 +807,29 @@ import "./index.css";
 
     // 触发闪电
     function triggerLightning() {
-      flashOverlay.style.opacity = "0.7";
-      setTimeout(() => {
-        flashOverlay.style.opacity = "0";
-      }, 80);
-      setTimeout(() => {
-        flashOverlay.style.opacity = "0.3";
-      }, 120);
-      setTimeout(() => {
-        flashOverlay.style.opacity = "0";
-      }, 200);
+      // 狂风暴雨（风力>2）的猛烈雷击
+      const isFierce = (currentState.windForce > 2.0);
 
-      container.classList.add("weather-shake");
-      setTimeout(() => container.classList.remove("weather-shake"), 400);
+      flashOverlay.style.opacity = isFierce ? '0.9' : '0.6';
+      setTimeout(() => { flashOverlay.style.opacity = '0'; }, 80);
+      setTimeout(() => { flashOverlay.style.opacity = isFierce ? '0.4' : '0.2'; }, 120);
+      setTimeout(() => { flashOverlay.style.opacity = '0'; }, 200);
+
+      // 只有猛烈暴风雪才引起屏幕物理抖动
+      if (isFierce) {
+        container.classList.add('weather-shake');
+        setTimeout(() => container.classList.remove('weather-shake'), 400);
+      }
 
       drawLightningBolt();
     }
 
     // 主循环
     function loop() {
-      if (!document.getElementById("rain-canvas")) return;
+      if (!document.getElementById('rain-canvas')) return;
 
       ctxRain.clearRect(0, 0, w, h);
-      drops.forEach((d) => {
-        d.update();
-        d.draw();
-      });
+      drops.forEach(d => { d.update(); d.draw(); });
 
       for (let i = splashes.length - 1; i >= 0; i--) {
         splashes[i].update();
@@ -903,7 +841,9 @@ import "./index.css";
         const now = Date.now();
         if (now > nextLightningTime) {
           triggerLightning();
-          nextLightningTime = now + 2500 + Math.random() * 4000;
+          // 风速越大，闪电越频繁 (2500 -> 1000 基础间隔缩短)
+          const baseInterval = Math.max(800, 2000 - (currentState.windForce - 1) * 400);
+          nextLightningTime = now + baseInterval + Math.random() * 3000;
         }
       }
 
@@ -914,12 +854,12 @@ import "./index.css";
     loop();
 
     // 清理函数
-    const cleanupContainer = document.createElement("div");
-    cleanupContainer.id = "rain-system";
-    cleanupContainer.style.display = "none";
+    const cleanupContainer = document.createElement('div');
+    cleanupContainer.id = 'rain-system';
+    cleanupContainer.style.display = 'none';
     cleanupContainer._cleanup = () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", handleResize); // 移除正确的 listener
+      window.removeEventListener('resize', handleResize); // 移除正确的 listener
     };
     // ... (rest of renderRainSystem)
     effectLayer.appendChild(cleanupContainer);
@@ -928,31 +868,31 @@ import "./index.css";
   // 🏡 构建扁平雨中场景 (Flat Rain Scene)
   function buildCartoonMeadowScene(container) {
     // 0. 草原背景容器
-    const bgContainer = document.createElement("div");
-    bgContainer.className = "rain-meadow-container";
+    const bgContainer = document.createElement('div');
+    bgContainer.className = 'rain-meadow-container';
 
     // 生成3层山丘
-    ["rm-hill-2", "rm-hill-1", "rm-hill-3"].forEach((cls) => {
-      const hill = document.createElement("div");
+    ['rm-hill-2', 'rm-hill-1', 'rm-hill-3'].forEach(cls => {
+      const hill = document.createElement('div');
       hill.className = `rain-meadow-hill ${cls}`;
       bgContainer.appendChild(hill);
     });
     container.appendChild(bgContainer);
 
     // 1. 积水潭 (放在草原上)
-    const puddle = document.createElement("div");
-    puddle.className = "rain-puddle";
-    puddle.style.cssText = "width: 80px; height: 25px; left: 25%; bottom: 15px;";
+    const puddle = document.createElement('div');
+    puddle.className = 'rain-puddle';
+    puddle.style.cssText = 'width: 80px; height: 25px; left: 25%; bottom: 15px;';
     container.appendChild(puddle);
 
     // 2. 扁平小路
-    const path = document.createElement("div");
-    path.className = "flat-rain-path";
+    const path = document.createElement('div');
+    path.className = 'flat-rain-path';
     container.appendChild(path);
 
     // 3. 扁平小屋
-    const house = document.createElement("div");
-    house.className = "flat-rain-house";
+    const house = document.createElement('div');
+    house.className = 'flat-rain-house';
     house.innerHTML = `
           <div class="house-chimney"></div>
           <div class="house-window"></div>
@@ -960,8 +900,8 @@ import "./index.css";
     container.appendChild(house);
 
     // 4. 扁平路灯
-    const lamp = document.createElement("div");
-    lamp.className = "flat-rain-lamp";
+    const lamp = document.createElement('div');
+    lamp.className = 'flat-rain-lamp';
     lamp.innerHTML = `
           <div class="lamp-head"></div>
           <div class="lamp-light"></div> 
@@ -971,34 +911,34 @@ import "./index.css";
 
   // ❄️ 雪天：卡通冬日雪景 (Cartoon Winter Scene)
   function renderSnowy() {
-    const sceneContainer = document.createElement("div");
-    sceneContainer.className = "snow-scene-container";
+    const sceneContainer = document.createElement('div');
+    sceneContainer.className = 'snow-scene-container';
 
     // 1. 远景雪山
-    const hills = ["sh-1", "sh-2"];
-    hills.forEach((hClass) => {
-      const el = document.createElement("div");
+    const hills = ['sh-1', 'sh-2'];
+    hills.forEach(hClass => {
+      const el = document.createElement('div');
       el.className = `snow-hill ${hClass}`;
       sceneContainer.appendChild(el);
     });
 
     // 2. 雪地地面
-    const ground = document.createElement("div");
-    ground.className = "snow-ground";
+    const ground = document.createElement('div');
+    ground.className = 'snow-ground';
     sceneContainer.appendChild(ground);
 
     // 3. 雪屋 (Igloo)
-    const igloo = document.createElement("div");
-    igloo.className = "snow-igloo";
-    const entrance = document.createElement("div");
-    entrance.className = "snow-igloo-entrance";
+    const igloo = document.createElement('div');
+    igloo.className = 'snow-igloo';
+    const entrance = document.createElement('div');
+    entrance.className = 'snow-igloo-entrance';
     igloo.appendChild(entrance);
     sceneContainer.appendChild(igloo);
 
     // 4. 积雪松树
-    const pines = ["sp-1", "sp-2", "sp-3"];
-    pines.forEach((pClass) => {
-      const el = document.createElement("div");
+    const pines = ['sp-1', 'sp-2', 'sp-3'];
+    pines.forEach(pClass => {
+      const el = document.createElement('div');
       el.className = `snow-pine ${pClass}`;
       sceneContainer.appendChild(el);
     });
@@ -1006,16 +946,21 @@ import "./index.css";
     effectLayer.appendChild(sceneContainer);
 
     // 5. 飘雪粒子
-    const snowContainer = document.createElement("div");
-    snowContainer.className = "snow-container";
+    const snowContainer = document.createElement('div');
+    snowContainer.className = 'snow-container';
 
     for (let i = 0; i < 80; i++) {
-      const flake = document.createElement("div");
-      flake.className = "snow-flake-svg";
+      const flake = document.createElement('div');
+      flake.className = 'snow-flake-svg';
 
       const isLarge = Math.random() < 0.3;
-      const size = isLarge ? 12 + Math.random() * 10 : 4 + Math.random() * 8;
-      const duration = isLarge ? 6 + Math.random() * 4 : 3 + Math.random() * 5;
+      const size = isLarge ? (12 + Math.random() * 10) : (4 + Math.random() * 8);
+
+      const windForce = currentState.windForce || 1.0;
+      const windForceX = currentState.windForceX || -1.0;
+      const baseDuration = isLarge ? (6 + Math.random() * 4) : (3 + Math.random() * 5);
+      // 风大雪飘得快，但不像云那么夸张，用 sqrt 平稳曲线
+      const duration = baseDuration / Math.max(0.5, Math.sqrt(windForce));
 
       if (Math.random() > 0.4) {
         flake.innerHTML = `<svg viewBox="0 0 24 24" class="w-full h-full fill-current"><circle cx="12" cy="12" r="8"/></svg>`;
@@ -1023,12 +968,13 @@ import "./index.css";
         flake.innerHTML = `<svg viewBox="0 0 24 24" class="w-full h-full stroke-current" stroke-width="2"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93"/></svg>`;
       }
 
-      const windOffset = 20; // 固定风偏
+      // 动态风偏 (原固定为 20), 引入方向矢量 windForceX
+      const windOffset = -20 * windForceX;
 
       flake.style.cssText = `
         left: ${Math.random() * 100}%;
         width: ${size}px; height: ${size}px;
-        opacity: ${isLarge ? 0.95 : 0.6 + Math.random() * 0.3};
+        opacity: ${isLarge ? 0.95 : (0.6 + Math.random() * 0.3)};
         --wind-offset: ${windOffset}px;
         animation-duration: ${duration}s;
         animation-delay: ${-Math.random() * duration}s;
@@ -1038,27 +984,24 @@ import "./index.css";
     effectLayer.appendChild(snowContainer);
   }
 
+
   function setupScrollListener() {
-    const scrollMask = container.querySelector(".scroll-mask");
+    const scrollMask = container.querySelector('.scroll-mask');
     if (!scrollMask) return;
     let ticking = false;
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (!ticking) {
-          requestAnimationFrame(() => {
-            scrollMask.style.opacity = window.scrollY > 50 ? "0.3" : "0";
-            ticking = false;
-          });
-          ticking = true;
-        }
-      },
-      { passive: true },
-    );
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          scrollMask.style.opacity = window.scrollY > 50 ? '0.3' : '0';
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
       init();
     });
   } else {
@@ -1072,7 +1015,7 @@ import "./index.css";
  */
 window.handleMomentCardGlow = function (event, card) {
   // 获取卡片内的光效元素
-  const glowElement = card.querySelector(".moment-glow");
+  const glowElement = card.querySelector('.moment-glow');
   if (!glowElement) return;
 
   // 获取卡片的边界矩形信息
@@ -1083,8 +1026,8 @@ window.handleMomentCardGlow = function (event, card) {
   const y = event.clientY - rect.top;
 
   // 更新光效位置，使其跟随鼠标移动
-  glowElement.style.left = x + "px";
-  glowElement.style.top = y + "px";
+  glowElement.style.left = x + 'px';
+  glowElement.style.top = y + 'px';
 };
 
 /**
@@ -1092,9 +1035,9 @@ window.handleMomentCardGlow = function (event, card) {
  * @param {HTMLElement} card - 卡片元素
  */
 window.showMomentCardGlow = function (card) {
-  const glow = card.querySelector(".moment-glow");
+  const glow = card.querySelector('.moment-glow');
   if (glow) {
-    glow.style.opacity = "1";
+    glow.style.opacity = '1';
   }
 };
 
@@ -1103,9 +1046,9 @@ window.showMomentCardGlow = function (card) {
  * @param {HTMLElement} card - 卡片元素
  */
 window.hideMomentCardGlow = function (card) {
-  const glow = card.querySelector(".moment-glow");
+  const glow = card.querySelector('.moment-glow');
   if (glow) {
-    glow.style.opacity = "0";
+    glow.style.opacity = '0';
   }
 };
 
@@ -1114,30 +1057,30 @@ window.hideMomentCardGlow = function (card) {
  * 使用立即执行函数避免变量名冲突
  */
 (function () {
-  "use strict";
+  'use strict';
 
   /**
    * 标题特效管理器
    */
   const TitleEffectsManager = {
     titleElement: null,
-    decorationEffect: "none",
-    styleEffect: "none",
-    originalText: "",
+    decorationEffect: 'none',
+    styleEffect: 'none',
+    originalText: '',
 
     /**
      * 初始化标题特效
      */
     init() {
       // 查找标题元素
-      this.titleElement = document.getElementById("main-title");
+      this.titleElement = document.getElementById('main-title');
       if (!this.titleElement) {
         return;
       }
 
       // 获取配置的特效类型
-      this.decorationEffect = this.titleElement.dataset.decorationEffect || "none";
-      this.styleEffect = this.titleElement.dataset.styleEffect || "none";
+      this.decorationEffect = this.titleElement.dataset.decorationEffect || 'none';
+      this.styleEffect = this.titleElement.dataset.styleEffect || 'none';
       this.originalText = this.titleElement.dataset.originalText || this.titleElement.textContent.trim();
 
       // 应用特效
@@ -1159,10 +1102,10 @@ window.hideMomentCardGlow = function (card) {
      * 应用装饰特效
      */
     applyDecorationEffect() {
-      if (this.decorationEffect === "none") return;
+      if (this.decorationEffect === 'none') return;
 
       // 为粒子和星光特效准备嵌套结构
-      if (this.decorationEffect === "effect-particles" || this.decorationEffect === "effect-starlight") {
+      if (this.decorationEffect === 'effect-particles' || this.decorationEffect === 'effect-starlight') {
         this.titleElement.innerHTML = `<span><span><span>${this.originalText}</span></span></span>`;
       }
 
@@ -1170,8 +1113,8 @@ window.hideMomentCardGlow = function (card) {
       this.titleElement.classList.add(this.decorationEffect);
 
       // 为霓虹边缘特效设置data-text属性
-      if (this.decorationEffect === "effect-neon-edge") {
-        this.titleElement.setAttribute("data-text", this.originalText);
+      if (this.decorationEffect === 'effect-neon-edge') {
+        this.titleElement.setAttribute('data-text', this.originalText);
       }
     },
 
@@ -1179,22 +1122,23 @@ window.hideMomentCardGlow = function (card) {
      * 应用样式特效
      */
     applyStyleEffect() {
-      if (this.styleEffect === "none") return;
+      if (this.styleEffect === 'none') return;
 
       // 添加样式特效类
       this.titleElement.classList.add(this.styleEffect);
 
       // 为特定特效设置数据属性
-      if (this.styleEffect === "effect-marker-pop" || this.styleEffect === "effect-diagonal-split") {
-        this.titleElement.setAttribute("data-text", this.originalText);
+      if (this.styleEffect === 'effect-marker-pop' || this.styleEffect === 'effect-diagonal-split') {
+        this.titleElement.setAttribute('data-text', this.originalText);
       }
-    },
+    }
   };
 
   /**
    * 页面加载完成后初始化
    */
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener('DOMContentLoaded', () => {
     TitleEffectsManager.init();
   });
+
 })();

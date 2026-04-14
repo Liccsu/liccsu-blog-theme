@@ -640,6 +640,12 @@ html.theme-transitioning * {
     animation-name: alpine-slide-up;
 }
 
+/* 修复：防止 body 或顶级容器应用 transform 动画导致 fixed 定位失效 (如 Live2D 看板娘) */
+body[x-data]:not([x-cloak]) {
+    animation: none !important;
+    transform: none !important;
+}
+
 /* 基础淡入（默认） */
 @keyframes alpine-fade-in {
     from {
@@ -830,5 +836,113 @@ article img[loading="lazy"] {
 @media (max-width: 767px) {
     body {
         padding-bottom: 0 !important;
+    }
+}
+
+/* ===================================================
+ * 瞬间图片 - 细腻 Hover 效果 (Steam/图库风格)
+ * 特性：
+ *   - 使用 expo-out 缓动曲线 (0.16, 1, 0.3, 1)，快速响应 + 柔和收尾
+ *   - Scale 幅度极小 (1.0 → 1.04)，优雅不突兀
+ *   - 亮度微升 (1.0 → 1.06)，模拟光照聚焦感
+ *   - 过渡时长 500ms，比默认 300ms 更丝滑
+ *   - will-change 提前告知浏览器，GPU 加速
+ * ==================================================*/
+
+/* 单图容器 */
+.moment-single-img-wrap {
+    position: relative;
+    display: inline-block;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.moment-single-img-wrap img {
+    display: block;
+    transition:
+        transform 500ms cubic-bezier(0.16, 1, 0.3, 1),
+        filter 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, filter;
+}
+
+@media (hover: hover) {
+    .moment-single-img-wrap:hover img {
+        transform: scale(1.04);
+        filter: brightness(1.06);
+    }
+}
+
+/* 多图网格每个图片容器 */
+.moment-grid-item {
+    position: relative;
+    overflow: hidden;
+    background-color: color-mix(in oklch, var(--color-base-content) 6%, transparent);
+    cursor: pointer;
+}
+
+.moment-grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition:
+        transform 500ms cubic-bezier(0.16, 1, 0.3, 1),
+        filter 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, filter;
+}
+
+/* 极淡遮罩覆盖层 - 默认微暗，hover 后光感上升消失 */
+.moment-grid-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.06);
+    transition: opacity 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    z-index: 1;
+}
+
+@media (hover: hover) {
+    .moment-grid-item:hover img {
+        transform: scale(1.04);
+        filter: brightness(1.06);
+    }
+
+    .moment-grid-item:hover::after {
+        opacity: 0;
+    }
+}
+
+/* 暗色模式下亮度差异更小，避免过曝 */
+[data-color-scheme="dark"] .moment-grid-item img,
+[data-color-scheme="dark"] .moment-single-img-wrap img {
+    transition:
+        transform 500ms cubic-bezier(0.16, 1, 0.3, 1),
+        filter 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-color-scheme="dark"] .moment-grid-item::after {
+    background: rgba(0, 0, 0, 0.12);
+}
+
+@media (hover: hover) {
+
+    [data-color-scheme="dark"] .moment-grid-item:hover img,
+    [data-color-scheme="dark"] .moment-single-img-wrap:hover img {
+        filter: brightness(1.1);
+    }
+}
+
+/* 尊重减少动画设置 */
+@media (prefers-reduced-motion: reduce) {
+
+    .moment-grid-item img,
+    .moment-single-img-wrap img {
+        transition: none;
+    }
+
+    .moment-grid-item::after {
+        transition: none;
     }
 }

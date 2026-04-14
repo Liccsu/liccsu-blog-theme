@@ -233,6 +233,17 @@ spec:
               value: 5
               min: 3
               max: 10
+            - $formkit: group
+              name: welcome_card_config
+              label: 欢迎天气卡片
+              value:
+                fallback_region: "北京"
+              children:
+                - $formkit: text
+                  name: fallback_region
+                  label: 默认地区（降级容灾）
+                  help: "当访客的IP定位失效（如代理环境或服务宕机）时，天气组件强制获取该城市的默认天气数据防报错。例如: 北京"
+                  value: "北京"
         - $formkit: group
           name: font_settings
           label: 全局字体
@@ -272,6 +283,17 @@ spec:
               label: 心知天气 API Key
               help: 申请地址 https://www.seniverse.com，留空则使用内置默认 Key（建议在心知天气控制台开启域名白名单限制）
               placeholder: "留空使用默认 Key"
+        - $formkit: group
+          name: debug_settings
+          label: 开发者与调试
+          value:
+            enable_weather_debug: false
+          children:
+            - $formkit: switch
+              name: enable_weather_debug
+              label: 启用天气调试模式
+              help: 在浏览器控制台输出天气组件调试信息，用于排查定位和接口问题
+              value: false
     - group: nav
 
       label: 顶部（全局）

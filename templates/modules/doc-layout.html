@@ -13,7 +13,9 @@
     <th:block th:replace="~{modules/theme-script :: inline-script}" />
 
     <!-- 页面标题 -->
-    <title th:text="${docTree?.spec?.title != null ? docTree.spec.title + ' | ' + site.title : site.title}"></title>
+    <title
+      th:text="${docTree?.spec?.title != null ? docTree.spec.title + ' | ' + site.title : site.title} + (${site.subtitle != null and !#strings.isEmpty(site.subtitle)} ? ' - ' + ${site.subtitle} : '')">
+    </title>
 
     <!-- 字体 -->
     <th:block th:replace="~{modules/font-loader :: fonts}" />
