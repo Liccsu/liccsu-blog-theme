@@ -14,8 +14,9 @@
     <!-- 防止主题闪烁 - 在渲染前立即应用主题 -->
     <th:block th:replace="~{modules/theme-script :: inline-script}" />
 
-    <!-- 页面标题 -->
-    <title th:text="${post.spec.title} + ' - ' + ${site.title}"></title>
+    <title
+      th:text="${post.spec.title} + ' - ' + ${site.title} + (${site.subtitle != null and !#strings.isEmpty(site.subtitle)} ? ' - ' + ${site.subtitle} : '')">
+    </title>
     <!-- 字体 -->
     <th:block th:replace="~{modules/font-loader :: fonts}" />
     <!-- 主题样式 -->

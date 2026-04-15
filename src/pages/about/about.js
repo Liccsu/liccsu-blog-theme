@@ -591,6 +591,15 @@ import "../../static/js/article-content.js";
     });
   };
 
+  // ============================= 兼容旧版全局调用 =============================
+
+  SF.registerLegacyGlobals = function () {
+    window.sponsorSelf = function (url) {
+      if (!url) return;
+      window.open(url, "_blank", "noopener");
+    };
+  };
+
   // ============================= 平滑滚动 =============================
 
   SF.initSmoothScroll = function () {
@@ -614,6 +623,7 @@ import "../../static/js/article-content.js";
   // ============================= 初始化 =============================
 
   document.addEventListener("DOMContentLoaded", function () {
+    SF.registerLegacyGlobals();
     SF.initScrollReveal();
     SF.initStatCounter();
     SF.initArticleHeatmap();

@@ -51,6 +51,10 @@
       const themeName = isDark ? darkTheme : lightTheme;
       const themeMode = isDark ? "dark" : "light";
 
+      // === 注入环境变量 ===
+      window.SYS_WEATHER_DEBUG = /*[[${theme.config.general.debug_settings.enable_weather_debug ?: false}]]*/ false;
+      window.SYS_GLOBAL_DEBUG = window.SYS_WEATHER_DEBUG;
+
       document.documentElement.setAttribute("data-theme", themeName);
       document.documentElement.setAttribute("data-color-scheme", themeMode);
 

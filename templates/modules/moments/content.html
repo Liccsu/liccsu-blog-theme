@@ -75,14 +75,23 @@
                       <a th:href="@{/authors/{name}(name=${moment.owner.name})}"
                         class="font-semibold text-primary text-sm truncate hover:underline"
                         th:text="${moment.owner?.displayName ?: '匿名用户'}">用户名</a>
-                      <div class="text-xs text-base-content/40"
-                        th:text="${#temporals.format(moment.spec.releaseTime, 'MM-dd HH:mm')}">11-27 14:00</div>
+                      <div class="flex items-center gap-1.5 mt-0.5 text-xs text-base-content/40">
+                        <span th:text="${#temporals.format(moment.spec.releaseTime, 'MM-dd HH:mm')}">11-27 14:00</span>
+                        <span th:if="${moment.spec.visible != null and moment.spec.visible.name() == 'PRIVATE'}"
+                          class="text-warning/80" title="私密瞬间">
+                          <span class="icon-[heroicons--lock-closed] w-3 h-3"></span>
+                        </span>
+                        <span th:if="${moment.spec.visible != null and moment.spec.visible.name() == 'INTERNAL'}"
+                          class="text-info/80" title="仅登录用户可见">
+                          <span class="icon-[heroicons--users] w-3 h-3"></span>
+                        </span>
+                      </div>
                     </div>
                   </div>
 
                   <!-- 文字内容 -->
                   <div th:if="${not #strings.isEmpty(content.html)}"
-                    class="text-sm text-base-content leading-relaxed mb-3" th:utext="${content.html}">
+                    class="text-sm text-base-content leading-relaxed mb-3 [&_a.tag]:hidden" th:utext="${content.html}">
                     今天的天气真好...
                   </div>
 
@@ -91,8 +100,9 @@
                     <!-- 单图 -->
                     <th:block th:if="${#lists.size(content.medium) == 1}">
                       <th:block th:each="medium : ${content.medium}">
-                        <img th:if="${medium.type.name == 'PHOTO'}" th:src="${medium.url}" alt="瞬间图片"
-                          class="rounded-xl max-h-72 object-cover cursor-pointer" loading="lazy" />
+                        <div th:if="${medium.type.name == 'PHOTO'}" class="moment-single-img-wrap">
+                          <img th:src="${medium.url}" alt="瞬间图片" class="max-h-72 object-cover" loading="lazy" />
+                        </div>
                         <video th:if="${medium.type.name == 'VIDEO'}" th:src="${medium.url}" controls preload="metadata"
                           class="rounded-xl max-h-72 w-full">
                         </video>
@@ -102,18 +112,33 @@
                       </th:block>
                     </th:block>
 
-                    <!-- 多图网格 -->
+                    <!-- 多图网格 (动态排版 2-9图) -->
                     <div th:if="${#lists.size(content.medium) > 1}" class="grid gap-1 rounded-xl overflow-hidden"
-                      th:classappend="${#lists.size(content.medium) == 2 or #lists.size(content.medium) == 4} ? 'grid-cols-2' : 'grid-cols-3'">
+                      th:classappend="${
+                        #lists.size(content.medium) == 2 ? 'grid-cols-2 w-3/4' : 
+                        #lists.size(content.medium) == 3 ? 'grid-cols-3' : 
+                        #lists.size(content.medium) == 4 ? 'grid-cols-2 w-3/4' : 
+                        #lists.size(content.medium) == 5 ? 'grid-cols-6' : 
+                        #lists.size(content.medium) == 6 ? 'grid-cols-3' : 
+                        #lists.size(content.medium) == 7 ? 'grid-cols-12' : 
+                        #lists.size(content.medium) == 8 ? 'grid-cols-6' : 'grid-cols-3'
+                      }">
                       <th:block th:each="medium, stat : ${content.medium}">
-                        <div th:if="${medium.type.name == 'PHOTO' && stat.index < 9}"
-                          class="aspect-square relative bg-base-200 overflow-hidden cursor-pointer">
-                          <img th:src="${medium.url}" alt="瞬间图片"
-                            class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                            loading="lazy" />
+                        <div th:if="${medium.type.name == 'PHOTO' && stat.index < 9}" class="moment-grid-item"
+                          th:classappend="${
+                            #lists.size(content.medium) == 3 && stat.index == 0 ? 'col-span-2 row-span-2 aspect-square' : 
+                            #lists.size(content.medium) == 3 && stat.index > 0 ? 'col-span-1 aspect-square' :
+                            #lists.size(content.medium) == 5 && stat.index < 2 ? 'col-span-3 aspect-[4/3]' : 
+                            #lists.size(content.medium) == 5 && stat.index >= 2 ? 'col-span-2 aspect-square' : 
+                            #lists.size(content.medium) == 7 && stat.index < 3 ? 'col-span-4 aspect-square' : 
+                            #lists.size(content.medium) == 7 && stat.index >= 3 ? 'col-span-3 aspect-square' : 
+                            #lists.size(content.medium) == 8 && stat.index < 2 ? 'col-span-3 aspect-[4/3]' : 
+                            #lists.size(content.medium) == 8 && stat.index >= 2 ? 'col-span-2 aspect-square' : 'aspect-square'
+                          }">
+                          <img th:src="${medium.url}" alt="瞬间图片" loading="lazy" />
                           <div th:if="${stat.index == 8 && #lists.size(content.medium) > 9}"
-                            class="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <span class="text-white font-semibold"
+                            class="absolute inset-0 bg-black/50 flex items-center justify-center" style="z-index:2">
+                            <span class="text-white text-xl font-semibold"
                               th:text="'+' + (${#lists.size(content.medium)} - 9)">+3</span>
                           </div>
                         </div>
@@ -170,7 +195,7 @@
             class="mt-8 flex items-center justify-center">
             <div class="inline-flex items-center p-1 rounded-full bg-base-200/60 backdrop-blur-md">
               <!-- 上一页 -->
-              <a th:href="@{${moments.prevUrl}}" class="w-9 h-9 flex items-center justify-center rounded-full 
+              <a th:href="@{${moments.prevUrl}(owner=${param.owner}, tag=${param.tag})}" class="w-9 h-9 flex items-center justify-center rounded-full 
                         text-base-content/60 hover:text-base-content hover:bg-base-100 
                         transition-all duration-200"
                 th:classappend="${!moments.hasPrevious()} ? 'opacity-30 pointer-events-none' : ''">
@@ -180,7 +205,7 @@
               <span class="px-4 text-xs font-semibold text-base-content/50 tabular-nums tracking-wide"
                 th:text="${moments.page} + ' / ' + ${moments.totalPages}">1 / 1</span>
               <!-- 下一页 -->
-              <a th:href="@{${moments.nextUrl}}" class="w-9 h-9 flex items-center justify-center rounded-full 
+              <a th:href="@{${moments.nextUrl}(owner=${param.owner}, tag=${param.tag})}" class="w-9 h-9 flex items-center justify-center rounded-full 
                         text-base-content/60 hover:text-base-content hover:bg-base-100 
                         transition-all duration-200"
                 th:classappend="${!moments.hasNext()} ? 'opacity-30 pointer-events-none' : ''">
@@ -593,15 +618,31 @@
 
               list.appendChild(wrapper);
             }
-            // 多个媒体：网格展示（2/4张=2列，其他=3列）
+            // 多个媒体：网格展示（动态排版 2-9图）
             else {
-              // 确定网格列数
-              const gridCols = (mediaCount === 2 || mediaCount === 4) ? 2 : 3;
-              list.className = `grid gap-1 rounded-xl overflow-hidden grid-cols-${gridCols}`;
+              // 确定网格容器类名
+              let gridClass = 'grid-cols-3';
+              if (mediaCount === 2 || mediaCount === 4) gridClass = 'grid-cols-2 w-3/4';
+              else if (mediaCount === 5 || mediaCount === 8) gridClass = 'grid-cols-6';
+              else if (mediaCount === 7) gridClass = 'grid-cols-12';
+
+              list.className = `grid gap-1 rounded-xl overflow-hidden ${gridClass}`;
 
               uploadedMedia.forEach((media, index) => {
                 const wrapper = document.createElement('div');
-                wrapper.className = 'aspect-square relative bg-base-200 overflow-hidden group';
+
+                // 确定网格项类名
+                let itemClass = 'aspect-square';
+                if (mediaCount === 3 && index === 0) itemClass = 'col-span-2 row-span-2 aspect-square';
+                else if (mediaCount === 3 && index > 0) itemClass = 'col-span-1 aspect-square';
+                else if (mediaCount === 5 && index < 2) itemClass = 'col-span-3 aspect-[4/3]';
+                else if (mediaCount === 5 && index >= 2) itemClass = 'col-span-2 aspect-square';
+                else if (mediaCount === 7 && index < 3) itemClass = 'col-span-4 aspect-square';
+                else if (mediaCount === 7 && index >= 3) itemClass = 'col-span-3 aspect-square';
+                else if (mediaCount === 8 && index < 2) itemClass = 'col-span-3 aspect-[4/3]';
+                else if (mediaCount === 8 && index >= 2) itemClass = 'col-span-2 aspect-square';
+
+                wrapper.className = `relative bg-base-200 overflow-hidden group ${itemClass}`;
 
                 if (media.type === 'PHOTO') {
                   const img = document.createElement('img');
