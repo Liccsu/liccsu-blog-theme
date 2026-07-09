@@ -7,6 +7,7 @@
  *   2. 导入Alpine.js及其组件
  *   3. 初始化全局工具函数
  *   4. 启动Alpine.js响应式系统
+ *   5. 初始化 swup PJAX（页面无刷新切换）
  *
  * 构建产物：templates/assets/js/main.js + templates/assets/css/main.css
  *
@@ -18,23 +19,23 @@
  * 样式文件导入
  * 按加载顺序排列，确保样式优先级正确
  * ==================================================*/
-import "./css/tailwind.css"; // Tailwind CSS 4 + DaisyUI 5 配置
-import "./css/nav-enhancements.css"; // 导航栏增强样式
-import "./css/base.css"; // 全局基础样式和变量
-import "./css/floating-dock.css"; // 悬浮控制栏样式
-import "./css/loading-screen.css"; // 页面加载屏幕
-import "./css/toc.css"; // TOC 目录导航公共样式
+import './css/tailwind.css';        // Tailwind CSS 4 + DaisyUI 5 配置
+import './css/nav-enhancements.css'; // 导航栏增强样式
+import './css/base.css';             // 全局基础样式和变量
+import './css/floating-dock.css';    // 悬浮控制栏样式
+import './css/loading-screen.css';   // 页面加载屏幕
+import './css/toc.css';              // TOC 目录导航公共样式
 
 /* ===================================================
  * 脚本文件导入
  * ==================================================*/
-import "./js/base.js"; // 全局工具函数和事件处理
+import './js/base.js';  // 全局工具函数和事件处理
 
 /* ===================================================
  * Alpine.js 响应式框架
  * ==================================================*/
-import { initializeAll } from "./js/alpine-modules.js"; // Alpine组件注册
-import Alpine from "alpinejs"; // Alpine核心
+import { initializeAll } from './js/alpine-modules.js';  // Alpine组件注册
+import Alpine from 'alpinejs';                           // Alpine核心
 
 // 挂载Alpine到全局对象，供模板使用
 window.Alpine = Alpine;
@@ -43,9 +44,315 @@ window.Alpine = Alpine;
  * Alpine.js 初始化钩子
  * 在Alpine启动前注册所有组件
  */
-document.addEventListener("alpine:init", () => {
+document.addEventListener('alpine:init', () => {
   initializeAll();
 });
 
 // 启动Alpine响应式系统
 Alpine.start();
+
+/* ===================================================
+ * Swup PJAX — 页面无刷新切换
+ * 受 theme-script.html 中 window.__skyPjaxEnabled 控制
+ * ==================================================*/
+import Swup from 'swup';
+import SwupHeadPlugin from '@swup/head-plugin';
+import SwupScriptsPlugin from '@swup/scripts-plugin';
+
+if (window.__skyPjaxEnabled !== false) {
+
+  const swup = new Swup({
+    containers: ['#swup', '#swup-scripts', '#swup-page-extras'],
+    // Only wait for the dedicated PJAX containers. The default selector
+    // (`[class*="transition-"]`) matches decorative homepage animations
+    // like the typewriter subtitle and can stall navigation for seconds.
+    animationSelector: '#swup, .transition-fade',
+    requestHeaders: {},
+    ignoreVisit: (url) => {
+      return (
+        url.startsWith('/login') ||
+        url.startsWith('/signup') ||
+        url.startsWith('/uc') ||
+        url.startsWith('/console') ||
+        url.startsWith('/logout')
+      );
+    },
+    plugins: [
+      new SwupHeadPlugin({
+        persistAssets: true,
+        persistTags: 'link[rel="stylesheet"][href*="main.css"]',
+      }),
+      new SwupScriptsPlugin({ head: false, body: true, optin: true }),
+    ],
+  });
+
+  window.__swup = swup;
+
+  // 是否已收到页面就绪信号（内联脚本同步执行时设置）
+  let _currentSignaled = false;
+
+  /**
+   * 内联脚本信号入口（friends 等无独立页面 JS 的页面使用）。
+   * module JS 内 notifySwupPageReady() 也调用此函数，但 load 事件才是主要触发源。
+   */
+  window.__completeSwupPageInit = () => {
+    _currentSignaled = true;
+  };
+
+  function dispatchPjaxCompatibilityEvents(detail) {
+    ['pjax:success', 'pjax:complete', 'pjax:end', 'swup:contentReplaced', 'swup:page:view'].forEach((name) => {
+      document.dispatchEvent(new CustomEvent(name, {
+        detail,
+        bubbles: true,
+        cancelable: true,
+      }));
+    });
+  }
+
+  function getLightGalleryInlineScripts(includeExecuted = false) {
+    return Array.from(document.querySelectorAll('script:not([src])')).filter((script) => {
+      const code = script.textContent || '';
+      return (
+        code.includes('lightGallery(') &&
+        code.includes('DOMContentLoaded') &&
+        (includeExecuted || script.getAttribute('data-sky-lightgallery-inline-executed') !== 'true')
+      );
+    });
+  }
+
+  function hasLightGalleryPluginMarkup() {
+    return Boolean(
+      document.querySelector('script[src*="/plugins/PluginLightGallery/assets/static/js/"]') ||
+      getLightGalleryInlineScripts(true).length > 0
+    );
+  }
+
+  function runLightGalleryInlineScripts() {
+    const scripts = getLightGalleryInlineScripts();
+    if (scripts.length === 0) return getLightGalleryInlineScripts(true).length > 0;
+
+    scripts.forEach((script) => {
+      script.setAttribute('data-sky-lightgallery-inline-executed', 'true');
+      const runner = document.createElement('script');
+      runner.textContent = `
+        (function () {
+          var originalAddEventListener = document.addEventListener;
+          document.addEventListener = function (type, listener, options) {
+            if (type === 'DOMContentLoaded' && typeof listener === 'function') {
+              listener.call(document, new Event('DOMContentLoaded'));
+              return undefined;
+            }
+            return originalAddEventListener.call(this, type, listener, options);
+          };
+          try {
+            ${script.textContent || ''}
+          } finally {
+            document.addEventListener = originalAddEventListener;
+          }
+        })();
+      `;
+      document.head.appendChild(runner);
+      runner.remove();
+    });
+
+    return true;
+  }
+
+  function loadLightGalleryScript(src) {
+    if (!src) return Promise.resolve();
+    window.__skyLightGalleryLoadedScripts = window.__skyLightGalleryLoadedScripts || new Set();
+    if (window.__skyLightGalleryLoadedScripts.has(src)) return Promise.resolve();
+
+    return new Promise((resolve) => {
+      const staleScript = Array.from(document.querySelectorAll('script[src]'))
+        .find((script) => script.src === src && script.getAttribute('data-sky-lightgallery-executed') !== 'true');
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = false;
+      script.setAttribute('data-sky-lightgallery-executed', 'true');
+      script.onload = () => {
+        window.__skyLightGalleryLoadedScripts.add(src);
+        resolve();
+      };
+      script.onerror = () => resolve();
+      if (staleScript?.parentNode) {
+        staleScript.parentNode.replaceChild(script, staleScript);
+      } else {
+        document.head.appendChild(script);
+      }
+    });
+  }
+
+  function ensureLightGalleryReady() {
+    if (typeof window.lightGallery === 'function') return Promise.resolve(true);
+    if (window.__skyLightGalleryReadyPromise) return window.__skyLightGalleryReadyPromise;
+
+    const scripts = Array.from(document.querySelectorAll('script[src*="/plugins/PluginLightGallery/assets/static/js/"]'))
+      .map((script) => script.src)
+      .filter(Boolean)
+      .sort((a, b) => {
+        const aCore = a.includes('/lightgallery.min.js') || a.includes('/lightgallery.js');
+        const bCore = b.includes('/lightgallery.min.js') || b.includes('/lightgallery.js');
+        if (aCore === bCore) return 0;
+        return aCore ? -1 : 1;
+      });
+
+    if (scripts.length === 0) return Promise.resolve(false);
+
+    window.__skyLightGalleryReadyPromise = scripts
+      .reduce((chain, src) => chain.then(() => loadLightGalleryScript(src)), Promise.resolve())
+      .then(() => typeof window.lightGallery === 'function')
+      .finally(() => {
+        window.__skyLightGalleryReadyPromise = null;
+      });
+
+    return window.__skyLightGalleryReadyPromise;
+  }
+
+  let lightGalleryInitToken = 0;
+
+  function scheduleLightGalleryPjaxInit() {
+    const token = ++lightGalleryInitToken;
+    let attempts = 0;
+
+    const run = () => {
+      if (token !== lightGalleryInitToken) return;
+      if (!hasLightGalleryPluginMarkup()) return;
+
+      attempts += 1;
+      ensureLightGalleryReady().then((ready) => {
+        if (token !== lightGalleryInitToken) return;
+        if (ready && runLightGalleryInlineScripts()) return;
+        if (attempts < 50) window.setTimeout(run, 100);
+      });
+    };
+
+    requestAnimationFrame(run);
+  }
+
+  window.SkyLightGallery = {
+    init: scheduleLightGalleryPjaxInit,
+    initNow: () => ensureLightGalleryReady().then((ready) => ready && runLightGalleryInlineScripts()),
+  };
+
+  document.addEventListener('sky:page-load', (event) => {
+    if (event.detail?.pjax) scheduleLightGalleryPjaxInit();
+  });
+
+  /** Alpine 恢复动作，rAF 后执行确保 DOM paint 完成 */
+  function _resumeAlpine() {
+    requestAnimationFrame(() => {
+      if (window.Alpine?.flushAndStopDeferringMutations) {
+        Alpine.flushAndStopDeferringMutations();
+      } else {
+        const container = document.getElementById('swup');
+        if (container && window.Alpine) Alpine.initTree(container);
+      }
+      window.SkyEvents?.onPageLoad();
+      const pageDetail = { initial: false, pjax: true, url: window.location.href };
+      window.SkyPjax?._runPage?.(pageDetail);
+      dispatchPjaxCompatibilityEvents(pageDetail);
+    });
+  }
+
+  swup.hooks.on('visit:start', () => {
+    window.SkyPjax?._cleanup?.({ pjax: true, url: window.location.href });
+    if (typeof window.__skyMusicSave === 'function') window.__skyMusicSave();
+    if (typeof window.__pageCleanup === 'function') {
+      window.__pageCleanup();
+      window.__pageCleanup = null;
+    }
+  });
+
+  // ① DOM 替换前：重置状态，暂停 Alpine MutationObserver，销毁旧页面组件树
+  swup.hooks.before('content:replace', () => {
+    _currentSignaled = false;
+    if (window.Alpine?.deferMutations) Alpine.deferMutations();
+    const container = document.getElementById('swup');
+    if (container && window.Alpine) Alpine.destroyTree(container);
+  });
+
+  // ② DOM 替换后（ScriptsPlugin 已注入新脚本）
+  //
+  //  【信号机制】使用 script.load 事件而非 notifySwupPageReady() 作为主触发：
+  //    - 首次导航（模块未缓存）：下载 → 执行（Alpine.data 注册完）→ load 触发 ✅
+  //    - 再次导航（模块已缓存）：ES 模块不重新执行，但 Alpine.data 已在首次执行时
+  //      注册并持久存在 → load 事件仍快速触发 ✅
+  //    - 内联脚本页面（friends 等）：同步执行已置 _currentSignaled=true → 快速路径 ✅
+  //
+  //  【不阻塞 swup】handler 不返回 Promise → swup 立即继续 content:scroll / page:view
+  swup.hooks.on('content:replace', () => {
+    // 只重放当前页面明确声明支持 PJAX 的脚本。
+    // 兼容两类标记：
+    //  - data-pjax：主题内约定
+    //  - .pjax：Halo / 插件常见约定（后端传递的普通脚本常见是这个）
+    //
+    // halo:footer 注入区保持常驻，避免全局脚本生成的 DOM 在切页时被替换掉。
+    const pjaxScripts = document.querySelectorAll('script[data-pjax], script.pjax');
+    if (!window.__skyLoadedPluginScripts) {
+      window.__skyLoadedPluginScripts = new Set();
+    }
+    pjaxScripts.forEach(script => {
+      // 避免重复加载已执行过的脚本源（主要针对外部 js，如 comment-widget 的全局核心代码）
+      // 对于内联 script（无 src），每次都执行以初始化组件
+      if (script.src) {
+        if (window.__skyLoadedPluginScripts.has(script.src)) return;
+        window.__skyLoadedPluginScripts.add(script.src);
+      }
+      const newScript = document.createElement('script');
+      Array.from(script.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+      newScript.textContent = script.textContent;
+      script.parentNode.replaceChild(newScript, script);
+    });
+    // 快速路径：内联脚本同步执行已发信号
+    if (_currentSignaled) {
+      _resumeAlpine();
+      return;
+    }
+
+    // 找到 ScriptsPlugin 刚注入的 type="module" 脚本
+    const swupScriptsEl = document.getElementById('swup-scripts');
+    const moduleScripts = swupScriptsEl
+      ? Array.from(swupScriptsEl.querySelectorAll('script[type="module"][src]'))
+      : [];
+
+    if (moduleScripts.length === 0) {
+      // 无 module 脚本且未收到内联信号（不应发生，兜底保护）
+      setTimeout(_resumeAlpine, 100);
+      return;
+    }
+
+    // 监听所有 module 脚本的 load/error 事件，全部 settled 后恢复 Alpine
+    let resumed = false;
+    function tryResume() {
+      if (!resumed) { resumed = true; _resumeAlpine(); }
+    }
+
+    let pending = moduleScripts.length;
+    moduleScripts.forEach((script) => {
+      const settle = () => { if (--pending <= 0) tryResume(); };
+      script.addEventListener('load',  settle, { once: true });
+      script.addEventListener('error', settle, { once: true });
+    });
+
+    // 5s 安全兜底（网络极慢 / load 事件未触发等极端情况）
+    setTimeout(tryResume, 5000);
+
+    // 不显式 return Promise → swup 立即继续，不阻塞导航管线
+  }, { after: true });
+
+} else {
+  // PJAX 已关闭 — 设置 noop 桩，防止页面 JS 调用报错
+  window.__swup = null;
+  window.__completeSwupPageInit = () => {};
+}
+
+const notifyInitialSkyPjaxPage = () => {
+  window.SkyPjax?._runPage?.({ initial: true, pjax: false, url: window.location.href });
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', notifyInitialSkyPjaxPage, { once: true });
+} else {
+  queueMicrotask(notifyInitialSkyPjaxPage);
+}

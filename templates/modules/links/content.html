@@ -3,6 +3,7 @@
   <!-- ========================================== -->
   <!--        友情链接页主体内容 - Apple Style     -->
   <!-- 支持分组展示，毛玻璃卡片布局                -->
+  <!-- 兼容基线：PluginLinks v2.0.0；页面路由直接消费 groups，不手动拼 LinkGroup/Link；link-submit 不可用时切换评论留言兜底。 -->
   <!-- ========================================== -->
 
   <!-- 友链内容片段 -->
@@ -194,7 +195,7 @@
             <dialog
               id="site-info-modal"
               class="modal modal-bottom sm:modal-middle"
-              x-data="{ 
+              x-data="{
                  copy(text, $el) {
                      navigator.clipboard.writeText(text).then(() => {
                          const originalIcon = $el.innerHTML;
@@ -473,6 +474,16 @@
                     </div>
                   </div>
 
+                  <div x-show="messageFallback" x-transition class="space-y-2">
+                    <textarea
+                      x-model="markdown"
+                      readonly
+                      rows="6"
+                      class="textarea textarea-bordered bg-base-100 w-full font-mono text-xs leading-relaxed"
+                    ></textarea>
+                    <p class="text-base-content/50 text-xs">复制后可粘贴到下方评论区留言申请。</p>
+                  </div>
+
                   <div class="pt-2">
                     <button
                       type="submit"
@@ -480,7 +491,9 @@
                       class="btn btn-primary btn-block shadow-primary/20 rounded-xl shadow-lg"
                     >
                       <span x-show="submitting" class="loading loading-spinner loading-xs"></span>
-                      <span x-text="submitting ? '正在提交...' : '提交申请'"></span>
+                      <span
+                        x-text="messageFallback ? (copied ? '已复制，去留言' : '复制申请内容') : (submitting ? '正在提交...' : '提交申请')"
+                      ></span>
                     </button>
                   </div>
                 </form>
@@ -490,7 +503,7 @@
           </div>
 
           <!-- 评论区 -->
-          <section class="mt-12" th:if="${cfg?.enable_comment != false}">
+          <section id="links-comments" class="mt-12" th:if="${cfg?.enable_comment != false}">
             <div class="mb-5 flex items-center gap-3">
               <div
                 class="from-primary/20 to-primary/10 flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br"

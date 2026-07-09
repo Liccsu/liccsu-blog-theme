@@ -80,13 +80,42 @@ body ai-summary-widget {
 }
 
 html[data-color-scheme="dark"] ai-summary-widget {
-  --lightningcss-light:  !important;
+  --lightningcss-light:   !important;
   --lightningcss-dark: initial !important;
   color-scheme: dark !important;
 }
 
 /* ===================================================
- * 5. 标题锚点链接
+ * 5. 文章底部创作声明卡片
+ * ==================================================*/
+.post-copyright-notice {
+  position: relative;
+  overflow: hidden;
+}
+
+.post-copyright-notice__line {
+  margin: 0;
+}
+
+.post-copyright-notice__label {
+  color: color-mix(in srgb, var(--color-base-content) 46%, transparent);
+}
+
+.post-copyright-notice__link {
+  color: color-mix(in srgb, var(--color-primary) 78%, var(--color-base-content));
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-primary) 24%, transparent);
+  text-underline-offset: 3px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.post-copyright-notice__link:hover {
+  color: var(--color-primary);
+  text-decoration-color: color-mix(in srgb, var(--color-primary) 58%, transparent);
+}
+
+/* ===================================================
+ * 6. 标题锚点链接
  * ==================================================*/
 .heading-anchor {
   position: absolute;
@@ -102,7 +131,7 @@ html[data-color-scheme="dark"] ai-summary-widget {
 }
 
 /* ===================================================
- * 6. 目录抽屉（移动端）
+ * 7. 目录抽屉（移动端）
  * TOC 基础样式已在 main.css 中导入
  * ==================================================*/
 .post-toc-overlay {
@@ -144,7 +173,7 @@ html[data-color-scheme="dark"] ai-summary-widget {
 }
 
 /* ===================================================
- * 7. 阅读进度条
+ * 8. 阅读进度条
  * ==================================================*/
 #reading-progress {
   position: fixed;
@@ -158,7 +187,7 @@ html[data-color-scheme="dark"] ai-summary-widget {
 }
 
 /* ===================================================
- * 8. 响应式优化
+ * 9. 响应式优化
  * ==================================================*/
 @media (max-width: 1023px) {
   article.flex-1 {

@@ -219,6 +219,8 @@ spec:
                       value: steam_card
                     - label: 追番卡片
                       value: bangumi_card
+                    - label: 在线统计
+                      value: online_stats
             - $formkit: number
               name: popular_posts_count
               label: 热门文章数量
@@ -235,15 +237,26 @@ spec:
               max: 10
             - $formkit: group
               name: welcome_card_config
-              label: 欢迎天气卡片
+              label: "欢迎天气卡片"
               value:
                 fallback_region: "北京"
               children:
                 - $formkit: text
                   name: fallback_region
                   label: 默认地区（降级容灾）
-                  help: "当访客的IP定位失效（如代理环境或服务宕机）时，天气组件强制获取该城市的默认天气数据防报错。例如: 北京"
+                  help: '当访客的IP定位失效（如代理环境或服务宕机）时，天气组件强制获取该城市的默认天气数据防报错。例如: "北京"'
                   value: "北京"
+            - $formkit: group
+              name: online_stats_config
+              label: "在线统计（plugin-online）"
+              value:
+                show_hot_pages: true
+              children:
+                - $formkit: switch
+                  name: show_hot_pages
+                  label: 显示热门页面
+                  help: 是否在在线统计组件中显示热门页面排行
+                  value: true
         - $formkit: group
           name: font_settings
           label: 全局字体
@@ -271,18 +284,7 @@ spec:
               label: 字体 CDN 地址
               help: 自定义字体文件的 CDN 根路径，末尾不要加斜杠
               value: "https://cdn.5ee.net/fonts"
-              placeholder: "https://cdn.5ee.net/fonts"
-        - $formkit: group
-          name: weather_settings
-          label: 天气设置
-          value:
-            seniverse_api_key: ""
-          children:
-            - $formkit: text
-              name: seniverse_api_key
-              label: 心知天气 API Key
-              help: 申请地址 https://www.seniverse.com，留空则使用内置默认 Key（建议在心知天气控制台开启域名白名单限制）
-              placeholder: "留空使用默认 Key"
+
         - $formkit: group
           name: debug_settings
           label: 开发者与调试
@@ -291,9 +293,10 @@ spec:
           children:
             - $formkit: switch
               name: enable_weather_debug
-              label: 启用天气调试模式
-              help: 在浏览器控制台输出天气组件调试信息，用于排查定位和接口问题
+              label: 开启天气组件 Debug 日志
+              help: "排查错误用。开启后会在浏览器 F12 控制台打印包含天气热力学地图、渲染流程、定位状态等关键日志。若需强制刷新天气缓存请执行：localStorage.removeItem('sky_weather_cache_v13')"
               value: false
+
     - group: nav
 
       label: 顶部（全局）
@@ -383,7 +386,7 @@ spec:
           label: 主题设置
           value:
             show_theme_toggle: true
-            default_theme: system
+            default_theme: auto
             light_theme: light
             dark_theme: dark
             light_icon: null
@@ -423,18 +426,18 @@ spec:
             - $formkit: toggle
               name: default_theme
               label: 默认主题
-              help: 新用户首次访问时使用的主题模式
+              help: 当前默认显示的主题,可从以下主题中选择,https://daisyui.com/theme-generator/ 查看具体配色方案
               render-type: text
               size: 80
               gap: 10
-              value: system
+              value: auto
               options:
-                - label: 跟随系统
-                  value: system
                 - label: 浅色主题
                   value: light_theme
                 - label: 深色主题
                   value: dark_theme
+                - label: 跟随系统
+                  value: auto
             - $formkit: toggle
               name: light_theme
               label: 浅色主题
@@ -626,8 +629,6 @@ spec:
               options:
                 - label: 隐藏
                   value: none
-                - label: 设置-Logo
-                  value: system
                 - label: Iconify
                   value: iconify
                 - label: SVG
@@ -704,15 +705,7 @@ spec:
           value:
             show_quick_nav: true
             nav_title: "底部导航"
-            nav_links:
-              - name: "首页"
-                url: "/"
-              - name: "关于"
-                url: "/about"
-              - name: "联系"
-                url: "/contact"
-              - name: "RSS 订阅"
-                url: "/rss"
+            nav_menu: ""
           children:
             - $formkit: switch
               id: show_quick_nav
@@ -727,23 +720,13 @@ spec:
               if: $get(show_quick_nav).value
               label: 导航标题
               help: 快速导航区域的标题
-            - $formkit: array
-              name: nav_links
-              id: nav_links_field
-              key: nav_links_field
+            - $formkit: menuRadio
+              name: nav_menu
+              id: nav_menu_field
+              key: nav_menu_field
               if: $get(show_quick_nav).value
-              label: 导航链接
-              help: 配置快速导航的链接项
-              itemLabels:
-                - type: text
-                  label: $value.name
-              children:
-                - $formkit: text
-                  name: name
-                  label: 链接名称
-                - $formkit: text
-                  name: url
-                  label: 链接地址
+              label: 导航菜单
+              help: 选择要在页脚显示的菜单（在 Halo 后台「外观 → 菜单」中管理，菜单项支持图标）
         - $formkit: group
           name: social_settings
           label: 底部社交链接设置
@@ -753,19 +736,19 @@ spec:
             social_links:
               - name: "GitHub"
                 url: "https://github.com/Liccsu/liccsu-blog-theme"
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>'
+                icon: '<svg width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>'
               - name: "Twitter"
                 url: "https://twitter.com/username"
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.205 2.25h3.308l-7.227 8.26l8.502 11.24H16.13l-5.214-6.817L4.95 21.75H1.64l7.73-8.835L1.215 2.25H8.04l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>'
+                icon: '<svg width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.205 2.25h3.308l-7.227 8.26l8.502 11.24H16.13l-5.214-6.817L4.95 21.75H1.64l7.73-8.835L1.215 2.25H8.04l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>'
               - name: "Telegram"
                 url: "https://t.me/username"
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19c-.14.75-.42 1-.68 1.03c-.58.05-1.02-.38-1.58-.75c-.88-.58-1.38-.94-2.23-1.5c-.99-.65-.35-1.01.22-1.59c.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02c-.09.02-1.49.95-4.22 2.79c-.4.27-.76.41-1.08.4c-.36-.01-1.04-.2-1.55-.37c-.63-.2-1.12-.31-1.08-.66c.02-.18.27-.36.74-.55c2.92-1.27 4.86-2.11 5.83-2.51c2.78-1.16 3.35-1.36 3.73-1.36c.08 0 .27.02.39.12c.1.08.13.19.14.27c-.01.06.01.24 0 .38"/></svg>'
+                icon: '<svg width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19c-.14.75-.42 1-.68 1.03c-.58.05-1.02-.38-1.58-.75c-.88-.58-1.38-.94-2.23-1.5c-.99-.65-.35-1.01.22-1.59c.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02c-.09.02-1.49.95-4.22 2.79c-.4.27-.76.41-1.08.4c-.36-.01-1.04-.2-1.55-.37c-.63-.2-1.12-.31-1.08-.66c.02-.18.27-.36.74-.55c2.92-1.27 4.86-2.11 5.83-2.51c2.78-1.16 3.35-1.36 3.73-1.36c.08 0 .27.02.39.12c.1.08.13.19.14.27c-.01.06.01.24 0 .38"/></svg>'
               - name: "邮箱"
                 url: "mailto:sky@5ee.net"
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>'
+                icon: '<svg width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>'
               - name: "RSS 订阅"
                 url: "/rss.xml"
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27zm0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93z"/></svg>'
+                icon: '<svg width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27zm0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93z"/></svg>'
           children:
             - $formkit: switch
               id: show_social_links
@@ -817,17 +800,24 @@ spec:
                 url: "/terms"
               - name: "网站地图"
                 url: "/sitemap.xml"
+            copyright_icon: null
             copyright_text: "© 2025 Sky Blog •  Powered by Halo"
             show_icp_info: true
+            icp_icon: null
             icp_number: "京ICP备2024001234号-1"
+            icp_url: "https://beian.miit.gov.cn/"
             show_police_info: true
+            police_icon: null
             police_number: "京公网安备11010802024567号"
+            police_url: ""
             show_hosting_info: true
             hosting_links:
               - name: "CloudFlare CDN"
                 url: "https://www.cloudflare.com"
+                icon: null
               - name: "阿里云"
                 url: "https://www.aliyun.com"
+                icon: null
           children:
             - $formkit: switch
               id: show_legal_links
@@ -852,6 +842,13 @@ spec:
                 - $formkit: text
                   name: url
                   label: 链接地址
+            - $formkit: iconify
+              name: copyright_icon
+              key: copyright_icon_field
+              label: 版权图标
+              help: 版权文字前的可选图标，不选则不显示
+              format: svg
+              value-only: true
             - $formkit: text
               name: copyright_text
               label: 版权文字
@@ -862,6 +859,14 @@ spec:
               label: 显示ICP备案
               help: 是否显示ICP备案信息
               value: true
+            - $formkit: iconify
+              name: icp_icon
+              key: icp_icon_field
+              if: $get(show_icp_info).value
+              label: ICP备案图标
+              help: 自定义图标，不选则使用默认盾牌图标
+              format: svg
+              value-only: true
             - $formkit: text
               name: icp_number
               id: icp_number_field
@@ -869,12 +874,28 @@ spec:
               if: $get(show_icp_info).value
               label: ICP备案号
               help: ICP备案号码
+            - $formkit: text
+              name: icp_url
+              id: icp_url_field
+              key: icp_url_field
+              if: $get(show_icp_info).value
+              label: ICP备案链接
+              help: 留空使用默认 beian.miit.gov.cn
+              value: "https://beian.miit.gov.cn/"
             - $formkit: switch
               id: show_police_info
               name: show_police_info
               label: 显示公安备案
               help: 是否显示公安备案信息
               value: true
+            - $formkit: iconify
+              name: police_icon
+              key: police_icon_field
+              if: $get(show_police_info).value
+              label: 公安备案图标
+              help: 自定义图标，不选则使用默认公安徽标图片
+              format: svg
+              value-only: true
             - $formkit: text
               name: police_number
               id: police_number_field
@@ -882,6 +903,13 @@ spec:
               if: $get(show_police_info).value
               label: 公安备案号
               help: 公安备案号码
+            - $formkit: text
+              name: police_url
+              id: police_url_field
+              key: police_url_field
+              if: $get(show_police_info).value
+              label: 公安备案链接
+              help: 留空则自动从备案号提取生成
             - $formkit: switch
               id: show_hosting_info
               name: show_hosting_info
@@ -896,6 +924,8 @@ spec:
               label: 托管服务链接
               help: 配置CDN和托管服务相关链接
               itemLabels:
+                - type: iconify
+                  label: $value.icon
                 - type: text
                   label: $value.name
               children:
@@ -905,9 +935,57 @@ spec:
                 - $formkit: text
                   name: url
                   label: 链接地址
+                - $formkit: iconify
+                  name: icon
+                  label: 图标
+                  help: 从图标库中选择图标（可选）
+                  format: svg
+                  value-only: true
     - group: index
       label: 首页
       formSchema:
+        # 自由排版与布局控制
+        - $formkit: group
+          name: index_layout
+          label: 自由排序控制器
+          value:
+            enabled: false
+            modules:
+              - id: heatmap
+              - id: docs
+              - id: tabs_group
+              - id: gallery
+              - id: links
+          children:
+            - $formkit: switch
+              id: index_enable_custom_layout
+              name: enabled
+              label: 开启模块自由排序
+              help: 关闭则默认按原固化顺序铺设。开启后可通过下方列表自由拖拽顺序（需保证底层各模块单独开关已开启）。
+            - $formkit: array
+              name: modules
+              label: 首页模块流
+              if: $get(index_enable_custom_layout).value
+              addLabel: 插入模块
+              itemLabels:
+                - type: text
+                  label: $value.id
+              children:
+                - $formkit: select
+                  name: id
+                  label: 选择功能模块
+                  options:
+                    - label: 热力图 (Heatmap)
+                      value: heatmap
+                    - label: 文档中心 (Docs)
+                      value: docs
+                    - label: 内容聚合区 (文章/瞬间/动态 Tab)
+                      value: tabs_group
+                    - label: 图库区 (Gallery)
+                      value: gallery
+                    - label: 友情链接区 (Links)
+                      value: links
+
         # 头部背景设置（包含总开关）
         - $formkit: group
           name: background_settings
@@ -1573,6 +1651,8 @@ spec:
             enable_links: true
             links_title: "友情链接"
             links_subtitle: "Friends & Partners"
+            links_groups: []
+            links_count: 0
           children:
             - $formkit: switch
               id: enable_links
@@ -1592,7 +1672,66 @@ spec:
               label: 模块副标题
               help: 友情链接模块的副标题文字
               value: "Friends & Partners"
-        # 悬浮控制栏设置
+            - $formkit: select
+              name: links_groups
+              if: $get(enable_links).value
+              label: 显示分组
+              help: 选择要在首页显示的友链分组，留空则显示所有分组
+              multiple: true
+              clearable: true
+              searchable: true
+              action: /apis/core.halo.run/v1alpha1/linkgroups
+              requestOption:
+                method: GET
+                pageField: page
+                sizeField: size
+                totalField: total
+                itemsField: items
+                labelField: spec.displayName
+                valueField: metadata.name
+            - $formkit: number
+              name: links_count
+              if: $get(enable_links).value
+              label: 显示数量
+              help: 首页最多展示的友链数量（仅前端截断，不限制后端加载，插件问题，暂不支持数量限制），0 为不限制
+              value: 0
+              validation: min:0
+        # 文档中心模块设置
+        - $formkit: group
+          name: docs_settings
+          label: 文档中心模块
+          help: 需安装 Docsme 文档插件 (plugin-docsme) ≥1.4.0；免费版请安装应用市场 1.5.0 免授权版本，专业版/商业版可使用 1.6.0
+          value:
+            enable_docs: true
+            docs_title: "文档中心"
+            docs_subtitle: "Documentation"
+            docs_count: 6
+          children:
+            - $formkit: switch
+              id: enable_docs
+              name: enable_docs
+              label: 启用文档中心
+              help: 是否在首页显示文档中心模块
+              value: true
+            - $formkit: text
+              name: docs_title
+              if: $get(enable_docs).value
+              label: 模块标题
+              help: 文档中心模块的标题文字
+              value: "文档中心"
+            - $formkit: text
+              name: docs_subtitle
+              if: $get(enable_docs).value
+              label: 模块副标题
+              help: 文档中心模块的副标题文字
+              value: "Documentation"
+            - $formkit: number
+              name: docs_count
+              if: $get(enable_docs).value
+              label: 显示数量
+              help: 首页最多展示的文档项目数量，默认 6
+              value: 6
+              validation: min:1
         - $formkit: group
           name: floating_dock
           label: 悬浮控制栏
@@ -1674,6 +1813,87 @@ spec:
               label: 显示文章摘要
               help: 在文章内容前显示摘要（打字机效果）。如果安装了 AI 摘要插件，建议关闭避免重复
               value: true
+        - $formkit: group
+          name: copyright_notice
+          label: 底部声明卡片
+          value:
+            enable: true
+            type: original
+            license_name: "CC BY-NC-SA 4.0"
+            license_url: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+            note: ""
+          children:
+            - $formkit: switch
+              id: article_copyright_notice_enable
+              name: enable
+              label: 启用声明卡片
+              help: 作为文章的默认底部声明；文章可单独设置为跟随默认、显示、隐藏或自定义声明
+              value: true
+            - $formkit: select
+              id: article_copyright_notice_type
+              name: type
+              if: $get(article_copyright_notice_enable).value
+              label: 默认声明类型
+              value: original
+              options:
+                - label: 原创
+                  value: original
+                - label: 搬运 / 转载
+                  value: repost
+                - label: AI 辅助
+                  value: ai
+                - label: 二创 / 改编
+                  value: derivative
+                - label: 自定义
+                  value: custom
+            - $formkit: text
+              name: source_title
+              if: $get(article_copyright_notice_enable).value
+              label: 默认来源标题
+              value: ""
+              placeholder: "原文或原作标题"
+            - $formkit: text
+              name: source_url
+              if: $get(article_copyright_notice_enable).value
+              label: 默认来源链接
+              value: ""
+              placeholder: "https://..."
+            - $formkit: text
+              name: source_author
+              if: $get(article_copyright_notice_enable).value
+              label: 默认原作者
+              value: ""
+              placeholder: "原作者或来源站点"
+            - $formkit: text
+              name: ai_tool
+              if: $get(article_copyright_notice_enable).value
+              label: 默认 AI 工具
+              value: ""
+              placeholder: "如：ChatGPT / Claude / Gemini"
+            - $formkit: text
+              name: ai_usage
+              if: $get(article_copyright_notice_enable).value
+              label: 默认 AI 参与方式
+              value: ""
+              placeholder: "如：资料整理、排版校对、代码辅助"
+            - $formkit: text
+              name: license_name
+              if: $get(article_copyright_notice_enable).value
+              label: 默认许可协议
+              value: "CC BY-NC-SA 4.0"
+              placeholder: "如：CC BY-NC-SA 4.0 / 保留所有权利"
+            - $formkit: text
+              name: license_url
+              if: $get(article_copyright_notice_enable).value
+              label: 默认协议链接
+              value: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              placeholder: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+            - $formkit: textarea
+              name: note
+              if: $get(article_copyright_notice_enable).value
+              label: 默认补充说明
+              value: ""
+              rows: 2
         - $formkit: group
           name: sidebar_settings
           label: 侧边栏设置
@@ -1757,6 +1977,8 @@ spec:
                       value: steam_card
                     - label: 追番卡片
                       value: bangumi_card
+                    - label: 在线统计
+                      value: online_stats
         - $formkit: group
           name: post_interaction
           label: 文章底部交互
@@ -1822,38 +2044,6 @@ spec:
               label: 启用评论
               help: 文章底部的评论按钮（展开内联评论区）
               value: true
-        - $formkit: group
-          name: copyright_card
-          label: 文章版权声明
-          value:
-            enable: true
-            license_type: "cc-by-nc-sa"
-          children:
-            - $formkit: switch
-              id: copyright_card_enable
-              name: enable
-              label: 启用版权声明卡片
-              help: 在文章末尾显示版权声明信息
-              value: true
-            - $formkit: select
-              name: license_type
-              label: 版权协议
-              if: $get(copyright_card_enable).value
-              help: 选择文章使用的 Creative Commons 版权协议
-              value: "cc-by-nc-sa"
-              options:
-                - label: CC BY 4.0 (署名)
-                  value: cc-by
-                - label: CC BY-SA 4.0 (署名-相同方式共享)
-                  value: cc-by-sa
-                - label: CC BY-NC 4.0 (署名-非商业性使用)
-                  value: cc-by-nc
-                - label: CC BY-NC-SA 4.0 (署名-非商业性使用-相同方式共享)
-                  value: cc-by-nc-sa
-                - label: CC BY-ND 4.0 (署名-禁止演绎)
-                  value: cc-by-nd
-                - label: CC BY-NC-ND 4.0 (署名-非商业性使用-禁止演绎)
-                  value: cc-by-nc-nd
         - $formkit: group
           name: dock_settings
           label: 悬浮控制栏
@@ -2285,29 +2475,25 @@ spec:
           name: sidebar_settings
           label: 侧边栏设置
           value:
-            show_sidebar: false
-            enable_custom_sidebar: false
-            sidebar_position: right
+            show_sidebar: true
+            enable_custom_sidebar: true
+            sidebar_position: left
             sidebar_widgets:
-              - widget: author_card
-              - widget: blog_stats
-              - widget: categories
-              - widget: tags
-              - widget: popular_posts
+              - widget: archive_sidebar
           children:
             - $formkit: switch
               id: archive_show_sidebar
               name: show_sidebar
               label: 显示侧边栏
               help: 控制归档页是否显示侧边栏
-              value: false
+              value: true
             - $formkit: switch
               id: archive_enable_custom_sidebar
               name: enable_custom_sidebar
               if: $get(archive_show_sidebar).value
               label: 定制侧边栏
               help: 启用后可单独配置此页面的侧边栏，禁用则使用全局配置
-              value: false
+              value: true
             - $formkit: toggle
               name: sidebar_position
               if: $get(archive_enable_custom_sidebar).value
@@ -2315,7 +2501,7 @@ spec:
               render-type: text
               size: 80
               gap: 10
-              value: right
+              value: left
               options:
                 - label: 左侧
                   value: left
@@ -2332,16 +2518,51 @@ spec:
                 - type: text
                   label: $value.widget
               value:
-                - widget: author_card
-                - widget: blog_stats
-                - widget: categories
-                - widget: tags
-                - widget: popular_posts
+                - widget: archive_sidebar
               children:
                 - $formkit: select
                   name: widget
                   label: 小工具类型
-                  options: *widget_options
+                  options:
+                    - label: 归档
+                      value: archive_sidebar
+                    - label: 欢迎卡片（天气）
+                      value: welcome_card
+                    - label: 作者卡片
+                      value: author_card
+                    - label: 博客统计
+                      value: blog_stats
+                    - label: 文章分类
+                      value: categories
+                    - label: 标签云
+                      value: tags
+                    - label: 热门文章
+                      value: popular_posts
+                    - label: 最新文章
+                      value: recent_posts
+                    - label: Steam 卡片
+                      value: steam_card
+                    - label: 追番卡片
+                      value: bangumi_card
+                    - label: 在线统计
+                      value: online_stats
+            - $formkit: group
+              name: archive_sidebar_config
+              label: [归档]
+              if: $get(archive_enable_custom_sidebar).value
+              value:
+                title: 归档
+              children:
+                - $formkit: text
+                  name: title
+                  label: 自定义标题
+                  help: 侧边栏展示的标题
+                - $formkit: iconify
+                  name: icon
+                  label: 自定义图标
+                  format: svg
+                  value-only: true
+                  help: 从图标库中选择 图标，如果留空将使用默认的日历图标。
         # 悬浮控制栏设置
         - $formkit: group
           name: floating_dock
@@ -2683,7 +2904,7 @@ spec:
           label: 个人信息
           value:
             avatar: ""
-            nickname: "Sky"
+            nickname: "Liccsu"
             role: "全栈开发者 & 开源爱好者"
             bio: "热爱编程，专注于 Web 全栈开发。喜欢探索新技术，乐于分享经验。在这里记录技术笔记、生活感悟，希望能帮助到更多人。"
           children:
@@ -2713,7 +2934,7 @@ spec:
           name: github
           label: GitHub
           value:
-            username: "sky121666"
+            username: "Liccsu"
             stats_host: "https://github-readme-stats.xoku.cn"
             show_stats: true
             show_calendar: true
@@ -2725,7 +2946,7 @@ spec:
               name: username
               label: GitHub 用户名
               help: 用于获取统计数据和贡献日历
-              placeholder: "如：sky121666"
+              placeholder: "如：Liccsu"
             - $formkit: switch
               name: show_stats
               label: 显示统计卡片
@@ -2816,17 +3037,17 @@ spec:
               label: $value.name
           value:
             - name: "GitHub"
-              url: "https://github.com/sky121666"
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>'
+              url: "https://github.com/Liccsu"
+              icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>'
             - name: "Twitter"
               url: "https://twitter.com/yourname"
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M18.205 2.25h3.308l-7.227 8.26l8.502 11.24H16.13l-5.214-6.817L4.95 21.75H1.64l7.73-8.835L1.215 2.25H8.04l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>'
+              icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M18.205 2.25h3.308l-7.227 8.26l8.502 11.24H16.13l-5.214-6.817L4.95 21.75H1.64l7.73-8.835L1.215 2.25H8.04l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>'
             - name: "邮箱"
               url: "mailto:sky@example.com"
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>'
+              icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 4l-8 5l-8-5V6l8 5l8-5z"/></svg>'
             - name: "微博"
               url: "https://weibo.com/yourname"
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9.82 13.87c-.34.71-.97 1.19-1.4 1.06c-.43-.13-.53-.88-.18-1.59c.34-.72.97-1.19 1.41-1.06c.43.13.52.88.17 1.59m1.27-2.38c-.14.15-.36.21-.49.13s-.15-.28 0-.43c.14-.15.35-.21.49-.13c.13.08.14.28 0 .43M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2s10 4.48 10 10M9.99 17.11c3.08 0 5.58-1.75 5.58-3.92c0-2.17-2.5-3.92-5.58-3.92S4.41 11.02 4.41 13.19c0 2.17 2.5 3.92 5.58 3.92m8.36-5.08c-.28-1.67-1.71-2.87-3.38-2.87c-.22 0-.43.03-.64.07c.95.77 1.52 1.82 1.52 2.97c0 2.41-2.39 4.36-5.33 4.36c-1.41 0-2.68-.5-3.61-1.29c-.46.91-.24 1.94.69 2.61c1.32.95 3.13 1.16 4.7.62c1.57-.54 2.76-1.77 3.06-3.17c.26-1.23-.11-2.43-.97-3.3"/></svg>'
+              icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9.82 13.87c-.34.71-.97 1.19-1.4 1.06c-.43-.13-.53-.88-.18-1.59c.34-.72.97-1.19 1.41-1.06c.43.13.52.88.17 1.59m1.27-2.38c-.14.15-.36.21-.49.13s-.15-.28 0-.43c.14-.15.35-.21.49-.13c.13.08.14.28 0 .43M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12S6.48 2 12 2s10 4.48 10 10M9.99 17.11c3.08 0 5.58-1.75 5.58-3.92c0-2.17-2.5-3.92-5.58-3.92S4.41 11.02 4.41 13.19c0 2.17 2.5 3.92 5.58 3.92m8.36-5.08c-.28-1.67-1.71-2.87-3.38-2.87c-.22 0-.43.03-.64.07c.95.77 1.52 1.82 1.52 2.97c0 2.41-2.39 4.36-5.33 4.36c-1.41 0-2.68-.5-3.61-1.29c-.46.91-.24 1.94.69 2.61c1.32.95 3.13 1.16 4.7.62c1.57-.54 2.76-1.77 3.06-3.17c.26-1.23-.11-2.43-.97-3.3"/></svg>'
           children:
             - $formkit: text
               name: name
@@ -2855,17 +3076,17 @@ spec:
               label: $value.name
           value:
             - name: "Vue.js"
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M2 3h3.5L12 15l6.5-12H22L12 21zm4.5 0h3L12 7.58L14.5 3h3L12 13.08z"/></svg>'
+              icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M2 3h3.5L12 15l6.5-12H22L12 21zm4.5 0h3L12 7.58L14.5 3h3L12 13.08z"/></svg>'
             - name: "TypeScript"
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h18v18H3zm10.71 14.86c.5.98 1.51 1.73 3.09 1.73c1.6 0 2.8-.83 2.8-2.36c0-1.41-.81-2.04-2.25-2.66l-.42-.18c-.73-.31-1.04-.52-1.04-1.02c0-.41.31-.73.81-.73c.48 0 .8.21 1.09.73l1.31-.87c-.55-.96-1.33-1.33-2.4-1.33c-1.51 0-2.48.96-2.48 2.23c0 1.38.81 2.03 2.03 2.55l.42.18c.78.34 1.24.55 1.24 1.13c0 .48-.45.83-1.15.83c-.83 0-1.31-.43-1.67-1.03zM13 11.25H8v1.5h1.5V20h1.75v-7.25H13z"/></svg>'
+              icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h18v18H3zm10.71 14.86c.5.98 1.51 1.73 3.09 1.73c1.6 0 2.8-.83 2.8-2.36c0-1.41-.81-2.04-2.25-2.66l-.42-.18c-.73-.31-1.04-.52-1.04-1.02c0-.41.31-.73.81-.73c.48 0 .8.21 1.09.73l1.31-.87c-.55-.96-1.33-1.33-2.4-1.33c-1.51 0-2.48.96-2.48 2.23c0 1.38.81 2.03 2.03 2.55l.42.18c.78.34 1.24.55 1.24 1.13c0 .48-.45.83-1.15.83c-.83 0-1.31-.43-1.67-1.03zM13 11.25H8v1.5h1.5V20h1.75v-7.25H13z"/></svg>'
             - name: "Tailwind CSS"
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 6c-2.67 0-4.33 1.33-5 4c1-1.33 2.17-1.83 3.5-1.5c.76.19 1.31.74 1.91 1.35c.98 1 2.09 2.15 4.59 2.15c2.67 0 4.33-1.33 5-4c-1 1.33-2.17 1.83-3.5 1.5c-.76-.19-1.3-.74-1.91-1.35C15.61 7.15 14.5 6 12 6m-5 6c-2.67 0-4.33 1.33-5 4c1-1.33 2.17-1.83 3.5-1.5c.76.19 1.3.74 1.91 1.35C8.39 16.85 9.5 18 12 18c2.67 0 4.33-1.33 5-4c-1 1.33-2.17 1.83-3.5 1.5c-.76-.19-1.3-.74-1.91-1.35C10.61 13.15 9.5 12 7 12"/></svg>'
+              icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 6c-2.67 0-4.33 1.33-5 4c1-1.33 2.17-1.83 3.5-1.5c.76.19 1.31.74 1.91 1.35c.98 1 2.09 2.15 4.59 2.15c2.67 0 4.33-1.33 5-4c-1 1.33-2.17 1.83-3.5 1.5c-.76-.19-1.3-.74-1.91-1.35C15.61 7.15 14.5 6 12 6m-5 6c-2.67 0-4.33 1.33-5 4c1-1.33 2.17-1.83 3.5-1.5c.76.19 1.3.74 1.91 1.35C8.39 16.85 9.5 18 12 18c2.67 0 4.33-1.33 5-4c-1 1.33-2.17 1.83-3.5 1.5c-.76-.19-1.3-.74-1.91-1.35C10.61 13.15 9.5 12 7 12"/></svg>'
             - name: "Java"
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.851 18.56s-.917.534.653.714c1.902.218 2.874.187 4.969-.211c0 0 .552.346 1.321.646c-4.699 2.013-10.633-.118-6.943-1.149m-.575-2.627s-1.028.761.542.924c2.032.209 3.636.227 6.413-.308c0 0 .384.389.987.602c-5.679 1.661-12.007.13-7.942-1.218m4.84-4.458c1.158 1.333-.304 2.533-.304 2.533s2.939-1.518 1.589-3.418c-1.261-1.772-2.228-2.652 3.007-5.688c0-.001-8.216 2.051-4.292 6.573M19.116 19.679s.679.559-.747.991c-2.712.822-11.288 1.069-13.669.033c-.856-.373.75-.89 1.254-.998c.527-.114.828-.093.828-.093c-.953-.671-6.156 1.317-2.643 1.887c9.58 1.553 17.462-.7 14.977-1.82M9.292 13.21s-4.362 1.036-1.544 1.412c1.189.159 3.561.123 5.77-.062c1.806-.152 3.618-.477 3.618-.477s-.637.272-1.098.587c-4.429 1.165-12.986.623-10.522-.568c2.082-1.006 3.776-.892 3.776-.892m7.824 4.374c4.503-2.34 2.421-4.589.968-4.285c-.355.074-.515.138-.515.138s.132-.207.385-.297c2.875-1.011 5.086 2.981-.928 4.562c0-.001.07-.062.09-.118M14.401 0s2.494 2.494-2.365 6.33c-3.896 3.077-.889 4.832 0 6.836c-2.274-2.053-3.943-3.858-2.824-5.539c1.644-2.469 6.197-3.665 5.189-7.627M9.734 23.924c4.322.277 10.959-.153 11.116-2.198c0 0-.302.775-3.572 1.391c-3.688.694-8.239.613-10.937.168c0-.001.553.457 3.393.639"/></svg>'
+              icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8.851 18.56s-.917.534.653.714c1.902.218 2.874.187 4.969-.211c0 0 .552.346 1.321.646c-4.699 2.013-10.633-.118-6.943-1.149m-.575-2.627s-1.028.761.542.924c2.032.209 3.636.227 6.413-.308c0 0 .384.389.987.602c-5.679 1.661-12.007.13-7.942-1.218m4.84-4.458c1.158 1.333-.304 2.533-.304 2.533s2.939-1.518 1.589-3.418c-1.261-1.772-2.228-2.652 3.007-5.688c0-.001-8.216 2.051-4.292 6.573M19.116 19.679s.679.559-.747.991c-2.712.822-11.288 1.069-13.669.033c-.856-.373.75-.89 1.254-.998c.527-.114.828-.093.828-.093c-.953-.671-6.156 1.317-2.643 1.887c9.58 1.553 17.462-.7 14.977-1.82M9.292 13.21s-4.362 1.036-1.544 1.412c1.189.159 3.561.123 5.77-.062c1.806-.152 3.618-.477 3.618-.477s-.637.272-1.098.587c-4.429 1.165-12.986.623-10.522-.568c2.082-1.006 3.776-.892 3.776-.892m7.824 4.374c4.503-2.34 2.421-4.589.968-4.285c-.355.074-.515.138-.515.138s.132-.207.385-.297c2.875-1.011 5.086 2.981-.928 4.562c0-.001.07-.062.09-.118M14.401 0s2.494 2.494-2.365 6.33c-3.896 3.077-.889 4.832 0 6.836c-2.274-2.053-3.943-3.858-2.824-5.539c1.644-2.469 6.197-3.665 5.189-7.627M9.734 23.924c4.322.277 10.959-.153 11.116-2.198c0 0-.302.775-3.572 1.391c-3.688.694-8.239.613-10.937.168c0-.001.553.457 3.393.639"/></svg>'
             - name: "Docker"
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M13.983 11.078h2.119a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.119a.185.185 0 0 0-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 0 0 .186-.186V3.574a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.186m0 2.716h2.118a.187.187 0 0 0 .186-.186V6.29a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 0 0 .184-.186V6.29a.185.185 0 0 0-.185-.185H8.1a.185.185 0 0 0-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 0 0 .185-.186V6.29a.186.186 0 0 0-.185-.185H5.136a.186.186 0 0 0-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 0 0 .185-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.186.186 0 0 0-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51c-.338.001-.676.03-1.01.087c-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199l-.226.327c-.284.438-.49.922-.612 1.43c-.23.97-.09 1.882.403 2.661c-.595.332-1.55.413-1.744.42H.751a.751.751 0 0 0-.75.748a11.4 11.4 0 0 0 .692 4.062c.545 1.428 1.355 2.48 2.41 3.124c1.18.723 3.1 1.137 5.275 1.137a15.7 15.7 0 0 0 2.93-.266a12 12 0 0 0 3.823-1.389a10.5 10.5 0 0 0 2.61-2.136c1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009c.309-.293.55-.65.707-1.046l.098-.288Z"/></svg>'
+              icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M13.983 11.078h2.119a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.119a.185.185 0 0 0-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 0 0 .186-.186V3.574a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.186m0 2.716h2.118a.187.187 0 0 0 .186-.186V6.29a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 0 0 .184-.186V6.29a.185.185 0 0 0-.185-.185H8.1a.185.185 0 0 0-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 0 0 .185-.186V6.29a.186.186 0 0 0-.185-.185H5.136a.186.186 0 0 0-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 0 0 .185-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.186.186 0 0 0-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51c-.338.001-.676.03-1.01.087c-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199l-.226.327c-.284.438-.49.922-.612 1.43c-.23.97-.09 1.882.403 2.661c-.595.332-1.55.413-1.744.42H.751a.751.751 0 0 0-.75.748a11.4 11.4 0 0 0 .692 4.062c.545 1.428 1.355 2.48 2.41 3.124c1.18.723 3.1 1.137 5.275 1.137a15.7 15.7 0 0 0 2.93-.266a12 12 0 0 0 3.823-1.389a10.5 10.5 0 0 0 2.61-2.136c1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009c.309-.293.55-.65.707-1.046l.098-.288Z"/></svg>'
             - name: "MySQL"
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M5.462 5.11c-.102 0-.17.013-.238.026v.026h.013c.047.093.128.153.187.233l.133.28l.013-.013c.082-.058.12-.15.12-.297c-.034-.036-.04-.08-.068-.116c-.034-.047-.106-.073-.16-.14M23.6 17.428c-.627-.385-1.35-.606-2.016-.845c-.156-.056-.327-.086-.47-.17l-.086-.17c.053-.11.04-.28.086-.418c.166-.51.506-.96.838-1.356c.263-.313.537-.68.74-1.038c.108-.19.16-.38.263-.575l-.153-.085c-.2.127-.467.2-.65.345c-.273.218-.513.478-.753.73c-.24.25-.453.52-.706.73l-.39-.263c.12-.37.406-.65.56-1.01c.093-.22.136-.44.226-.66l-.17-.085c-.266.24-.47.56-.7.845c-.23.286-.46.56-.74.78l-.086-.043c-.046-.093-.02-.22-.043-.345c-.073-.37-.14-.75-.263-.093c-.093-.14-.36-.22-.56-.3c-.22-.086-.48-.12-.66-.213c-.086-.047-.2-.153-.263-.153l-.086.17c.1.1.12.253.213.345c.066.066.18.1.263.153c.18.12.38.2.56.3c.086.047.233.1.263.17c.06.14-.013.3-.043.433c-.1.3-.2.56-.3.86c-.1.28-.2.56-.346.8c-.073.12-.346.186-.52.26c-.2.086-.42.133-.62.213c-.1.04-.26.08-.3.17c.093.1.113.26.213.346c.16.14.34.26.52.39c.16.113.42.18.52.346c-.12.36-.14.76-.26 1.13c-.12.36-.34.72-.52 1.08l.17.17c.36-.24.66-.56.87-.95c.1-.186.14-.4.26-.56c.22.06.46.26.65.39c.28.186.54.39.82.56c.14.086.4.14.43.26c-.08.2-.12.42-.21.61c-.1.2-.26.38-.35.58l.13.17c.44-.2.8-.54 1.13-.91c.16-.18.3-.4.52-.52c.2.1.4.3.56.43c.3.24.58.52.91.73c.17.1.58.32.61.1c.02-.14-.15-.26-.26-.35c-.2-.16-.42-.3-.61-.48c-.2-.18-.38-.4-.56-.6l.26-.35c.2.1.34.3.52.43c.3.22.6.42.95.56c.18.07.5.2.61.04c.04-.06-.02-.14-.09-.17m-4.17-1.74c.04-.14.14-.24.22-.35c.14.1.32.16.43.3c.12.14.18.32.26.48l-.35.17c-.14-.14-.36-.26-.43-.43c-.04-.08 0-.12-.13-.17m-9.78 1.18c-.36-.12-.63-.36-.86-.65c-.24-.3-.42-.66-.56-1.04c-.3-.8-.42-1.74-.43-2.77c0-.54.04-.1.1-1.56c.04-.3.04-.6.13-.86l-.09-.09c-.16.1-.3.3-.43.48c-.2.28-.38.58-.52.91c-.28.66-.44 1.4-.52 2.25c-.04.42-.02.84 0 1.26c.02.4.08.8.17 1.17c.1.38.22.76.43 1.04c.1.14.3.36.52.3c.2-.04.3-.3.35-.52c.06-.3.02-.62.04-.95l.17-.04c.1.32.2.7.39.95c.2.28.48.5.78.6c.06.02.16.08.22.04c.06-.06 0-.14-.04-.17c-.1-.1-.24-.14-.35-.22m-3.6-1.3c-.1-.28-.16-.6-.22-.91c-.12-.66-.2-1.34-.22-2.08c0-.36 0-.72.04-1.08c.02-.36.08-.72.17-1.04c.04-.14.1-.28.13-.43c.02-.1.1-.3.04-.39c-.06-.1-.22-.1-.3-.13c-.2-.06-.42-.04-.61-.04c-.36 0-.76-.02-1.04.09l-.09.09c.06.14.2.2.3.3c.1.1.2.22.26.35c.1.2.14.42.17.65c.06.46.04.96.04 1.47c0 .5-.02 1-.04 1.47c-.02.36-.04.72-.09 1.04c-.02.18-.06.36-.09.52c-.02.1-.08.28 0 .35c.1.1.28.04.39.04h.78c.2 0 .44.04.56-.09c.06-.06.04-.14.04-.22c-.02-.3-.14-.58-.22-.86m-2.64.56c-.06-.02-.14 0-.2.04c-.12.1-.12.28-.12.44c0 .1.02.22.08.28c.06.06.16.06.24.04c.12-.04.2-.14.24-.26c.02-.06.04-.14.04-.2c0-.08 0-.18-.06-.24c-.04-.04-.14-.08-.22-.1m-.34-1.26c.16-.02.3-.06.3-.26c0-.22-.14-.3-.3-.34c-.1-.02-.2 0-.28.04c-.1.06-.16.16-.16.28c0 .1.04.2.14.26c.08.04.2.04.3.02m-1.2 1.04c-.08-.02-.2 0-.26.04c-.14.1-.14.28-.14.46c0 .1.02.22.1.28c.06.06.16.06.24.04c.12-.04.2-.16.24-.28c.02-.06.04-.14.04-.2c0-.08 0-.18-.06-.24c-.04-.04-.1-.08-.16-.1m-.26-1.22c.16-.02.32-.06.32-.26c0-.22-.16-.32-.32-.36c-.1-.02-.2 0-.28.04c-.1.06-.18.16-.18.3c0 .1.06.2.16.26c.08.04.2.04.3.02m-1.04.86c-.08-.02-.18 0-.24.04c-.14.1-.14.28-.14.46c0 .1.02.22.1.28c.06.06.16.06.24.04c.12-.04.2-.16.24-.28c.02-.06.04-.14.04-.2c0-.08 0-.18-.06-.24c-.04-.04-.1-.08-.18-.1m-.2-1.04c.16-.02.32-.06.32-.26c0-.22-.16-.32-.32-.36c-.1-.02-.2 0-.28.04c-.1.06-.18.16-.18.3c0 .1.06.2.16.26c.08.04.2.04.3.02"/></svg>'
+              icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M5.462 5.11c-.102 0-.17.013-.238.026v.026h.013c.047.093.128.153.187.233l.133.28l.013-.013c.082-.058.12-.15.12-.297c-.034-.036-.04-.08-.068-.116c-.034-.047-.106-.073-.16-.14M23.6 17.428c-.627-.385-1.35-.606-2.016-.845c-.156-.056-.327-.086-.47-.17l-.086-.17c.053-.11.04-.28.086-.418c.166-.51.506-.96.838-1.356c.263-.313.537-.68.74-1.038c.108-.19.16-.38.263-.575l-.153-.085c-.2.127-.467.2-.65.345c-.273.218-.513.478-.753.73c-.24.25-.453.52-.706.73l-.39-.263c.12-.37.406-.65.56-1.01c.093-.22.136-.44.226-.66l-.17-.085c-.266.24-.47.56-.7.845c-.23.286-.46.56-.74.78l-.086-.043c-.046-.093-.02-.22-.043-.345c-.073-.37-.14-.75-.263-.093c-.093-.14-.36-.22-.56-.3c-.22-.086-.48-.12-.66-.213c-.086-.047-.2-.153-.263-.153l-.086.17c.1.1.12.253.213.345c.066.066.18.1.263.153c.18.12.38.2.56.3c.086.047.233.1.263.17c.06.14-.013.3-.043.433c-.1.3-.2.56-.3.86c-.1.28-.2.56-.346.8c-.073.12-.346.186-.52.26c-.2.086-.42.133-.62.213c-.1.04-.26.08-.3.17c.093.1.113.26.213.346c.16.14.34.26.52.39c.16.113.42.18.52.346c-.12.36-.14.76-.26 1.13c-.12.36-.34.72-.52 1.08l.17.17c.36-.24.66-.56.87-.95c.1-.186.14-.4.26-.56c.22.06.46.26.65.39c.28.186.54.39.82.56c.14.086.4.14.43.26c-.08.2-.12.42-.21.61c-.1.2-.26.38-.35.58l.13.17c.44-.2.8-.54 1.13-.91c.16-.18.3-.4.52-.52c.2.1.4.3.56.43c.3.24.58.52.91.73c.17.1.58.32.61.1c.02-.14-.15-.26-.26-.35c-.2-.16-.42-.3-.61-.48c-.2-.18-.38-.4-.56-.6l.26-.35c.2.1.34.3.52.43c.3.22.6.42.95.56c.18.07.5.2.61.04c.04-.06-.02-.14-.09-.17m-4.17-1.74c.04-.14.14-.24.22-.35c.14.1.32.16.43.3c.12.14.18.32.26.48l-.35.17c-.14-.14-.36-.26-.43-.43c-.04-.08 0-.12-.13-.17m-9.78 1.18c-.36-.12-.63-.36-.86-.65c-.24-.3-.42-.66-.56-1.04c-.3-.8-.42-1.74-.43-2.77c0-.54.04-.1.1-1.56c.04-.3.04-.6.13-.86l-.09-.09c-.16.1-.3.3-.43.48c-.2.28-.38.58-.52.91c-.28.66-.44 1.4-.52 2.25c-.04.42-.02.84 0 1.26c.02.4.08.8.17 1.17c.1.38.22.76.43 1.04c.1.14.3.36.52.3c.2-.04.3-.3.35-.52c.06-.3.02-.62.04-.95l.17-.04c.1.32.2.7.39.95c.2.28.48.5.78.6c.06.02.16.08.22.04c.06-.06 0-.14-.04-.17c-.1-.1-.24-.14-.35-.22m-3.6-1.3c-.1-.28-.16-.6-.22-.91c-.12-.66-.2-1.34-.22-2.08c0-.36 0-.72.04-1.08c.02-.36.08-.72.17-1.04c.04-.14.1-.28.13-.43c.02-.1.1-.3.04-.39c-.06-.1-.22-.1-.3-.13c-.2-.06-.42-.04-.61-.04c-.36 0-.76-.02-1.04.09l-.09.09c.06.14.2.2.3.3c.1.1.2.22.26.35c.1.2.14.42.17.65c.06.46.04.96.04 1.47c0 .5-.02 1-.04 1.47c-.02.36-.04.72-.09 1.04c-.02.18-.06.36-.09.52c-.02.1-.08.28 0 .35c.1.1.28.04.39.04h.78c.2 0 .44.04.56-.09c.06-.06.04-.14.04-.22c-.02-.3-.14-.58-.22-.86m-2.64.56c-.06-.02-.14 0-.2.04c-.12.1-.12.28-.12.44c0 .1.02.22.08.28c.06.06.16.06.24.04c.12-.04.2-.14.24-.26c.02-.06.04-.14.04-.2c0-.08 0-.18-.06-.24c-.04-.04-.14-.08-.22-.1m-.34-1.26c.16-.02.3-.06.3-.26c0-.22-.14-.3-.3-.34c-.1-.02-.2 0-.28.04c-.1.06-.16.16-.16.28c0 .1.04.2.14.26c.08.04.2.04.3.02m-1.2 1.04c-.08-.02-.2 0-.26.04c-.14.1-.14.28-.14.46c0 .1.02.22.1.28c.06.06.16.06.24.04c.12-.04.2-.16.24-.28c.02-.06.04-.14.04-.2c0-.08 0-.18-.06-.24c-.04-.04-.1-.08-.16-.1m-.26-1.22c.16-.02.32-.06.32-.26c0-.22-.16-.32-.32-.36c-.1-.02-.2 0-.28.04c-.1.06-.18.16-.18.3c0 .1.06.2.16.26c.08.04.2.04.3.02m-1.04.86c-.08-.02-.18 0-.24.04c-.14.1-.14.28-.14.46c0 .1.02.22.1.28c.06.06.16.06.24.04c.12-.04.2-.16.24-.28c.02-.06.04-.14.04-.2c0-.08 0-.18-.06-.24c-.04-.04-.1-.08-.18-.1m-.2-1.04c.16-.02.32-.06.32-.26c0-.22-.16-.32-.32-.36c-.1-.02-.2 0-.28.04c-.1.06-.18.16-.18.3c0 .1.06.2.16.26c.08.04.2.04.3.02"/></svg>'
           children:
             - $formkit: text
               name: name
@@ -3084,7 +3305,66 @@ spec:
           name: show_photo_info
           label: 显示图片信息
           help: 鼠标悬浮时显示标题和描述
-          value: false
+          value: true
+        - $formkit: switch
+          name: show_download_btn
+          label: 显示下载按钮
+          help: 鼠标悬浮时显示图片下载按钮
+          value: true
+        # ========== 布局外观 ==========
+        - $formkit: group
+          name: layout
+          label: 布局外观
+          value:
+            full_width: false
+            max_cols: 4
+            border_radius: 12
+            gap: 16
+          children:
+            - $formkit: toggle
+              name: full_width
+              label: 页面布局
+              render-type: text
+              size: 80
+              gap: 10
+              value: false
+              options:
+                - label: 居中
+                  value: false
+                - label: 全铺
+                  value: true
+            - $formkit: select
+              name: max_cols
+              label: 最大列数
+              help: 大屏下显示的最多列数，小屏会自动缩减
+              value: 4
+              options:
+                - label: 2 列
+                  value: 2
+                - label: 3 列
+                  value: 3
+                - label: 4 列（推荐）
+                  value: 4
+                - label: 5 列
+                  value: 5
+                - label: 6 列
+                  value: 6
+            - $formkit: number
+              name: border_radius
+              label: 图片圆角（px）
+              help: 卡片圆角大小，0 = 直角，24 = 大圆角
+              value: 12
+              min: 0
+              max: 24
+              step: 2
+            - $formkit: number
+              name: gap
+              label: 图片间距（px）
+              help: 图片之间的间距大小
+              value: 16
+              min: 0
+              max: 32
+              step: 4
         - $formkit: switch
           name: enable_comment
           label: 启用评论
@@ -3652,9 +3932,15 @@ spec:
           value:
             auth_layout: default
             brand_style: simple
-            card_effect: none
+            card_effect: 3d
             brand_slogan: "探索、记录、分享"
-            show_brand_area: true
+            features_welcome: "欢迎来到"
+            feature_1_title: "安全可靠"
+            feature_1_desc: "基于 Spring Security 的账户保护"
+            feature_2_title: "内容推荐"
+            feature_2_desc: "为您量身定制的阅读体验"
+            feature_3_title: "多端同步"
+            feature_3_desc: "随时随地访问您的创作"
           children:
             - $formkit: toggle
               id: auth_layout
@@ -3687,6 +3973,8 @@ spec:
                   value: simple
                 - label: 功能特性
                   value: features
+                - label: 动态插画
+                  value: illustration
             - $formkit: toggle
               id: card_effect
               name: card_effect
@@ -3715,76 +4003,90 @@ spec:
               if: $get(auth_layout).value === 'split'
               placeholder: "探索、记录、分享"
               value: "探索、记录、分享"
-            - $formkit: group
-              name: style_features
-              label: 功能特性风格配置
+            - $formkit: attachment
+              name: auth_logo
+              label: 功能区 Logo
+              help: 留空则使用站点默认 Logo
+              accepts: ["image/*"]
               if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
-              children:
-                - $formkit: attachment
-                  name: auth_logo
-                  label: Logo
-                  help: 留空则使用站点默认 Logo
-                  accepts: ["image/*"]
-                - $formkit: text
-                  name: auth_site_title
-                  label: 标题
-                  help: 留空则使用站点默认标题
-                  placeholder: "留空使用站点标题"
-                - $formkit: attachment
-                  name: auth_side_image
-                  label: 侧边栏背景图
-                  help: 自定义侧边栏的背景图片，上传后将覆盖默认的渐变背景
-                  accepts: ["image/*"]
-                - $formkit: text
-                  name: features_welcome
-                  label: 欢迎语
-                  placeholder: "欢迎来到"
-                  value: "欢迎来到"
+              key: auth_logo_field
+            - $formkit: text
+              name: auth_site_title
+              label: 功能区标题
+              help: 留空则使用站点默认标题
+              placeholder: "留空使用站点标题"
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_site_title_field
+            - $formkit: attachment
+              name: auth_side_image
+              label: 侧边栏背景图
+              help: 自定义侧边栏的背景图片，上传后将覆盖默认的渐变背景
+              accepts: ["image/*"]
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_side_image_field
+            - $formkit: text
+              name: features_welcome
+              label: 欢迎语
+              placeholder: "欢迎来到"
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: features_welcome_field
 
-                # 特性 1
-                - $formkit: iconify
-                  name: feature_1_icon
-                  label: 特性 1 图标
-                  format: svg
-                  value-only: true
-                - $formkit: text
-                  name: feature_1_title
-                  label: 特性 1 标题
-                  value: "安全可靠"
-                - $formkit: text
-                  name: feature_1_desc
-                  label: 特性 1 描述
-                  value: "基于 Spring Security 的账户保护"
+            # 特性 1
+            - $formkit: iconify
+              name: feature_1_icon
+              label: 特性 1 图标
+              format: svg
+              value-only: true
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_f1_icon_field
+            - $formkit: text
+              name: feature_1_title
+              label: 特性 1 标题
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_f1_title_field
+            - $formkit: text
+              name: feature_1_desc
+              label: 特性 1 描述
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_f1_desc_field
 
-                # 特性 2
-                - $formkit: iconify
-                  name: feature_2_icon
-                  label: 特性 2 图标
-                  format: svg
-                  value-only: true
-                - $formkit: text
-                  name: feature_2_title
-                  label: 特性 2 标题
-                  value: "内容推荐"
-                - $formkit: text
-                  name: feature_2_desc
-                  label: 特性 2 描述
-                  value: "为您量身定制的阅读体验"
+            # 特性 2
+            - $formkit: iconify
+              name: feature_2_icon
+              label: 特性 2 图标
+              format: svg
+              value-only: true
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_f2_icon_field
+            - $formkit: text
+              name: feature_2_title
+              label: 特性 2 标题
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_f2_title_field
+            - $formkit: text
+              name: feature_2_desc
+              label: 特性 2 描述
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_f2_desc_field
 
-                # 特性 3
-                - $formkit: iconify
-                  name: feature_3_icon
-                  label: 特性 3 图标
-                  format: svg
-                  value-only: true
-                - $formkit: text
-                  name: feature_3_title
-                  label: 特性 3 标题
-                  value: "多端同步"
-                - $formkit: text
-                  name: feature_3_desc
-                  label: 特性 3 描述
-                  value: "随时随地访问您的创作"
+            # 特性 3
+            - $formkit: iconify
+              name: feature_3_icon
+              label: 特性 3 图标
+              format: svg
+              value-only: true
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_f3_icon_field
+            - $formkit: text
+              name: feature_3_title
+              label: 特性 3 标题
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_f3_title_field
+            - $formkit: text
+              name: feature_3_desc
+              label: 特性 3 描述
+              if: $get(auth_layout).value === 'split' && $get(brand_style).value === 'features'
+              key: auth_f3_desc_field
 
     - group: bangumi_settings
       label: 追番
@@ -4029,9 +4331,163 @@ spec:
               label: Dock 菜单
               value: primary
               if: $get(equipment_enable_custom_dock).value
-              help: 选择要在悬浮控制栏中显示的菜单
             - $formkit: switch
               name: enable_back_to_top
               label: 返回顶部按钮
               if: $get(equipment_enable_custom_dock).value
               value: true
+    # ==========================================
+    #  悬浮音乐播放器 (APlayer + MetingJS)
+    # ==========================================
+    - group: music
+      label: 音乐播放器
+      formSchema:
+        - $formkit: group
+          name: music_settings
+          label: 基础设置
+          value:
+            enable: false
+            enable_pjax: true
+            server: netease
+            type: playlist
+            id: ""
+          children:
+            - $formkit: switch
+              name: enable
+              id: music_enable
+              label: 启用悬浮音乐播放器
+              help: 开启后在所有页面底部显示悬浮音乐播放器
+              value: false
+            - $formkit: switch
+              name: enable_pjax
+              id: music_enable_pjax
+              label: 启用 PJAX 无刷新切换
+              help: 开启后页面切换无刷新（推荐开启，关闭音乐播放器时可选择关闭以减少资源加载）
+              value: true
+            - $formkit: select
+              name: server
+              label: 音乐平台
+              if: $get(music_enable).value
+              value: netease
+              options:
+                - label: 网易云音乐
+                  value: netease
+                - label: QQ 音乐
+                  value: tencent
+                - label: 酷狗
+                  value: kugou
+                - label: 酷我
+                  value: kuwo
+                - label: 百度
+                  value: baidu
+            - $formkit: select
+              name: type
+              label: 资源类型
+              if: $get(music_enable).value
+              value: playlist
+              options:
+                - label: 歌单
+                  value: playlist
+                - label: 专辑
+                  value: album
+                - label: 歌手热门
+                  value: artist
+                - label: 单曲
+                  value: song
+            - $formkit: text
+              name: id
+              label: 资源 ID
+              if: $get(music_enable).value
+              help: "歌单/专辑/歌手/单曲的 ID（从音乐平台 URL 中获取）"
+              validation: required
+        - $formkit: group
+          name: player_config
+          label: 播放器配置
+          if: $get(music_enable).value
+          value:
+            volume: 70
+            order: list
+          children:
+            - $formkit: number
+              name: volume
+              label: 默认音量
+              help: "0-100，推荐 50-80"
+              value: 70
+              min: 0
+              max: 100
+              step: 5
+            - $formkit: select
+              name: order
+              label: 播放顺序
+              value: list
+              options:
+                - label: 列表循环
+                  value: list
+                - label: 随机播放
+                  value: random
+        - $formkit: group
+          name: position_config
+          label: 位置与显示
+          if: $get(music_enable).value
+          value:
+            default_position: bottom-left
+            default_offset_x: 16
+            default_offset_y: 24
+          children:
+            - $formkit: select
+              name: default_position
+              label: 默认位置
+              help: 播放器在屏幕上的初始位置
+              value: bottom-left
+              options:
+                - label: 左上角
+                  value: top-left
+                - label: 顶部居中
+                  value: top-center
+                - label: 右上角
+                  value: top-right
+                - label: 左侧居中
+                  value: middle-left
+                - label: 正中央
+                  value: middle-center
+                - label: 右侧居中
+                  value: middle-right
+                - label: 左下角（默认）
+                  value: bottom-left
+                - label: 底部居中
+                  value: bottom-center
+                - label: 右下角
+                  value: bottom-right
+            - $formkit: number
+              name: default_offset_x
+              label: 水平微调（px）
+              help: "边角位置：距左/右边缘距离（默认 16）；居中位置：向右偏移量（0 = 正中，负值向左）"
+              value: 16
+              min: -500
+              max: 500
+              step: 4
+            - $formkit: number
+              name: default_offset_y
+              label: 垂直微调（px）
+              help: "边角位置：距上/下边缘距离（默认 24）；居中位置：向下偏移量（0 = 正中，负值向上）"
+              value: 24
+              min: -500
+              max: 500
+              step: 4
+        - $formkit: group
+          name: cdn_config
+          label: CDN / 代理设置
+          if: $get(music_enable).value
+          value:
+            aplayer_js: "https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"
+            meting_api: "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&r=:r"
+          children:
+            - $formkit: text
+              name: aplayer_js
+              label: APlayer JS 地址
+              value: "https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"
+            - $formkit: text
+              name: meting_api
+              label: Meting API 代理地址
+              help: "必填。官方 API 已失效，需使用第三方代理。格式：https://api.example.com/meting/?server=:server&type=:type&id=:id&r=:r"
+              value: "https://api.injahow.cn/meting/?server=:server&type=:type&id=:id&r=:r"
