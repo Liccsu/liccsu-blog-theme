@@ -3,6 +3,7 @@
  */
 
 import './index.css';
+import { notifySwupPageReady, runPageInit } from '../../common/js/page-runtime.js';
 
 /**
  * 天气联动背景效果 - 终极卡通真实感融合版 (V3)
@@ -22,16 +23,6 @@ import './index.css';
   };
 
   const CACHE_KEY = 'sky_weather_cache_v13';
-  const weatherNameMap = {
-    'sunny': '☀️ 晴天',
-    'cloudy': '☁️ 多云',
-    'night-clear': '🌙 晴朗夜晚',
-    'night-cloudy': '🌥️ 多云夜晚',
-    'foggy': '🌫️ 雾天',
-    'rainy': '🌧️ 雨天',
-    'snowy': '❄️ 雪天',
-    'stormy': '⛈️ 雷暴'
-  };
 
   // SVG 资源库 - 纯 SVG 字符串
   const SVGS = {
@@ -90,7 +81,7 @@ import './index.css';
     WTLogger.info('init() 开始执行');
     container = document.getElementById('weather-effect-root');
     if (!container) {
-      WTLogger.warn('❌ weather-effect-root 元素不存在，背景类型可能未设为「天气联动」');
+      WTLogger.info('weather-effect-root 元素不存在，背景类型未启用天气联动');
       return;
     }
     WTLogger.info('✅ weather-effect-root 找到');
@@ -107,11 +98,15 @@ import './index.css';
     WTLogger.info('初始渲染，currentState.type =', currentState.type);
     renderEffect();
     setupScrollListener();
+    // 存储具名监听器引用（供 cleanup 使用）
+    let _weatherHandler = null;
+    let _scrollHandler = null;
+    let _mousemoveHandler = null;
 
     // 第二阶段：监听天气数据更新事件（来自天气卡片的真实数据）
-    window.addEventListener('sky-weather-updated', (event) => {
+    _weatherHandler = (event) => {
       const newBg = event.detail?.weatherBg;
-      const rawData = event.detail?.rawData; // 获取附加的物理参数
+      const rawData = event.detail?.rawData;
       WTLogger.info('收到 sky-weather-updated 事件，weatherBg =', newBg, 'rawData =', rawData);
 
       if (!newBg) return;
@@ -124,14 +119,28 @@ import './index.css';
       WTLogger.info('切换背景 →', normalizedBg);
       currentState.type = normalizedBg;
 
-      // 应用物理参数
-      if (rawData) {
-        applyPhysicsVariables(rawData);
-      }
-
+      if (rawData) applyPhysicsVariables(rawData);
       renderEffect();
-    });
+    };
+    window.addEventListener('sky-weather-updated', _weatherHandler);
     WTLogger.info('事件监听器已注册，init() 完成');
+
+    // 注册 swup cleanup（离开首页时调用）
+    window.__pageCleanup = () => {
+      WTLogger.info('执行 index.js cleanup');
+      if (_weatherHandler) window.removeEventListener('sky-weather-updated', _weatherHandler);
+      if (_scrollHandler) window.removeEventListener('scroll', _scrollHandler);
+      if (_mousemoveHandler) document.removeEventListener('mousemove', _mousemoveHandler);
+      if (window.__indexScrollHandler) {
+        window.removeEventListener('scroll', window.__indexScrollHandler);
+        window.__indexScrollHandler = null;
+      }
+      // 清理天气场景内部 setInterval/RAF
+      if (effectLayer?.lastElementChild?._cleanup) {
+        effectLayer.lastElementChild._cleanup();
+      }
+      _weatherHandler = _scrollHandler = _mousemoveHandler = null;
+    };
   }
 
   function loadWeatherData() {
@@ -378,11 +387,11 @@ import './index.css';
     // 生成卡通 SVG 云朵
     const cloudCount = isNight ? 5 : 8;
     for (let i = 0; i < cloudCount; i++) {
-      createCartoonCloud(isNight, i);
+      createCartoonCloud(isNight);
     }
   }
 
-  function createCartoonCloud(isNight, index) {
+  function createCartoonCloud(isNight) {
     const cloud = document.createElement('div');
     cloud.className = 'cloud-cartoon ' + (isNight ? 'night' : 'day');
     cloud.innerHTML = SVGS.cloud;
@@ -989,7 +998,8 @@ import './index.css';
     const scrollMask = container.querySelector('.scroll-mask');
     if (!scrollMask) return;
     let ticking = false;
-    window.addEventListener('scroll', () => {
+    // 具名函数，便于 cleanup 时移除
+    window.__indexScrollHandler = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           scrollMask.style.opacity = window.scrollY > 50 ? '0.3' : '0';
@@ -997,7 +1007,8 @@ import './index.css';
         });
         ticking = true;
       }
-    }, { passive: true });
+    };
+    window.addEventListener('scroll', window.__indexScrollHandler, { passive: true });
   }
 
   if (document.readyState === 'loading') {
@@ -1014,6 +1025,7 @@ import './index.css';
  * 为moment-card元素添加动态光晕交互效果
  */
 window.handleMomentCardGlow = function (event, card) {
+  if (!event) return;
   // 获取卡片内的光效元素
   const glowElement = card.querySelector('.moment-glow');
   if (!glowElement) return;
@@ -1137,8 +1149,10 @@ window.hideMomentCardGlow = function (card) {
   /**
    * 页面加载完成后初始化
    */
-  document.addEventListener('DOMContentLoaded', () => {
+  runPageInit(() => {
     TitleEffectsManager.init();
   });
 
 })();
+
+notifySwupPageReady();

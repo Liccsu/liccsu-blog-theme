@@ -9,19 +9,22 @@
     <!-- 启用 View Transitions API (Safari 18+/Chrome 111+) -->
     <meta name="view-transition" content="same-origin" />
 
-    <!-- 移动端状态栏颜色 -->
-    <th:block th:replace="~{modules/theme-script :: theme-color-meta}" />
     <!-- 防止主题闪烁 - 在渲染前立即应用主题 -->
     <th:block th:replace="~{modules/theme-script :: inline-script}" />
 
+    <!-- 页面标题 -->
     <title
-      th:text="${post.spec.title} + ' - ' + ${site.title} + (${site.subtitle != null and !#strings.isEmpty(site.subtitle)} ? ' - ' + ${site.subtitle} : '')">
+      th:text="${post.spec.title} + ' - ' + ${site.title} + (${site.subtitle != null and !#strings.isEmpty(site.subtitle)} ? ' - ' + ${site.subtitle} : '')"
+    >
     </title>
     <!-- 字体 -->
     <th:block th:replace="~{modules/font-loader :: fonts}" />
     <!-- 主题样式 -->
-    <link rel="stylesheet" th:href="@{/assets/css/main.css?v={version}(version=${theme.spec.version})}" />
-    <link rel="stylesheet" th:href="@{/assets/css/post.css?v={version}(version=${theme.spec.version})}" />
+    <link rel="stylesheet" th:href="@{/assets/css/main.css?v={version}(version='2.2.23')}" />
+    <link rel="stylesheet" th:href="@{/assets/css/post.css?v={version}(version='2.2.23')}" />
+
+    <!-- 音乐播放器 CSS -->
+    <th:block th:replace="~{modules/music-player :: head}" />
   </head>
 
   <body
@@ -29,7 +32,7 @@
                  enableCustomBg = ${bgConfig?.enable_custom == true},
                  bgStyle = ${bgConfig?.background_style ?: 'base-200'},
                  bgClass = ${enableCustomBg ? (bgStyle == 'grid' ? 'bg-base-100' : 'bg-' + bgStyle) : 'bg-base-200'}"
-    th:class="'min-h-screen text-base-content ' + ${bgClass} + ' relative'"
+    th:class="'min-h-screen text-base-content relative ' + ${bgClass}"
   >
     <!-- 网格背景（仅当选择 grid 样式时显示） -->
     <div
@@ -45,7 +48,7 @@
       <th:block th:replace="~{modules/nav :: navbar}" />
 
       <!-- 主要内容区域 -->
-      <main class="-mt-16 flex-1">
+      <main id="swup" class="-mt-16 flex-1">
         <th:block th:replace="~{modules/post/content}" />
       </main>
 
@@ -53,17 +56,27 @@
       <th:block th:replace="~{modules/footer :: footer}" />
     </div>
 
-    <!-- 悬浮 Dock 控制栏（文章页版本） -->
-    <th:block th:replace="~{modules/post/floating-dock :: dock}" />
+    <div id="swup-page-extras">
+      <!-- 悬浮 Dock 控制栏（文章页版本） -->
+      <th:block th:replace="~{modules/post/floating-dock :: dock}" />
 
-    <!-- 分享模态框 -->
-    <th:block th:replace="~{modules/post/floating-dock :: shareModal}" />
+      <!-- 分享模态框 -->
+      <th:block th:replace="~{modules/post/floating-dock :: shareModal}" />
 
-    <!-- 目录抽屉 -->
-    <th:block th:replace="~{modules/post/floating-dock :: tocDrawer}" />
+      <!-- 目录抽屉 -->
+      <th:block th:replace="~{modules/post/floating-dock :: tocDrawer}" />
+    </div>
 
     <!-- JavaScript 文件 - 使用 ES Module -->
-    <script type="module" th:src="@{/assets/js/post.js?v={version}(version=${theme.spec.version})}"></script>
-    <script type="module" th:src="@{/assets/js/main.js?v={version}(version=${theme.spec.version})}"></script>
+    <div id="swup-scripts" hidden>
+      <script
+        type="module"
+        th:src="@{/assets/js/post.js?v={version}(version='2.2.23')}"
+        data-swup-reload-script
+      ></script>
+    </div>
+    <script type="module" th:src="@{/assets/js/main.js?v={version}(version='2.2.23')}"></script>
+    <!-- 悬浮音乐播放器 -->
+    <th:block th:replace="~{modules/music-player :: player}" />
   </body>
 </html>

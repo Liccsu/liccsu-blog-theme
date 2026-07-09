@@ -12,22 +12,22 @@
     <meta name="view-transition" content="same-origin" />
 
     <!-- 防止主题闪烁 -->
-    <!-- 移动端状态栏颜色 -->
-    <th:block th:replace="~{modules/theme-script :: theme-color-meta}" />
-    <!-- 防止主题闪烁 - 在渲染前立即应用主题 -->
     <th:block th:replace="~{modules/theme-script :: inline-script}" />
 
     <!-- 页面标题 -->
     <title
-      th:text="${singlePage.spec.title} + ' - ' + ${site.title} + (${site.subtitle != null and !#strings.isEmpty(site.subtitle)} ? ' - ' + ${site.subtitle} : '')">
+      th:text="${singlePage.spec.title} + ' - ' + ${site.title} + (${site.subtitle != null and !#strings.isEmpty(site.subtitle)} ? ' - ' + ${site.subtitle} : '')"
+    >
     </title>
 
     <!-- 字体 -->
     <th:block th:replace="~{modules/font-loader :: fonts}" />
     <!-- 主题样式 -->
-    <link rel="stylesheet" th:href="@{/assets/css/main.css?v={version}(version=${theme.spec.version})}" />
+    <link rel="stylesheet" th:href="@{/assets/css/main.css?v={version}(version='2.2.23')}" />
     <!-- 页面样式 -->
-    <link rel="stylesheet" th:href="@{/assets/css/page.css?v={version}(version=${theme.spec.version})}" />
+    <link rel="stylesheet" th:href="@{/assets/css/page.css?v={version}(version='2.2.23')}" />
+    <!-- 音乐播放器 CSS -->
+    <th:block th:replace="~{modules/music-player :: head}" />
   </head>
 
   <body
@@ -35,7 +35,7 @@
                  enableCustomBg = ${bgConfig?.enable_custom == true},
                  bgStyle = ${bgConfig?.background_style ?: 'base-200'},
                  bgClass = ${enableCustomBg ? (bgStyle == 'grid' ? 'bg-base-100' : 'bg-' + bgStyle) : 'bg-base-200'}"
-    th:class="'min-h-screen ' + ${bgClass} + ' relative flex flex-col'"
+    th:class="'min-h-screen relative flex flex-col ' + ${bgClass}"
   >
     <!-- 网格背景（仅当选择 grid 样式时显示） -->
     <div
@@ -51,7 +51,7 @@
       <th:block th:replace="~{modules/nav :: navbar}" />
 
       <!-- 主要内容 -->
-      <main class="flex-1">
+      <main id="swup" class="flex-1">
         <th:block th:replace="${content}" />
       </main>
 
@@ -59,11 +59,21 @@
       <th:block th:replace="~{modules/footer :: footer}" />
     </div>
 
-    <!-- 悬浮 Dock -->
-    <th:block th:replace="~{modules/floating-dock :: dock}" />
+    <div id="swup-page-extras">
+      <!-- 悬浮 Dock -->
+      <th:block th:replace="~{modules/floating-dock :: dock}" />
+    </div>
 
     <!-- JavaScript - 使用 ES Module -->
-    <script type="module" th:src="@{/assets/js/main.js?v={version}(version=${theme.spec.version})}"></script>
-    <script type="module" th:src="@{/assets/js/page.js?v={version}(version=${theme.spec.version})}"></script>
+    <div id="swup-scripts" hidden>
+      <script
+        type="module"
+        th:src="@{/assets/js/page.js?v={version}(version='2.2.23')}"
+        data-swup-reload-script
+      ></script>
+    </div>
+    <script type="module" th:src="@{/assets/js/main.js?v={version}(version='2.2.23')}"></script>
+    <!-- 悬浮音乐播放器 -->
+    <th:block th:replace="~{modules/music-player :: player}" />
   </body>
 </html>

@@ -1,7 +1,11 @@
 import { defineConfig } from "vite";
 import { glob } from "glob";
-import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from "fs";
-import { join, dirname } from "path";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "fs";
+import { join } from "path";
+
+function normalizePath(filePath: string): string {
+  return filePath.replace(/\\/g, "/");
+}
 
 /**
  * 复制静态资源到构建目录
@@ -10,11 +14,9 @@ import { join, dirname } from "path";
 function copyStaticAssets() {
   const srcStaticDir = "src/static";
   const destAssetsDir = "templates/assets";
-
-  // 排除列表：这些文件已通过 import 集成到构建中
   const excludeFiles = new Set([
-    "css/article-content.css", // 已通过 @import 集成到各页面 CSS
-    "js/article-content.js", // 已通过 import 集成到各页面 JS
+    "css/article-content.css",
+    "js/article-content.js",
   ]);
 
   if (!existsSync(srcStaticDir)) {
@@ -22,7 +24,7 @@ function copyStaticAssets() {
   }
 
   function getRelativePath(fullPath: string, basePath: string): string {
-    return fullPath.substring(basePath.length + 1);
+    return normalizePath(fullPath).substring(normalizePath(basePath).length + 1);
   }
 
   function copyRecursive(src: string, dest: string, basePath: string = srcStaticDir) {
@@ -39,7 +41,7 @@ function copyStaticAssets() {
       if (statSync(srcPath).isDirectory()) {
         copyRecursive(srcPath, destPath, basePath);
       } else {
-        // 跳过 README.md 和排除列表中的文件
+        // 跳过 README.md
         if (item === "README.md") {
           return;
         }
@@ -70,7 +72,8 @@ function generateEntries() {
   // 扫描页面JS文件
   const jsFiles = glob.sync("src/pages/**/*.js");
   jsFiles.forEach((file) => {
-    const matches = file.match(/src\/pages\/([^\/]+)\/\1\.js$/);
+    const normalized = normalizePath(file);
+    const matches = normalized.match(/src\/pages\/([^\/]+)\/\1\.js$/);
     if (matches) {
       const pageName = matches[1];
       entries[pageName] = file;
@@ -92,6 +95,10 @@ function generateEntries() {
   return entries;
 }
 
+const isWatchMode = process.argv.includes("--watch");
+const packageJson = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf-8"));
+const assetVersion = packageJson.version;
+
 export default defineConfig({
   build: {
     outDir: "templates/assets",
@@ -101,7 +108,8 @@ export default defineConfig({
       output: {
         format: "es", // 使用 ES Module 格式，支持代码分割
         entryFileNames: "js/[name].js",
-        chunkFileNames: "js/chunks/[name]-[hash].js", // 共享 chunk 的命名
+        // 入口文件通过模板中的 ?v=version 控制缓存，分包文件名追加版本，避免新入口命中旧 chunk
+        chunkFileNames: `js/chunks/[name]-${assetVersion}.js`,
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith(".css")) {
             const name = assetInfo.name.replace(".css", "");
@@ -116,6 +124,8 @@ export default defineConfig({
       },
     },
     assetsInlineLimit: 0,
+    // watch 模式下排除输出目录，防止 closeBundle 的文件复制触发无限重建
+    ...(isWatchMode ? { watch: { exclude: ["templates/assets/**"] } } : {}),
   },
   plugins: [
     {

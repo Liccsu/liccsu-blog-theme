@@ -3,8 +3,6 @@
  * 只包含模板中实际使用的功能
  */
 
-/* global Alpine */
-
 /**
  * 悬浮 Dock 控制器
  * 模板使用：templates/modules/floating-dock.html, templates/modules/post/floating-dock.html
@@ -15,25 +13,29 @@ function createFloatingDock() {
     isCommentDrawerOpen: false,
     scrollTimeout: null,
     scrollPercent: 0,
+    _scrollHandler: null,
 
     init() {
       this.updateVisibility();
 
       let ticking = false;
+      this._scrollHandler = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.updateVisibility();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      window.addEventListener('scroll', this._scrollHandler, { passive: true });
+    },
 
-      window.addEventListener(
-        "scroll",
-        () => {
-          if (!ticking) {
-            requestAnimationFrame(() => {
-              this.updateVisibility();
-              ticking = false;
-            });
-            ticking = true;
-          }
-        },
-        { passive: true },
-      );
+    destroy() {
+      if (this._scrollHandler) {
+        window.removeEventListener('scroll', this._scrollHandler);
+        this._scrollHandler = null;
+      }
     },
 
     updateVisibility() {
@@ -48,27 +50,27 @@ function createFloatingDock() {
     scrollToTop() {
       window.scrollTo({
         top: 0,
-        behavior: "smooth",
+        behavior: 'smooth'
       });
     },
 
     // 文章页专用方法
     openShareModal() {
-      const checkbox = document.getElementById("share-drawer");
+      const checkbox = document.getElementById('share-drawer');
       if (checkbox) {
         checkbox.checked = true;
         // 触发 Alpine 的响应式更新
-        checkbox.dispatchEvent(new Event("change"));
+        checkbox.dispatchEvent(new Event('change'));
       }
     },
 
     toggleCommentDrawer() {
       this.isCommentDrawerOpen = !this.isCommentDrawerOpen;
-      const checkbox = document.getElementById("comment-drawer");
+      const checkbox = document.getElementById('comment-drawer');
       if (checkbox) {
         checkbox.checked = this.isCommentDrawerOpen;
       }
-    },
+    }
   };
 }
 
@@ -80,19 +82,20 @@ function createFloatingDock() {
 /**
  * 通用分享弹窗组件
  * 模板使用：templates/modules/share-modal.html
- *
+ * 
  * 支持的 data 属性：
  * - data-share-url: 分享链接
  * - data-share-title: 分享标题
  * - data-share-item-ids: 启用的平台ID列表（逗号分隔）
- *
+ * 
  * 触发方式：$dispatch('open-share-modal')
  */
 function createShareModal() {
   return {
     // 页面信息
-    permalink: "",
-    title: "",
+    permalink: '',
+    title: '',
+    qrcodePageUrl: '',
 
     // 状态
     isOpen: false,
@@ -104,80 +107,32 @@ function createShareModal() {
     // 预设的所有分享平台（含颜色）
     presetShareItems: [
       { id: "wechat", name: "微信", icon: "icon-[simple-icons--wechat]", color: "#07c160", type: "qrcode" },
-      {
-        id: "x",
-        name: "X",
-        icon: "icon-[simple-icons--x]",
-        color: "#000000",
-        type: "url",
-        url: "https://twitter.com/intent/tweet?url={url}&text={title}",
-      },
-      {
-        id: "telegram",
-        name: "Telegram",
-        icon: "icon-[simple-icons--telegram]",
-        color: "#26a5e4",
-        type: "url",
-        url: "https://telegram.me/share/url?url={url}&text={title}",
-      },
-      {
-        id: "facebook",
-        name: "Facebook",
-        icon: "icon-[simple-icons--facebook]",
-        color: "#1877f2",
-        type: "url",
-        url: "https://facebook.com/sharer/sharer.php?u={url}",
-      },
-      {
-        id: "qq",
-        name: "QQ",
-        icon: "icon-[simple-icons--tencentqq]",
-        color: "#12b7f5",
-        type: "url",
-        url: "https://connect.qq.com/widget/shareqq/index.html?url={url}&title={title}",
-      },
-      {
-        id: "qzone",
-        name: "QQ空间",
-        icon: "icon-[simple-icons--qzone]",
-        color: "#fece00",
-        type: "url",
-        url: "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}",
-      },
-      {
-        id: "weibo",
-        name: "微博",
-        icon: "icon-[simple-icons--sinaweibo]",
-        color: "#e6162d",
-        type: "url",
-        url: "https://service.weibo.com/share/share.php?url={url}&title={title}",
-      },
-      {
-        id: "douban",
-        name: "豆瓣",
-        icon: "icon-[simple-icons--douban]",
-        color: "#007722",
-        type: "url",
-        url: "https://www.douban.com/share/service?href={url}&name={title}",
-      },
-      { id: "native", name: "更多", icon: "icon-[heroicons--share]", color: "#6366f1", type: "native" },
+      { id: "x", name: "X", icon: "icon-[simple-icons--x]", color: "#000000", type: "url", url: "https://twitter.com/intent/tweet?url={url}&text={title}" },
+      { id: "telegram", name: "Telegram", icon: "icon-[simple-icons--telegram]", color: "#26a5e4", type: "url", url: "https://telegram.me/share/url?url={url}&text={title}" },
+      { id: "facebook", name: "Facebook", icon: "icon-[simple-icons--facebook]", color: "#1877f2", type: "url", url: "https://facebook.com/sharer/sharer.php?u={url}" },
+      { id: "qq", name: "QQ", icon: "icon-[simple-icons--tencentqq]", color: "#12b7f5", type: "url", url: "https://connect.qq.com/widget/shareqq/index.html?url={url}&title={title}" },
+      { id: "qzone", name: "QQ空间", icon: "icon-[simple-icons--qzone]", color: "#fece00", type: "url", url: "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}" },
+      { id: "weibo", name: "微博", icon: "icon-[simple-icons--sinaweibo]", color: "#e6162d", type: "url", url: "https://service.weibo.com/share/share.php?url={url}&title={title}" },
+      { id: "douban", name: "豆瓣", icon: "icon-[simple-icons--douban]", color: "#007722", type: "url", url: "https://www.douban.com/share/service?href={url}&name={title}" },
+      { id: "native", name: "更多", icon: "icon-[heroicons--share]", color: "#6366f1", type: "native" }
     ],
 
     // 初始化
     init() {
       // 从 data 属性读取配置
-      const shareUrl = this.$el.dataset.shareUrl || this.$el.dataset.postUrl || "";
-      const shareTitle = this.$el.dataset.shareTitle || this.$el.dataset.postTitle || "";
-      const shareItemIdsStr = this.$el.dataset.shareItemIds || "";
+      const shareUrl = this.$el.dataset.shareUrl || this.$el.dataset.postUrl || '';
+      const shareTitle = this.$el.dataset.shareTitle || this.$el.dataset.postTitle || '';
+      const shareItemIdsStr = this.$el.dataset.shareItemIds || '';
+      this.qrcodePageUrl = this.$el.dataset.qrcodePageUrl || '/assets/qrcode/qrcode-share.html';
 
-      this.shareItemIds = shareItemIdsStr ? shareItemIdsStr.split(",").map((s) => s.trim()) : [];
+      this.shareItemIds = shareItemIdsStr ? shareItemIdsStr.split(',').map(s => s.trim()) : [];
       this.title = shareTitle || document.title;
 
       // 设置分享链接（转换为绝对 URL）
       if (shareUrl) {
-        if (shareUrl.startsWith("/")) {
+        if (shareUrl.startsWith('/')) {
           this.permalink = window.location.origin + shareUrl;
-        } else if (shareUrl.startsWith("http")) {
+        } else if (shareUrl.startsWith('http')) {
           this.permalink = shareUrl;
         } else {
           this.permalink = window.location.href;
@@ -195,7 +150,9 @@ function createShareModal() {
       if (!this.shareItemIds || this.shareItemIds.length === 0) {
         return this.presetShareItems;
       }
-      return this.shareItemIds.map((id) => this.presetShareItems.find((item) => item.id === id)).filter(Boolean);
+      return this.shareItemIds
+        .map(id => this.presetShareItems.find(item => item.id === id))
+        .filter(Boolean);
       // 注意：不再过滤 native 类型，让所有配置的平台都显示
       // 点击时再判断浏览器是否支持
     },
@@ -203,13 +160,13 @@ function createShareModal() {
     // 打开弹窗
     openModal() {
       this.isOpen = true;
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     },
 
     // 关闭弹窗
     closeModal() {
       this.isOpen = false;
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     },
 
     // 复制链接
@@ -217,42 +174,35 @@ function createShareModal() {
       try {
         await navigator.clipboard.writeText(this.permalink);
         this.copied = true;
-        setTimeout(() => {
-          this.copied = false;
-        }, 2000);
-      } catch (err) {
+        setTimeout(() => { this.copied = false; }, 2000);
+      } catch {
         // 复制失败静默处理
       }
     },
 
     // 处理分享 - 直接在点击事件中处理，确保用户手势有效
     handleShare(platformId) {
-      const platform = this.activeShareItems.find((item) => item?.id === platformId);
+      const platform = this.activeShareItems.find(item => item?.id === platformId);
       if (!platform) {
         return;
       }
 
-      if (platform.type === "native") {
+
+      if (platform.type === 'native') {
         // 原生分享必须在用户手势中直接调用
         if (navigator.share) {
-          const self = this;
-          navigator
-            .share({
-              title: this.title,
-              url: this.permalink,
-            })
-            .then(() => {
-              self.closeModal();
-            })
-            .catch((err) => {
-              self.closeModal();
-            });
+          navigator.share({
+            title: this.title,
+            url: this.permalink
+          }).finally(() => {
+            this.closeModal();
+          });
         } else {
           // 不支持原生分享（非 HTTPS 或浏览器不支持）
           this.copyUrl();
           // 不关闭弹窗，让用户看到"已复制"提示
         }
-      } else if (platform.type === "qrcode") {
+      } else if (platform.type === 'qrcode') {
         this.closeModal();
         this.shareToWeChat();
       } else {
@@ -266,30 +216,24 @@ function createShareModal() {
       const shareUrl = platform.url
         .replace(/{url}/g, encodeURIComponent(this.permalink))
         .replace(/{title}/g, encodeURIComponent(this.title));
-      const width = 600,
-        height = 500;
+      const width = 600, height = 500;
       const left = (window.innerWidth - width) / 2;
       const top = (window.innerHeight - height) / 2;
-      window.open(
-        shareUrl,
-        `分享到${platform.name}`,
-        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes`,
-      );
+      window.open(shareUrl, `分享到${platform.name}`,
+        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes`);
     },
 
     // 微信二维码分享
     shareToWeChat() {
-      const width = 400,
-        height = 500;
+      const width = 400, height = 500;
       const left = (window.innerWidth - width) / 2;
       const top = (window.innerHeight - height) / 2;
-      const qrcodePageUrl = `/themes/liccsu-blog-theme/assets/qrcode/qrcode-share.html?url=${encodeURIComponent(this.permalink)}`;
-      window.open(
-        qrcodePageUrl,
-        "微信扫码分享",
-        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no`,
-      );
-    },
+      const qrcodePage = new URL(this.qrcodePageUrl, window.location.origin);
+      qrcodePage.searchParams.set('url', this.permalink);
+      const qrcodePageUrl = qrcodePage.toString();
+      window.open(qrcodePageUrl, '微信扫码分享',
+        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,status=no,scrollbars=no,resizable=no`);
+    }
   };
 }
 
@@ -300,29 +244,38 @@ function createShareModal() {
 function createCommentDrawer() {
   return {
     isOpen: false,
+    _closeHandler: null,
 
     init() {
       // 监听抽屉状态
-      const checkbox = document.getElementById("comment-drawer");
+      const checkbox = document.getElementById('comment-drawer');
       if (checkbox) {
-        checkbox.addEventListener("change", (e) => {
+        checkbox.addEventListener('change', (e) => {
           this.isOpen = e.target.checked;
         });
       }
 
       // 监听关闭抽屉事件
-      window.addEventListener("close-comment-drawer", () => {
+      this._closeHandler = () => {
         this.closeDrawer();
-      });
+      };
+      window.addEventListener('close-comment-drawer', this._closeHandler);
+    },
+
+    destroy() {
+      if (this._closeHandler) {
+        window.removeEventListener('close-comment-drawer', this._closeHandler);
+        this._closeHandler = null;
+      }
     },
 
     closeDrawer() {
       this.isOpen = false;
-      const checkbox = document.getElementById("comment-drawer");
+      const checkbox = document.getElementById('comment-drawer');
       if (checkbox) {
         checkbox.checked = false;
       }
-    },
+    }
   };
 }
 
@@ -337,19 +290,22 @@ function createHeaderController() {
     showMoments: true,
     showPublishModal: false,
     isTablet: false,
+    _scrollHandler: null,
+    _resizeHandler: null,
 
     init() {
       // 检测设备类型
       this.detectDevice();
 
       // 监听窗口大小变化
-      window.addEventListener("resize", () => {
+      this._resizeHandler = () => {
         this.detectDevice();
-      });
+      };
+      window.addEventListener('resize', this._resizeHandler);
 
       // 监听滚动事件，使用节流优化性能
       let ticking = false;
-      window.addEventListener("scroll", () => {
+      this._scrollHandler = () => {
         if (!ticking) {
           requestAnimationFrame(() => {
             this.updateScrollOffset();
@@ -357,7 +313,19 @@ function createHeaderController() {
           });
           ticking = true;
         }
-      });
+      };
+      window.addEventListener('scroll', this._scrollHandler);
+    },
+
+    destroy() {
+      if (this._scrollHandler) {
+        window.removeEventListener('scroll', this._scrollHandler);
+        this._scrollHandler = null;
+      }
+      if (this._resizeHandler) {
+        window.removeEventListener('resize', this._resizeHandler);
+        this._resizeHandler = null;
+      }
     },
 
     detectDevice() {
@@ -374,7 +342,7 @@ function createHeaderController() {
       if (this.isTablet) {
         this.scrollOffset *= 0.7;
       }
-    },
+    }
   };
 }
 
@@ -385,33 +353,38 @@ function createHeaderController() {
 function createNavbarController() {
   return {
     scrolled: false,
+    _scrollHandler: null,
 
     init() {
       // 使用 requestAnimationFrame 节流的滚动监听
       let ticking = false;
 
-      window.addEventListener(
-        "scroll",
-        () => {
-          if (!ticking) {
-            requestAnimationFrame(() => {
-              const newScrolled = window.scrollY > 20;
-              // 只在状态变化时更新 DOM
-              if (this.scrolled !== newScrolled) {
-                this.scrolled = newScrolled;
-                const navbar = this.$el.querySelector(".navbar");
-                if (navbar) {
-                  navbar.classList.toggle("scrolled", this.scrolled);
-                }
+      this._scrollHandler = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            const newScrolled = window.scrollY > 20;
+            // 只在状态变化时更新 DOM
+            if (this.scrolled !== newScrolled) {
+              this.scrolled = newScrolled;
+              const navbar = this.$el.querySelector('.navbar');
+              if (navbar) {
+                navbar.classList.toggle('scrolled', this.scrolled);
               }
-              ticking = false;
-            });
-            ticking = true;
-          }
-        },
-        { passive: true },
-      );
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      window.addEventListener('scroll', this._scrollHandler, { passive: true });
     },
+
+    destroy() {
+      if (this._scrollHandler) {
+        window.removeEventListener('scroll', this._scrollHandler);
+        this._scrollHandler = null;
+      }
+    }
   };
 }
 
@@ -419,197 +392,181 @@ function createNavbarController() {
  * 主题切换控制器
  * 模板使用：templates/modules/nav.html
  * 统一管理整个应用的主题状态
- * 支持三种模式：light（浅色）、dark（深色）、system（跟随系统）
  * 在 <html> 元素上添加 data-color-scheme 属性，便于 CSS 统一判断亮暗模式
  */
 function createThemeToggle() {
   return {
-    mode: "system",
     isDark: false,
-    isDropdownOpen: false,
-    lightTheme: "",
-    darkTheme: "",
+    isAuto: false,
+    lightTheme: '',
+    darkTheme: '',
     mediaQuery: null,
-    _safariBackdrop: null, // Safari 状态栏修复用的临时遮罩层引用
+    _onSystemChange: null,
+    _safariBackdrop: null,
 
     init() {
-      // 读取主题配置
-      this.lightTheme = this.$el.dataset.lightTheme || "light";
-      this.darkTheme = this.$el.dataset.darkTheme || "dark";
-      const defaultTheme = this.$el.dataset.defaultTheme || "system";
+      this.lightTheme = this.$el.dataset.lightTheme || 'light';
+      this.darkTheme = this.$el.dataset.darkTheme || 'dark';
+      const defaultTheme = this.normalizeMode(this.$el.dataset.defaultTheme || 'auto');
 
-      // 从 localStorage 读取用户偏好，并处理向后兼容
-      let savedMode = localStorage.getItem("theme-mode");
-      if (savedMode === "light_theme") savedMode = "light";
-      if (savedMode === "dark_theme") savedMode = "dark";
+      const savedTheme = this.normalizeMode(localStorage.getItem('theme-mode'));
+      const effectiveMode = savedTheme || defaultTheme;
 
-      // 确定当前模式
-      this.mode = savedMode || this.mapDefaultTheme(defaultTheme);
+      this._onSystemChange = this.onSystemChange.bind(this);
 
-      // 计算 isDark 状态
-      this.updateIsDark();
-
-      // 监听系统主题变化（仅在 system 模式下响应）
-      this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      this.mediaQuery.addEventListener("change", (e) => {
-        if (this.mode === "system") {
-          this.isDark = e.matches;
-          this.applyTheme();
-        }
-      });
-
-      // 注意：不调用 applyTheme()，因为主题已经在 <head> 内联脚本中设置好了
-      // 这里只是同步状态到组件，避免闪烁
-    },
-
-    /**
-     * 映射默认主题配置值到模式
-     */
-    mapDefaultTheme(value) {
-      if (value === "light_theme") return "light";
-      if (value === "dark_theme") return "dark";
-      return value; // 'system' 或其他
-    },
-
-    /**
-     * 根据当前模式计算 isDark 状态
-     */
-    updateIsDark() {
-      if (this.mode === "system") {
-        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (effectiveMode === 'auto') {
+        this.isAuto = true;
+        this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        this.isDark = this.mediaQuery.matches;
+        this.addSystemThemeListener();
       } else {
-        this.isDark = this.mode === "dark";
+        this.isDark = effectiveMode === 'dark_theme';
       }
     },
 
-    /**
-     * 设置主题模式
-     */
-    setMode(newMode) {
-      this.mode = newMode;
-      this.updateIsDark();
-      localStorage.setItem("theme-mode", newMode);
-      this.applyTheme();
-      this.isDropdownOpen = false;
+    normalizeMode(mode) {
+      if (mode === 'system') return 'auto';
+      if (mode === 'light') return 'light_theme';
+      if (mode === 'dark') return 'dark_theme';
+      return mode;
     },
 
-    /**
-     * 应用主题到 HTML 元素
-     * 同时设置 data-theme（具体主题名）和 data-color-scheme（light/dark 标识）
-     * 切换时临时禁用过渡，防止闪烁
-     */
+    addSystemThemeListener() {
+      if (!this.mediaQuery || !this._onSystemChange) return;
+      if (typeof this.mediaQuery.addEventListener === 'function') {
+        this.mediaQuery.addEventListener('change', this._onSystemChange);
+      } else if (typeof this.mediaQuery.addListener === 'function') {
+        this.mediaQuery.addListener(this._onSystemChange);
+      }
+    },
+
+    removeSystemThemeListener() {
+      if (!this.mediaQuery || !this._onSystemChange) return;
+      if (typeof this.mediaQuery.removeEventListener === 'function') {
+        this.mediaQuery.removeEventListener('change', this._onSystemChange);
+      } else if (typeof this.mediaQuery.removeListener === 'function') {
+        this.mediaQuery.removeListener(this._onSystemChange);
+      }
+    },
+
+    onSystemChange(e) {
+      if (!this.isAuto) return;
+      this.isDark = e.matches;
+      this.applyTheme();
+    },
+
+    toggleTheme() {
+      if (this.isAuto) {
+        // auto → light
+        this.isAuto = false;
+        this.isDark = false;
+        localStorage.setItem('theme-mode', 'light_theme');
+      } else if (!this.isDark) {
+        // light → dark
+        this.isDark = true;
+        localStorage.setItem('theme-mode', 'dark_theme');
+      } else {
+        // dark → auto
+        this.isAuto = true;
+        localStorage.setItem('theme-mode', 'auto');
+        this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        this.isDark = this.mediaQuery.matches;
+        this.addSystemThemeListener();
+        this.applyTheme();
+        return;
+      }
+
+      // 离开 auto 模式时移除监听
+      if (!this.isAuto && this.mediaQuery) {
+        this.removeSystemThemeListener();
+        this.mediaQuery = null;
+      }
+
+      this.applyTheme();
+    },
+
     applyTheme() {
       const themeName = this.isDark ? this.darkTheme : this.lightTheme;
-      const themeMode = this.isDark ? "dark" : "light";
+      const themeMode = this.isDark ? 'dark' : 'light';
       const html = document.documentElement;
 
-      // 临时禁用所有过渡
-      html.classList.add("theme-transitioning");
+      html.classList.add('theme-transitioning');
 
-      // 应用新主题
-      html.setAttribute("data-theme", themeName);
-      html.setAttribute("data-color-scheme", themeMode);
+      html.setAttribute('data-theme', themeName);
+      html.setAttribute('data-color-scheme', themeMode);
 
-      // 下一帧恢复过渡
-      requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          html.classList.remove("theme-transitioning");
+          requestAnimationFrame(() => {
+            html.classList.remove('theme-transitioning');
+          });
         });
-      });
+        this.updateThemeColor();
+        this.triggerSafariStatusBarUpdate();
+      },
 
-      // 更新移动端状态栏颜色
-      this.updateThemeColor();
-
-      // Safari 状态栏颜色修复：模拟 drawer-side 关闭
-      this.triggerSafariStatusBarUpdate();
-    },
-
-    /**
-     * 触发 Safari 状态栏颜色更新
-     * 通过创建并移除临时遮罩层，触发 Safari 重新读取 theme-color
-     */
-    triggerSafariStatusBarUpdate() {
-      // 如果已有遮罩层，先移除（防止竞态条件）
-      if (this._safariBackdrop) {
-        this._safariBackdrop.remove();
-        this._safariBackdrop = null;
-      }
-
-      // 根据当前主题选择遮罩层颜色（浅色主题用白色，深色主题用黑色）
-      const bgColor = this.isDark ? "rgba(0, 0, 0, 0.1)" : "rgba(255, 255, 255, 0.1)";
-
-      // 创建临时遮罩层
-      const backdrop = document.createElement("div");
-      backdrop.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 16px;
-        z-index: 99999;
-        background-color: ${bgColor};
-        pointer-events: none;
-      `;
-      document.body.appendChild(backdrop);
-      this._safariBackdrop = backdrop;
-
-      // 延迟后移除遮罩层，触发 Safari 重新计算状态栏颜色
-      setTimeout(() => {
-        if (this._safariBackdrop === backdrop) {
-          backdrop.remove();
+      triggerSafariStatusBarUpdate() {
+        if (this._safariBackdrop) {
+          this._safariBackdrop.remove();
           this._safariBackdrop = null;
         }
-      }, 50);
-    },
 
-    /**
-     * 更新移动端状态栏颜色
-     * 通过 meta[name="theme-color"] 标签控制
-     * Safari: 使用带 media 属性的 meta 标签跟随系统主题（JS 动态修改无效）
-     * Chrome Android 等: 支持 JS 动态修改无 media 属性的 meta 标签
-     */
-    updateThemeColor() {
-      requestAnimationFrame(() => {
-        // 获取当前主题的背景色并转换为 HEX
-        const hexColor = this.getThemeBackgroundColor();
+        const bgColor = this.isDark ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
+        const backdrop = document.createElement('div');
+        backdrop.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 16px;
+          z-index: 99999;
+          background-color: ${bgColor};
+          pointer-events: none;
+        `;
+        document.body.appendChild(backdrop);
+        this._safariBackdrop = backdrop;
 
-        // 为支持动态更新的浏览器（如 Chrome Android）更新无 media 属性的 meta 标签
-        let dynamicMeta = document.querySelector('meta[name="theme-color"]:not([media])');
-        if (!dynamicMeta) {
-          dynamicMeta = document.createElement("meta");
-          dynamicMeta.name = "theme-color";
-          document.head.appendChild(dynamicMeta);
+        setTimeout(() => {
+          if (this._safariBackdrop === backdrop) {
+            backdrop.remove();
+            this._safariBackdrop = null;
+          }
+        }, 50);
+      },
+
+      updateThemeColor() {
+        requestAnimationFrame(() => {
+          const hexColor = this.getThemeBackgroundColor();
+          let dynamicMeta = document.querySelector('meta[name="theme-color"]:not([media])');
+          if (!dynamicMeta) {
+            dynamicMeta = document.createElement('meta');
+            dynamicMeta.name = 'theme-color';
+            document.head.appendChild(dynamicMeta);
+          }
+          dynamicMeta.content = hexColor;
+        });
+      },
+
+      getThemeBackgroundColor() {
+        const temp = document.createElement('div');
+        temp.style.cssText = 'position:absolute;visibility:hidden;background-color:oklch(var(--b1))';
+        document.body.appendChild(temp);
+        const computedColor = getComputedStyle(temp).backgroundColor;
+        temp.remove();
+
+        const match = computedColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (match) {
+          const r = parseInt(match[1]).toString(16).padStart(2, '0');
+          const g = parseInt(match[2]).toString(16).padStart(2, '0');
+          const b = parseInt(match[3]).toString(16).padStart(2, '0');
+          return `#${r}${g}${b}`;
         }
-        dynamicMeta.content = hexColor;
-      });
-    },
 
-    /**
-     * 获取当前主题的背景色（HEX 格式）
-     * 从 CSS 变量 --b1 获取 oklch 值并转换为 HEX
-     */
-    getThemeBackgroundColor() {
-      // 创建临时元素获取计算后的颜色
-      const temp = document.createElement("div");
-      temp.style.cssText = "position:absolute;visibility:hidden;background-color:oklch(var(--b1))";
-      document.body.appendChild(temp);
-      const computedColor = getComputedStyle(temp).backgroundColor;
-      temp.remove();
-
-      // 将 rgb/rgba 转换为 HEX
-      const match = computedColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-      if (match) {
-        const r = parseInt(match[1]).toString(16).padStart(2, "0");
-        const g = parseInt(match[2]).toString(16).padStart(2, "0");
-        const b = parseInt(match[3]).toString(16).padStart(2, "0");
-        return `#${r}${g}${b}`;
+        return this.isDark ? '#1f2937' : '#ffffff';
       }
+    };
+  }
 
-      // 回退到默认颜色
-      return this.isDark ? "#1f2937" : "#ffffff";
-    },
-  };
-}
+
 
 /**
  * 简单悬浮 Dock 控制器
@@ -619,24 +576,29 @@ function createThemeToggle() {
 function createSimpleFloatingDock() {
   return {
     isVisible: false,
+    _scrollHandler: null,
 
     init() {
       this.updateVisibility();
 
       let ticking = false;
-      window.addEventListener(
-        "scroll",
-        () => {
-          if (!ticking) {
-            requestAnimationFrame(() => {
-              this.updateVisibility();
-              ticking = false;
-            });
-            ticking = true;
-          }
-        },
-        { passive: true },
-      );
+      this._scrollHandler = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.updateVisibility();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      window.addEventListener('scroll', this._scrollHandler, { passive: true });
+    },
+
+    destroy() {
+      if (this._scrollHandler) {
+        window.removeEventListener('scroll', this._scrollHandler);
+        this._scrollHandler = null;
+      }
     },
 
     updateVisibility() {
@@ -645,8 +607,8 @@ function createSimpleFloatingDock() {
     },
 
     scrollToTop() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    },
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 }
 
@@ -658,24 +620,29 @@ function createSimpleFloatingDock() {
 function createDocFloatingDock() {
   return {
     isVisible: false,
+    _scrollHandler: null,
 
     init() {
       this.updateVisibility();
 
       let ticking = false;
-      window.addEventListener(
-        "scroll",
-        () => {
-          if (!ticking) {
-            requestAnimationFrame(() => {
-              this.updateVisibility();
-              ticking = false;
-            });
-            ticking = true;
-          }
-        },
-        { passive: true },
-      );
+      this._scrollHandler = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.updateVisibility();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      window.addEventListener('scroll', this._scrollHandler, { passive: true });
+    },
+
+    destroy() {
+      if (this._scrollHandler) {
+        window.removeEventListener('scroll', this._scrollHandler);
+        this._scrollHandler = null;
+      }
     },
 
     updateVisibility() {
@@ -684,20 +651,20 @@ function createDocFloatingDock() {
     },
 
     scrollToTop() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     },
 
     toggleCommentDrawer() {
-      window.dispatchEvent(new CustomEvent("toggle-doc-comment-drawer"));
+      window.dispatchEvent(new CustomEvent('toggle-doc-comment-drawer'));
     },
 
     toggleTocDrawer() {
-      window.dispatchEvent(new CustomEvent("toggle-doc-toc-drawer"));
+      window.dispatchEvent(new CustomEvent('toggle-doc-toc-drawer'));
     },
 
     toggleSidebarDrawer() {
-      window.dispatchEvent(new CustomEvent("toggle-doc-sidebar-drawer"));
-    },
+      window.dispatchEvent(new CustomEvent('toggle-doc-sidebar-drawer'));
+    }
   };
 }
 
@@ -711,7 +678,7 @@ function createDocCommentDrawer() {
 
     closeDrawer() {
       this.isOpen = false;
-    },
+    }
   };
 }
 
@@ -723,24 +690,29 @@ function createSideFloatingDock() {
   return {
     isVisible: false,
     isExpanded: false,
+    _scrollHandler: null,
 
     init() {
       this.updateVisibility();
 
       let ticking = false;
-      window.addEventListener(
-        "scroll",
-        () => {
-          if (!ticking) {
-            requestAnimationFrame(() => {
-              this.updateVisibility();
-              ticking = false;
-            });
-            ticking = true;
-          }
-        },
-        { passive: true },
-      );
+      this._scrollHandler = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.updateVisibility();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      window.addEventListener('scroll', this._scrollHandler, { passive: true });
+    },
+
+    destroy() {
+      if (this._scrollHandler) {
+        window.removeEventListener('scroll', this._scrollHandler);
+        this._scrollHandler = null;
+      }
     },
 
     updateVisibility() {
@@ -753,650 +725,635 @@ function createSideFloatingDock() {
     },
 
     scrollToTop() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    },
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 }
 
 /**
- * 欢迎天气卡片
+ * 欢迎天气卡片（多源支持）
  * 模板使用：templates/modules/widgets/welcome-card.html
+ * 定位源：pconline CF Worker（默认）/ 高德 IP 定位
+ * 天气源：心知天气（默认免费）/ 高德天气 / 和风天气
  */
 function welcomeWeatherCard() {
-  // 缓存配置（v12 版本 - 心知天气 Seniverse 支持）
-  const CACHE_KEY = "sky_weather_cache_v12";
-  const CACHE_DURATION = 30 * 60 * 1000; // 30 分钟缓存
+  const CACHE_KEY = 'sky_weather_cache_v13';
+  const CACHE_DURATION = 30 * 60 * 1000;
 
-  // 清除旧版本缓存
+  // 清除旧缓存
   try {
-    const oldKeys = [
-      "sky_weather_cache",
-      "sky_weather_cache_v2",
-      "sky_weather_cache_v3",
-      "sky_weather_cache_v4",
-      "sky_weather_cache_v5",
-      "sky_weather_cache_v6",
-      "sky_weather_cache_v7",
-      "sky_weather_cache_v8",
-      "sky_weather_cache_v9",
-      "sky_weather_cache_v10",
-      "sky_weather_cache_v11",
-    ];
-    oldKeys.forEach((key) => {
-      if (localStorage.getItem(key)) {
-        localStorage.removeItem(key);
-      }
-    });
-  } catch (e) {
-    /* ignore */
+    for (let i = 1; i <= 12; i++) {
+      const key = i === 1 ? 'sky_weather_cache' : `sky_weather_cache_v${i}`;
+      localStorage.removeItem(key);
+    }
+  } catch {
+    // 忽略旧缓存清理失败
   }
 
   return {
-    loading: true,
-    weather: null,
-    location: "",
-    errorMsg: "",
-    greeting: "",
-    currentDate: "",
-    weatherIcon: "",
-    weatherIconSvg: "",
-    weatherBg: "",
+    loading: true, weather: null, location: '', errorMsg: '', greeting: '', currentDate: '',
+    weatherIcon: '', weatherIconSvg: '', weatherBg: '', config: {},
 
     init() {
+      // 天气源已固化为自有后端的无感 Open-Meteo，不再需要复杂的来源和 Key 管理
+      this.config = {
+        enabled: this.$el.dataset.weatherProvider !== 'none'
+      };
+      if (!this.config.enabled) return;
+
       this.updateGreeting();
       this.updateDate();
-      // 延迟加载天气，不阻塞首屏渲染
-      if ("requestIdleCallback" in window) {
+      if ('requestIdleCallback' in window) {
         requestIdleCallback(() => this.loadWeather(), { timeout: 2000 });
       } else {
         setTimeout(() => this.loadWeather(), 100);
-      }
-
-      // 监听天气刷新请求（来自首页天气效果的定时刷新）
-      window.addEventListener("sky-weather-refresh-request", () => {
-        this.forceRefreshWeather();
-      });
-    },
-
-    /**
-     * 强制刷新天气（忽略缓存）
-     */
-    async forceRefreshWeather() {
-      try {
-        // 清除缓存
-        localStorage.removeItem(CACHE_KEY);
-        // 重新获取天气
-        await this.fetchWeatherByIP();
-      } catch (e) {
-        // Silent fail
       }
     },
 
     updateGreeting() {
       const hour = new Date().getHours();
-      if (hour >= 5 && hour < 9) {
-        this.greeting = "早上好 ☀️";
-      } else if (hour >= 9 && hour < 12) {
-        this.greeting = "上午好 🌤️";
-      } else if (hour >= 12 && hour < 14) {
-        this.greeting = "中午好 🌞";
-      } else if (hour >= 14 && hour < 18) {
-        this.greeting = "下午好 ⛅";
-      } else if (hour >= 18 && hour < 22) {
-        this.greeting = "晚上好 🌙";
-      } else {
-        this.greeting = "夜深了 🌟";
-      }
+      if (hour >= 5 && hour < 9) this.greeting = '早上好 ☀️';
+      else if (hour >= 9 && hour < 12) this.greeting = '上午好 🌤️';
+      else if (hour >= 12 && hour < 14) this.greeting = '中午好 🌞';
+      else if (hour >= 14 && hour < 18) this.greeting = '下午好 ⛅';
+      else if (hour >= 18 && hour < 22) this.greeting = '晚上好 🌙';
+      else this.greeting = '夜深了 🌟';
     },
 
     updateDate() {
       const now = new Date();
-      const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+      const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
       this.currentDate = `${now.getMonth() + 1}月${now.getDate()}日 ${weekdays[now.getDay()]}`;
     },
 
-    // 默认天气数据（北京）
     getDefaultWeather() {
       return {
-        location: "北京",
-        weather: { temp: "--", description: "加载中...", humidity: "--", wind: "--" },
-        weatherIcon: "https://basmilius.github.io/weather-icons/production/fill/all/clear-day.svg",
-        weatherBg: "sunny",
+        location: '--',
+        weather: { temp: '--', description: '加载中...', humidity: '--', wind: '--', feels_like: '--' },
+        weatherIcon: 'https://basmilius.github.io/weather-icons/production/fill/all/clear-day.svg',
+        weatherBg: 'sunny'
       };
     },
 
-    // 从缓存加载或请求新数据
+    // ═══════ 主流程 ═══════
+
     async loadWeather() {
-      console.log("[Weather] 开始加载天气...");
-      // 1. 优先使用缓存
       const cached = this.getCache();
       if (cached) {
-        console.log("[Weather] 命中缓存，城市:", cached.location);
+        if (window.SYS_WEATHER_DEBUG) console.log('[Weather] 命中缓存，城市:', cached.location);
         this.applyWeatherData(cached);
         this.loading = false;
+        // 缓存命中也需要通知 index.js 的背景引擎同步天气状态
+        // 通过 setTimeout 确保 index.js 的监听器已完成注册
+        if (cached.weatherBg) {
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('sky-weather-updated', {
+              detail: {
+                weatherBg: cached.weatherBg,
+                location: cached.location,
+                rawData: cached.weather // 包含 temp, humidity, wind 等物理参数
+              }
+            }));
+          }, 200);
+        }
         return;
       }
-
-      console.log("[Weather] 无缓存，显示默认数据，后台获取真实天气");
-      // 2. 无缓存时，立即显示默认数据
+      if (window.SYS_WEATHER_DEBUG) console.log('[Weather] 无缓存，显示默认数据，后台获取真实天气');
       this.applyWeatherData(this.getDefaultWeather());
       this.loading = false;
 
-      // 3. 后台获取真实天气
       try {
-        await this.fetchWeatherByIP();
-      } catch (e) {
-        console.warn("[Weather] IP 定位或天气获取失败:", e.message);
+        const loc = await this.getLocationByPconline();
+        if (window.SYS_WEATHER_DEBUG) console.log('[Weather] 定位结果:', loc.city, '(来源:', loc.source + ')');
+        if (!loc.city || loc.city === '未知') { console.warn('[Weather] 定位失败'); return; }
+        await this.getWeatherByWttrProxy(loc);
+      } catch (error) {
+        console.warn('[Weather] 天气获取失败:', error.message);
+        this.errorMsg = '服务维护中';
       }
     },
 
-    // 通过 IP 获取城市名，然后查询天气
-    async fetchWeatherByIP() {
-      console.log("[Weather] 开始 IP 定位...");
-      const locationData = await this.getLocationFromIP();
-      const cityName = locationData.city;
-      console.log(
-        "[Weather] IP 定位结果:",
-        cityName,
-        "(来源:",
-        locationData.source + ")",
-      );
+    // ═══════ IP 定位路由 ═══════
 
-      if (!cityName || cityName === "未知") {
-        throw new Error("无法获取城市名");
+    async getLocationByPconline() {
+      const fallbackRegion = this.$el.dataset.fallbackRegion || '北京';
+
+      try {
+        const data = await this.fetchWithTimeout('https://pconline.xoku.cn/', {}, 6000).then(r => r.json());
+        const rawCity = data.city || data.addr || '';
+        const city = rawCity.replace('市', '').trim() || '未知';
+        const bad = city.includes('美国') || city.includes('CloudFlare') || city.includes('节点') || city === '未知';
+
+        if (city && !bad) {
+          return { city, adcode: '', source: 'pconline' };
+        }
+
+        if (window.SYS_WEATHER_DEBUG) console.warn(`[Weather] IP定位返回异常城市(${city})，已降级启用默认地区: ${fallbackRegion}`);
+        return { city: fallbackRegion, adcode: '', source: 'fallback_region' };
+      } catch (error) {
+        if (window.SYS_WEATHER_DEBUG) console.warn('[Weather] pconline 请求失败或被拦截:', error.message, `| 已降级启用默认地区: ${fallbackRegion}`);
+        return { city: fallbackRegion, adcode: '', source: 'fallback_region' };
       }
-
-      await this.fetchWeatherByCity(cityName);
     },
 
-    // 带超时的 fetch 封装
+    // ═══════ 天气查询路由 ═══════
+
+    async getWeatherByWttrProxy(loc) {
+      if (window.SYS_WEATHER_DEBUG) console.log('[Weather] Open-Meteo CF 反代请求:', loc.city);
+      try {
+        const url = `https://pconline.xoku.cn/weather?city=${encodeURIComponent(loc.city)}`;
+        const res = await this.fetchWithTimeout(url, {}, 8000);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        if (data.error) throw new Error(data.error);
+        if (data.temp === undefined) throw new Error('返回数据格式异常');
+
+        // WMO weather_code 映射到 Basmilius 图标
+        const code = data.weather_code;
+        const iconInfo = this.getWeatherMapFromWmoCode(code);
+
+        const wd = {
+          location: data.location || loc.city,
+          weather: {
+            temp: data.temp,
+            feels_like: data.feels_like,
+            humidity: data.humidity,
+            wind_direction: data.wind_direction,
+            description: data.description,
+            wind: `${this.degToDir(data.wind_direction)} ${data.wind_speed}km/h`
+          },
+          weatherIcon: iconInfo.icon,
+          weatherBg: iconInfo.bg
+        };
+        if (window.SYS_WEATHER_DEBUG) console.log('[Weather] 天气请求成功:', wd.location + ',', wd.weather.description + ',', wd.weather.temp + '°C');
+        await this.loadSvgIcon(wd.weatherIcon);
+        wd.weatherIconSvg = this.weatherIconSvg;
+        this.applyWeatherData(wd);
+        this.setCache(wd);
+      } catch (error) {
+        console.warn('[Weather] 天气查询失败:', error.message);
+        throw error;
+      }
+    },
+
     fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), timeoutMs);
-      return fetch(url, { ...options, signal: controller.signal }).finally(() =>
-        clearTimeout(timer),
-      );
+      return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timer));
     },
 
-    // IP 定位：只用 pconline（CF Worker 代理），直接获取真实运营商 IP
-    // 备用 API（ip-api.com 等）会因代理/CDN 路由问题返回错误城市，已放弃
-    async getLocationFromIP() {
-      console.log("[Weather] 通过 pconline CF Worker 获取位置...");
-      try {
-        const data = await this.fetchWithTimeout(
-          "https://pconline.xoku.cn/",
-          {},
-          6000,
-        ).then((res) => res.json());
+    // ═══════ 天气代码 → 图标 & 背景映射 ═══════
 
-        const rawCity = data.city || data.addr || "";
-        const city = rawCity.replace("市", "").trim() || "未知";
-        console.log("[Weather] pconline 返回城市:", city, "原始数据:", data);
+    _isNight() { const h = new Date().getHours(); return h >= 18 || h < 6; },
+    _iconBase: 'https://basmilius.github.io/weather-icons/production/fill/all/',
 
-        // 如果用户开启了代理、iCloud 专用代理等，会定位到奇怪的地方
-        const isAbnormalCity =
-          city.includes("美国") ||
-          city.includes("CloudFlare") ||
-          city.includes("节点") ||
-          city === "未知";
+    // 风向角度 → 方位文字
+    degToDir(deg) {
+      if (deg == null) return '';
+      const dirs = ['北风', '东北偏北风', '东北风', '东北偏东风', '东风', '东南偏东风', '东南风', '东南偏南风', '南风', '西南偏南风', '西南风', '西南偏西风', '西风', '西北偏西风', '西北风', '西北偏北风'];
+      return dirs[Math.round(deg / 22.5) % 16];
+    },
 
-        if (city && !isAbnormalCity) {
-          return { city, source: "pconline" };
-        }
+    // WMO 标准天气代码映射 (Open-Meteo 使用)
+    getWeatherMapFromWmoCode(code) {
+      const n = this._isNight();
+      let icon;
+      let bg = n ? 'night-cloudy' : 'cloudy';
 
-        console.warn("[Weather] pconline 返回异常城市或使用了代理，降级为默认");
-        return { city: "未知", source: "fallback" };
-      } catch (e) {
-        console.warn(
-          "[Weather] pconline 请求失败:",
-          e.message,
-          "，降级为默认城市",
-        );
-        return { city: "未知", source: "fallback" };
+      if (code === 0) {
+        icon = n ? 'clear-night' : 'clear-day';
+        bg = n ? 'night-clear' : 'sunny';
+      } else if (code === 1 || code === 2) {
+        icon = n ? 'partly-cloudy-night' : 'partly-cloudy-day';
+        bg = n ? 'night-cloudy' : 'cloudy';
+      } else if (code === 3) {
+        icon = 'cloudy';
+        bg = n ? 'night-cloudy' : 'cloudy';
+      } else if (code === 45 || code === 48) {
+        icon = 'fog';
+        bg = 'foggy';
+      } else if (code >= 51 && code <= 57) {
+        icon = 'drizzle';
+        bg = 'rainy';
+      } else if (code >= 61 && code <= 67) {
+        icon = 'rain';
+        bg = 'rainy';
+      } else if (code >= 71 && code <= 77) {
+        icon = 'snow';
+        bg = 'snowy';
+      } else if (code >= 80 && code <= 82) {
+        icon = 'rain';
+        bg = code === 82 ? 'stormy' : 'rainy';
+      } else if (code === 85 || code === 86) {
+        icon = 'snow';
+        bg = 'snowy';
+      } else if (code >= 95 && code <= 99) {
+        icon = 'thunderstorms';
+        bg = 'stormy';
+      } else {
+        icon = n ? 'partly-cloudy-night' : 'partly-cloudy-day';
       }
+      return { icon: `${this._iconBase}${icon}.svg`, bg };
     },
 
-    // 城市名英中映射
-    translateCity(cityName) {
-      const cityMap = {
-        Beijing: "北京",
-        Shanghai: "上海",
-        Guangzhou: "广州",
-        Shenzhen: "深圳",
-        Hangzhou: "杭州",
-        Nanjing: "南京",
-        Chengdu: "成都",
-        Wuhan: "武汉",
-        "Xi'an": "西安",
-        Xian: "西安",
-        Chongqing: "重庆",
-        Tianjin: "天津",
-        Suzhou: "苏州",
-        Qingdao: "青岛",
-        Dalian: "大连",
-        Xiamen: "厦门",
-        Ningbo: "宁波",
-        Dongguan: "东莞",
-        Shenyang: "沈阳",
-        Zhengzhou: "郑州",
-        Changsha: "长沙",
-        Jinan: "济南",
-        Harbin: "哈尔滨",
-        Fuzhou: "福州",
-        Kunming: "昆明",
-        Hefei: "合肥",
-        Nanchang: "南昌",
-        Shijiazhuang: "石家庄",
-        Taiyuan: "太原",
-        Changchun: "长春",
-        Lanzhou: "兰州",
-        Guiyang: "贵阳",
-        Nanning: "南宁",
-        Urumqi: "乌鲁木齐",
-        Hohhot: "呼和浩特",
-        Lhasa: "拉萨",
-        Xining: "西宁",
-        Yinchuan: "银川",
-        Haikou: "海口",
-        Macau: "澳门",
-        "Hong Kong": "香港",
-        Zhuhai: "珠海",
-        Foshan: "佛山",
-        Wuxi: "无锡",
-        Wenzhou: "温州",
-        Huizhou: "惠州",
-        Zhongshan: "中山",
-        Jiaxing: "嘉兴",
-        Nantong: "南通",
-        Changzhou: "常州",
-        Yangzhou: "扬州",
-        Zhenjiang: "镇江",
-      };
-      return cityMap[cityName] || cityName.replace("市", "");
-    },
+    // ═══════ 缓存 ═══════
 
-    // 根据城市名获取天气
-    async fetchWeatherByCity(cityName) {
-      // 优先使用用户在主题设置中配置的 Key，留空则使用内置默认 Key
-      const DEFAULT_KEY = "SWMR1Zeyn0TCbArs1";
-      const SENIVERSE_KEY = this.$el?.dataset?.weatherKey || DEFAULT_KEY;
-
-      // 1. 尝试心知天气 (基础数据：温度、天气描述)
-      try {
-        const url = `https://api.seniverse.com/v3/weather/now.json?key=${SENIVERSE_KEY}&location=${encodeURIComponent(cityName)}&language=zh-Hans&unit=c`;
-
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(`Seniverse API error: ${res.status}`);
-
-        const data = await res.json();
-
-        const now = data.results?.[0]?.now;
-        const location = data.results?.[0]?.location;
-        if (!now) throw new Error("No weather data");
-
-        const code = parseInt(now.code);
-        const weatherData = {
-          location: location?.name || cityName,
-          weather: {
-            temp: parseFloat(now.temperature),
-            feels_like: parseFloat(now.temperature),
-            humidity: 0,
-            description: now.text,
-            wind: 0,
-          },
-          weatherIcon: this.getWeatherIconFromSeniverse(code),
-          weatherBg: this.getWeatherBgFromSeniverse(code),
-        };
-
-        await this.loadSvgIcon(weatherData.weatherIcon);
-        weatherData.weatherIconSvg = this.weatherIconSvg;
-
-        // 2. 并行请求 wttr.in 补充湿度和风速 (不阻塞主流程)
-        this.fetchExtraWeatherData(cityName);
-
-        this.applyWeatherData(weatherData);
-        this.setCache(weatherData);
-        return;
-      } catch (e) {
-        // Fallback to wttr.in
-      }
-
-      // 2. 降级到 wttr.in
-      try {
-        const url = `https://wttr.in/${encodeURIComponent(cityName)}?format=j1&lang=zh`;
-
-        const res = await fetch(url, { headers: { Accept: "application/json" } });
-        if (!res.ok) throw new Error("wttr.in error");
-
-        const data = await res.json();
-        const current = data.current_condition?.[0];
-        if (!current) throw new Error("No weather data");
-
-        const weatherCode = parseInt(current.weatherCode);
-        const weatherData = {
-          location: cityName,
-          weather: {
-            temp: parseFloat(current.temp_C),
-            feels_like: parseFloat(current.FeelsLikeC),
-            humidity: parseInt(current.humidity),
-            description: current.lang_zh?.[0]?.value || current.weatherDesc?.[0]?.value || "未知",
-            wind: parseFloat(current.windspeedKmph),
-          },
-          weatherIcon: this.getWeatherIconFromWttr(weatherCode),
-          weatherBg: this.getWeatherBgFromWttr(weatherCode),
-        };
-
-        await this.loadSvgIcon(weatherData.weatherIcon);
-        weatherData.weatherIconSvg = this.weatherIconSvg;
-
-        this.applyWeatherData(weatherData);
-        this.setCache(weatherData);
-      } catch (e) {
-        // Silent fail
-      }
-    },
-
-    // 补充获取湿度和风速 (从 wttr.in，不阻塞主流程)
-    async fetchExtraWeatherData(cityName) {
-      try {
-        const res = await fetch(`https://wttr.in/${encodeURIComponent(cityName)}?format=j1&lang=zh`, {
-          headers: { Accept: "application/json" },
-        });
-        if (!res.ok) return;
-
-        const data = await res.json();
-        const current = data.current_condition?.[0];
-        if (!current) return;
-
-        // 直接更新 Alpine 响应式属性
-        this.weather.humidity = parseInt(current.humidity || 0);
-        this.weather.wind = parseFloat(current.windspeedKmph || 0);
-        this.weather.feels_like = parseFloat(current.FeelsLikeC || this.weather.temp);
-
-        // 更新缓存
-        this.setCache({
-          location: this.location,
-          weather: this.weather,
-          weatherIcon: this.weatherIcon,
-          weatherBg: this.weatherBg,
-          weatherIconSvg: this.weatherIconSvg,
-        });
-      } catch (e) {
-        // Silent fail
-      }
-    },
-
-    // 心知天气代码映射图标 (返回完整 URL)
-    getWeatherIconFromSeniverse(code) {
-      const baseUrl = "https://basmilius.github.io/weather-icons/production/fill/all/";
-      const hour = new Date().getHours();
-      const isNight = hour >= 18 || hour < 6;
-
-      // https://seniverse.yuque.com/hyper_data/api_2018/yev2c3
-      let icon = "not-available";
-      if (code === 0 || code === 38)
-        icon = isNight ? "clear-night" : "clear-day"; // 晴/热
-      else if (code >= 1 && code <= 3)
-        icon = isNight ? "partly-cloudy-night" : "partly-cloudy-day"; // 晴间多云
-      else if (code >= 4 && code <= 9)
-        icon = "cloudy"; // 多云/阴
-      else if (code >= 10 && code <= 19)
-        icon = "rain"; // 各种雨
-      else if (code >= 20 && code <= 25)
-        icon = "snow"; // 各种雪
-      else if (code >= 26 && code <= 31)
-        icon = "fog"; // 雾/霾
-      else if (code >= 32 && code <= 36)
-        icon = "wind"; // 风
-      else if (code === 37)
-        icon = "snow"; // 冷
-      else icon = isNight ? "partly-cloudy-night" : "partly-cloudy-day";
-
-      return `${baseUrl}${icon}.svg`;
-    },
-
-    // 心知天气代码映射背景
-    // 代码参考: https://seniverse.yuque.com/hyper_data/api_2018/yev2c3
-    // 0: 晴, 1-3: 晴间多云, 4-9: 多云/阴, 10-12: 阵雨/雷阵雨, 13-19: 各种雨
-    // 20-25: 各种雪, 26-31: 雾/霾, 32-36: 风, 37: 冷, 38: 热, 99: 未知
-    getWeatherBgFromSeniverse(code) {
-      const hour = new Date().getHours();
-      const isNight = hour >= 18 || hour < 6;
-
-      // 晴天
-      if (code === 0 || code === 38) return isNight ? "night-clear" : "sunny";
-      // 晴间多云
-      if (code >= 1 && code <= 3) return isNight ? "night-cloudy" : "cloudy";
-      // 多云/阴
-      if (code >= 4 && code <= 9) return isNight ? "night-cloudy" : "cloudy";
-      // 雷阵雨 (10-12 包含雷暴)
-      if (code >= 10 && code <= 12) return "stormy";
-      // 各种雨 (13-19)
-      if (code >= 13 && code <= 19) return "rainy";
-      // 各种雪
-      if (code >= 20 && code <= 25) return "snowy";
-      // 雾/霾
-      if (code >= 26 && code <= 31) return "foggy";
-      // 风/冷 - 按多云处理
-      if (code >= 32 && code <= 37) return isNight ? "night-cloudy" : "cloudy";
-      // 默认
-      return isNight ? "night-cloudy" : "cloudy";
-    },
-
-    // 获取缓存
     getCache() {
       try {
-        const cached = localStorage.getItem(CACHE_KEY);
-        if (!cached) return null;
-
-        const data = JSON.parse(cached);
-        const cacheAge = Date.now() - data.timestamp;
-        if (cacheAge > CACHE_DURATION) {
-          localStorage.removeItem(CACHE_KEY);
-          return null;
-        }
-
-        return data;
-      } catch (e) {
+        const c = localStorage.getItem(CACHE_KEY);
+        if (!c) return null;
+        const d = JSON.parse(c);
+        if (Date.now() - d.timestamp > CACHE_DURATION) { localStorage.removeItem(CACHE_KEY); return null; }
+        return d;
+      } catch {
         return null;
       }
     },
 
-    // 保存缓存
-    // 用于追踪上次触发的天气类型，避免重复事件
     _lastDispatchedBg: null,
-
     setCache(data) {
       try {
-        const cacheData = { ...data, timestamp: Date.now() };
-        localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-
-        // 只在 weatherBg 真正变化时触发事件，避免重复
-        if (data.weatherBg && data.weatherBg !== this._lastDispatchedBg) {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ ...data, timestamp: Date.now() }));
+        // 只要有数据就派发事件（去掉 weatherBg !== _lastDispatchedBg 的限制，因为物理参数可能在同种天气下变化）
+        if (data.weatherBg) {
           this._lastDispatchedBg = data.weatherBg;
-          window.dispatchEvent(
-            new CustomEvent("sky-weather-updated", {
-              detail: { weatherBg: data.weatherBg, location: data.location },
-            }),
-          );
+          window.dispatchEvent(new CustomEvent('sky-weather-updated', {
+            detail: {
+              weatherBg: data.weatherBg,
+              location: data.location,
+              rawData: data.weather // 包含 temp, humidity, wind 等物理参数
+            }
+          }));
         }
-      } catch (e) {
-        /* ignore */
+      } catch {
+        // 忽略缓存写入失败
       }
     },
 
-    // 应用天气数据到组件
-    applyWeatherData(data) {
-      this.location = data.location;
-      this.weather = data.weather;
-      this.weatherIcon = data.weatherIcon;
-      this.weatherIconSvg = data.weatherIconSvg || "";
-      this.weatherBg = data.weatherBg || "sunny";
+    // ═══════ 通用工具 ═══════
+
+    applyWeatherData(d) {
+      this.location = d.location;
+      this.weather = d.weather;
+      this.weatherIcon = d.weatherIcon;
+      this.weatherIconSvg = d.weatherIconSvg || '';
+      this.weatherBg = d.weatherBg || 'sunny';
     },
 
-    // 加载 SVG 图标内容
-    async loadSvgIcon(url) {
-      try {
-        const res = await fetch(url);
-        if (res.ok) {
-          let svg = await res.text();
-          svg = svg.replace(/<\?xml[^>]*\?>/g, "");
-          svg = svg.replace(/<svg/, '<svg class="w-full h-full"');
-          this.weatherIconSvg = svg;
-        } else {
-          this.weatherIconSvg = "";
-        }
-      } catch (e) {
-        this.weatherIconSvg = "";
-      }
-    },
-
-    // wttr.in 天气代码转图标 URL
-    getWeatherIconFromWttr(code) {
-      const baseUrl = "https://basmilius.github.io/weather-icons/production/fill/all/";
-      const hour = new Date().getHours();
-      const isNight = hour >= 18 || hour < 6;
-
-      let icon = "not-available";
-      // wttr.in 使用 WWO (World Weather Online) 代码
-      // 参考: https://www.worldweatheronline.com/developer/api/docs/weather-icons.aspx
-      if (code === 113)
-        icon = isNight ? "clear-night" : "clear-day"; // 晴
-      else if (code === 116)
-        icon = isNight ? "partly-cloudy-night" : "partly-cloudy-day"; // 局部多云
-      else if (code === 119 || code === 122)
-        icon = "cloudy"; // 多云/阴
-      else if (code === 143 || code === 248 || code === 260)
-        icon = "fog"; // 雾
-      else if (code === 176 || code === 263 || code === 266)
-        icon = "drizzle"; // 毛毛雨
-      else if (code >= 293 && code <= 314)
-        icon = "rain"; // 雨
-      else if (code >= 179 && code <= 230)
-        icon = "snow"; // 雪
-      else if (code >= 350 && code <= 377)
-        icon = "sleet"; // 冰雹/雨夹雪
-      else if (code >= 386 && code <= 395)
-        icon = "thunderstorms"; // 雷暴
-      else if (code >= 320 && code <= 338)
-        icon = "snow"; // 雪
-      else icon = isNight ? "partly-cloudy-night" : "partly-cloudy-day";
-
-      return `${baseUrl}${icon}.svg`;
-    },
-
-    // wttr.in 天气代码转背景类型
-    getWeatherBgFromWttr(code) {
-      const hour = new Date().getHours();
-      const isNight = hour >= 18 || hour < 6;
-
-      if (code === 113) return isNight ? "night-clear" : "sunny"; // 晴
-      if (code === 116 || code === 119 || code === 122) return isNight ? "night-cloudy" : "cloudy"; // 多云
-      if (code === 143 || code === 248 || code === 260) return "foggy"; // 雾
-      if ((code >= 176 && code <= 230) || (code >= 320 && code <= 338)) return "snowy"; // 雪
-      if ((code >= 263 && code <= 314) || (code >= 350 && code <= 377)) return "rainy"; // 雨
-      if (code >= 386 && code <= 395) return "stormy"; // 雷暴
-      return isNight ? "night-cloudy" : "cloudy";
-    },
-
-    // WMO 天气代码转描述（保留用于兼容）
-    getWeatherDescription(code) {
-      const descriptions = {
-        0: "晴朗",
-        1: "大部晴朗",
-        2: "局部多云",
-        3: "多云",
-        45: "有雾",
-        48: "雾凇",
-        51: "小毛毛雨",
-        53: "毛毛雨",
-        55: "大毛毛雨",
-        56: "冻毛毛雨",
-        57: "大冻毛毛雨",
-        61: "小雨",
-        63: "中雨",
-        65: "大雨",
-        66: "小冻雨",
-        67: "大冻雨",
-        71: "小雪",
-        73: "中雪",
-        75: "大雪",
-        77: "雪粒",
-        80: "小阵雨",
-        81: "阵雨",
-        82: "大阵雨",
-        85: "小阵雪",
-        86: "大阵雪",
-        95: "雷暴",
-        96: "雷暴伴小冰雹",
-        99: "雷暴伴大冰雹",
+    getInlineWeatherIcon(url) {
+      const iconName = (url?.split('/').pop() || '').replace('.svg', '');
+      const icons = {
+        'clear-day': `<svg viewBox="0 0 48 48" class="w-full h-full text-amber-400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="24" cy="24" r="8" fill="currentColor" stroke="none"></circle><path d="M24 6v5M24 37v5M6 24h5M37 24h5M11.3 11.3l3.6 3.6M33.1 33.1l3.6 3.6M36.7 11.3l-3.6 3.6M14.9 33.1l-3.6 3.6"></path></svg>`,
+        'clear-night': `<svg viewBox="0 0 48 48" class="w-full h-full text-sky-200" fill="currentColor"><path d="M30.5 6.5c-7.3 1.8-12.7 8.3-12.7 16.1 0 9.2 7.5 16.7 16.7 16.7 2.4 0 4.6-.5 6.6-1.4-2.8 3.4-7 5.6-11.8 5.6-8.5 0-15.5-7-15.5-15.5 0-9.2 8.1-16.4 16.7-21.5Z"></path></svg>`,
+        'partly-cloudy-day': `<svg viewBox="0 0 48 48" class="w-full h-full" fill="none"><circle cx="18" cy="18" r="7" class="text-amber-400" fill="currentColor"></circle><path d="M18 6v4M18 26v4M6 18h4M26 18h4M10.5 10.5l2.8 2.8M23 23l2.8 2.8" class="text-amber-400" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M18 34h17a6 6 0 0 0 0-12 8.5 8.5 0 0 0-16.1-1.9A7 7 0 0 0 18 34Z" class="text-slate-400" fill="currentColor"></path></svg>`,
+        'partly-cloudy-night': `<svg viewBox="0 0 48 48" class="w-full h-full" fill="none"><path d="M17.5 11.5c-4.4 1.1-7.7 5-7.7 9.6 0 5.5 4.5 10 10 10 1.4 0 2.7-.3 4-.9-1.7 2-4.2 3.4-7.1 3.4-5.1 0-9.2-4.1-9.2-9.2 0-5.4 4.8-9.8 10-12.9Z" class="text-sky-200" fill="currentColor"></path><path d="M18 36h17a6 6 0 0 0 0-12 8.5 8.5 0 0 0-16.1-1.9A7 7 0 0 0 18 36Z" class="text-slate-400" fill="currentColor"></path></svg>`,
+        'cloudy': `<svg viewBox="0 0 48 48" class="w-full h-full text-slate-400" fill="currentColor"><path d="M12 35h24a8 8 0 1 0-1.4-15.9A11 11 0 0 0 13.1 22 6.5 6.5 0 0 0 12 35Z"></path></svg>`,
+        'fog': `<svg viewBox="0 0 48 48" class="w-full h-full text-slate-400" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M10 18h28"></path><path d="M6 24h36"></path><path d="M10 30h28"></path><path d="M14 36h20"></path></svg>`,
+        'drizzle': `<svg viewBox="0 0 48 48" class="w-full h-full" fill="none"><path d="M12 26h24a8 8 0 1 0-1.4-15.9A11 11 0 0 0 13.1 13 6.5 6.5 0 0 0 12 26Z" class="text-slate-400" fill="currentColor"></path><path d="M18 31l-2 5M24 33l-2 5M30 31l-2 5" class="text-sky-400" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path></svg>`,
+        'rain': `<svg viewBox="0 0 48 48" class="w-full h-full" fill="none"><path d="M12 24h24a8 8 0 1 0-1.4-15.9A11 11 0 0 0 13.1 11 6.5 6.5 0 0 0 12 24Z" class="text-slate-400" fill="currentColor"></path><path d="M17 29l-3 8M24 29l-3 10M31 29l-3 8" class="text-sky-500" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"></path></svg>`,
+        'snow': `<svg viewBox="0 0 48 48" class="w-full h-full" fill="none"><path d="M12 24h24a8 8 0 1 0-1.4-15.9A11 11 0 0 0 13.1 11 6.5 6.5 0 0 0 12 24Z" class="text-slate-400" fill="currentColor"></path><path d="M18 30v8M14.5 34h7M15.8 31.8l4.4 4.4M20.2 31.8l-4.4 4.4M30 30v8M26.5 34h7M27.8 31.8l4.4 4.4M32.2 31.8l-4.4 4.4" class="text-sky-100" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>`,
+        'thunderstorms': `<svg viewBox="0 0 48 48" class="w-full h-full" fill="none"><path d="M12 24h24a8 8 0 1 0-1.4-15.9A11 11 0 0 0 13.1 11 6.5 6.5 0 0 0 12 24Z" class="text-slate-500" fill="currentColor"></path><path d="m23 27-4 8h5l-2 7 7-10h-5l3-5Z" class="text-amber-400" fill="currentColor"></path></svg>`,
+        'not-available': `<svg viewBox="0 0 48 48" class="w-full h-full text-slate-400" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="24" cy="24" r="10"></circle><path d="M24 18v7"></path><path d="M24 33h.01"></path></svg>`,
       };
-      return descriptions[code] || "未知";
+
+      return icons[iconName] || icons['not-available'];
     },
 
-    // WMO 天气代码转 Meteocons SVG URL（动态天气图标）
-    getWeatherIcon(code) {
-      const baseUrl = "https://basmilius.github.io/weather-icons/production/fill/all/";
-      // 判断是否为夜间（18:00-06:00）
-      const hour = new Date().getHours();
-      const isNight = hour >= 18 || hour < 6;
-
-      let icon = "not-available";
-      if (code === 0) icon = isNight ? "clear-night" : "clear-day";
-      else if (code === 1) icon = isNight ? "partly-cloudy-night" : "partly-cloudy-day";
-      else if (code === 2) icon = isNight ? "partly-cloudy-night" : "partly-cloudy-day";
-      else if (code === 3) icon = "cloudy";
-      else if (code <= 48) icon = "fog";
-      else if (code <= 57) icon = "drizzle";
-      else if (code <= 65) icon = "rain";
-      else if (code <= 67) icon = "sleet";
-      else if (code <= 77) icon = "snow";
-      else if (code <= 82) icon = isNight ? "partly-cloudy-night-rain" : "partly-cloudy-day-rain";
-      else if (code <= 86) icon = isNight ? "partly-cloudy-night-snow" : "partly-cloudy-day-snow";
-      else if (code >= 95) icon = "thunderstorms";
-      else icon = isNight ? "partly-cloudy-night" : "partly-cloudy-day";
-
-      return `${baseUrl}${icon}.svg`;
-    },
-
-    // 根据天气代码获取背景类型
-    getWeatherBg(code) {
-      const hour = new Date().getHours();
-      const isNight = hour >= 18 || hour < 6;
-
-      if (code === 0) return isNight ? "night-clear" : "sunny";
-      if (code <= 3) return isNight ? "night-cloudy" : "cloudy";
-      if (code <= 48) return "foggy";
-      if (code <= 67) return "rainy";
-      if (code <= 77) return "snowy";
-      if (code <= 86) return "snowy";
-      if (code >= 95) return "stormy";
-      return isNight ? "night-cloudy" : "cloudy";
-    },
+    async loadSvgIcon(url) {
+      this.weatherIconSvg = this.getInlineWeatherIcon(url);
+    }
   };
 }
+
 /**
- * 初始化所有组件
- * 注册模板中实际使用的 Alpine.js 组件
+ * 在线统计组件
+ * 模板使用：templates/modules/widgets/online-stats.html
+ * 适配 plugin-online (Zyx-2012) 的统计 API
  */
+function onlineStats() {
+  const API_SUMMARY = '/apis/online-user.zyx2012.cn/v1alpha1/stats/summary';
+  const API_STATS = '/apis/online-user.zyx2012.cn/v1alpha1/stats';
+  const MAX_HOT_PAGES = 5;
+  const MIN_LOAD_INTERVAL = 1500;
+
+  // 已知路由 → 友好名称
+  const KNOWN_ROUTES = {
+    '/': '首页',
+    '/archives': '归档',
+    '/links': '友链',
+    '/moments': '瞬间',
+    '/friends': '朋友圈',
+    '/photos': '相册',
+    '/about': '关于',
+    '/douban': '豆瓣',
+    '/bangumis': '追番',
+    '/equipments': '装备',
+    '/steam': 'Steam',
+  };
+
+  // 标题缓存（会话级）
+  const titleCache = {};
+
+  return {
+    loading: true,
+    error: false,
+    total: 0,
+    peak24h: 0,
+    activePages: 0,
+    wsActive: false,
+    updatedAt: '',
+    hotPages: [],
+    showHotPages: true,
+    _loadTimer: null,
+    _loadPromise: null,
+    _lastLoadAt: 0,
+    _registeredHandler: null,
+    _pathChangedHandler: null,
+
+    init() {
+      this.showHotPages = this.$el.dataset.showHotPages !== 'false';
+      this._registeredHandler = () => this.scheduleLoadData();
+      this._pathChangedHandler = () => this.scheduleLoadData();
+      window.addEventListener('online-monitor:registered', this._registeredHandler);
+      window.addEventListener('online-monitor:path-changed', this._pathChangedHandler);
+      this.scheduleLoadData({ immediate: true });
+    },
+
+    destroy() {
+      if (this._registeredHandler) {
+        window.removeEventListener('online-monitor:registered', this._registeredHandler);
+      }
+      if (this._pathChangedHandler) {
+        window.removeEventListener('online-monitor:path-changed', this._pathChangedHandler);
+      }
+      clearTimeout(this._loadTimer);
+      this._loadTimer = null;
+    },
+
+    scheduleLoadData(options = {}) {
+      const now = Date.now();
+      const wait = options.immediate ? 0 : Math.max(0, MIN_LOAD_INTERVAL - (now - this._lastLoadAt));
+      clearTimeout(this._loadTimer);
+
+      if (this._loadPromise && wait === 0) return this._loadPromise;
+
+      if (wait > 0) {
+        this._loadTimer = setTimeout(() => this.loadData(), wait);
+        return null;
+      }
+
+      return this.loadData();
+    },
+
+    async loadData() {
+      if (this._loadPromise) return this._loadPromise;
+      this._lastLoadAt = Date.now();
+      this._loadPromise = this.fetchData().finally(() => {
+        this._loadPromise = null;
+      });
+      return this._loadPromise;
+    },
+
+    async fetchData() {
+      try {
+        const fetches = [fetch(API_SUMMARY)];
+        if (this.showHotPages) fetches.push(fetch(API_STATS));
+
+        const results = await Promise.allSettled(fetches);
+        const summaryRes = results[0];
+
+        if (summaryRes.status === 'fulfilled' && summaryRes.value.ok) {
+          const summary = await summaryRes.value.json();
+          this.total = summary.total || 0;
+          this.peak24h = summary.peak24h || 0;
+          this.activePages = summary.activePages || 0;
+          this.wsActive = summary.wsActive ?? false;
+
+          if (summary.updatedAt) {
+            const d = new Date(summary.updatedAt);
+            this.updatedAt = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')} 更新`;
+          }
+        } else {
+          this.error = true;
+          return;
+        }
+
+        if (this.showHotPages && results[1]?.status === 'fulfilled' && results[1].value.ok) {
+          const stats = await results[1].value.json();
+          const pages = (Array.isArray(stats) ? stats : [])
+            .filter(p => p.count > 0)
+            .sort((a, b) => b.count - a.count)
+            .slice(0, MAX_HOT_PAGES);
+
+          this.hotPages = pages.map(p => ({
+            ...p,
+            title: KNOWN_ROUTES[p.uri] || this.fallbackTitle(p.uri)
+          }));
+
+          this.resolveTitles(pages);
+        }
+
+        this.error = false;
+      } catch {
+        this.error = true;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // URI → 可读回退名（去掉前缀路径，保留最后段）
+    fallbackTitle(uri) {
+      const segments = uri.replace(/\/$/, '').split('/').filter(Boolean);
+      if (segments.length === 0) return '首页';
+      const last = segments[segments.length - 1];
+      // 解码 URL 编码
+      try { return decodeURIComponent(last); } catch { return last; }
+    },
+
+    // 批量异步解析页面标题
+    async resolveTitles(pages) {
+      const tasks = pages.map(async (page) => {
+        if (KNOWN_ROUTES[page.uri]) return; // 已有友好名
+        if (titleCache[page.uri]) {
+          this.updatePageTitle(page.uri, titleCache[page.uri]);
+          return;
+        }
+        try {
+          const res = await fetch(page.uri, { method: 'GET', headers: { 'Accept': 'text/html' } });
+          if (!res.ok) return;
+          // 只读取前 8KB 提取 <title>
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let html = '';
+          while (html.length < 8192) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            html += decoder.decode(value, { stream: true });
+            const match = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+            if (match) {
+              reader.cancel();
+              let title = match[1].trim();
+              // 去除站点后缀 " - SiteName" 或 " | SiteName"
+              title = title.replace(/\s*[-|–—]\s*[^-|–—]+$/, '').trim();
+              if (title) {
+                titleCache[page.uri] = title;
+                this.updatePageTitle(page.uri, title);
+              }
+              return;
+            }
+          }
+          reader.cancel();
+        } catch {
+          // 解析失败静默忽略，保持 URI 回退名
+        }
+      });
+      await Promise.allSettled(tasks);
+    },
+
+    updatePageTitle(uri, title) {
+      const idx = this.hotPages.findIndex(p => p.uri === uri);
+      if (idx !== -1) {
+        this.hotPages[idx].title = title;
+      }
+    }
+  };
+}
+
+/**
+ * 音乐播放器 UI 控制器
+ * 模板使用：templates/modules/music-player.html
+ * 绑定 APlayer 引擎实例（window.__skyMusicPlayer），驱动自定义 UI
+ */
+function skyMusicPlayer() {
+  return {
+    ready: false, expanded: false, playing: false, showList: false,
+    title: '加载中...', artist: '', cover: '', progress: 0,
+    tracks: [], currentIndex: 0, _ap: null, _raf: null,
+
+    init() {
+      this._applyPosition();
+      const ap = window.__skyMusicPlayer;
+      if (ap) this._bindAP(ap);
+      else window.addEventListener('sky:player:ready', e => this._bindAP(e.detail), { once: true });
+    },
+
+    _bindAP(ap) {
+      this._ap = ap;
+      this.tracks = ap.list.audios.map(a => ({ name: a.name, artist: a.artist }));
+      this._syncTrack();
+      this.ready = true;
+      ap.on('play', () => { this.playing = true; this._tickStart(); });
+      ap.on('pause', () => { this.playing = false; this._tickStop(); });
+      ap.on('listswitch', () => this._syncTrack());
+      ap.on('ended', () => this._syncTrack());
+    },
+
+    _syncTrack() {
+      const ap = this._ap;
+      if (!ap) return;
+      const a = ap.list.audios[ap.list.index];
+      if (a) {
+        this.title = a.name || 'Unknown';
+        this.artist = a.artist || '';
+        this.cover = a.cover || '';
+        this.currentIndex = ap.list.index;
+      }
+      this.playing = ap.audio ? !ap.audio.paused : false;
+      this._tickProg();
+    },
+
+    _tickStart() {
+      this._tickStop();
+      const f = () => { this._tickProg(); this._raf = requestAnimationFrame(f); };
+      this._raf = requestAnimationFrame(f);
+    },
+    _tickStop() { if (this._raf) { cancelAnimationFrame(this._raf); this._raf = null; } },
+    _tickProg() {
+      const ap = this._ap;
+      if (!ap?.audio) return;
+      const d = ap.audio.duration || 0;
+      this.progress = d > 0 ? (ap.audio.currentTime / d) * 100 : 0;
+    },
+
+    togglePlay() { this._ap?.toggle(); },
+    prev() { this._ap?.skipBack(); },
+    next() { this._ap?.skipForward(); },
+    seek(e) {
+      if (!this._ap) return;
+      const r = e.currentTarget.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+      const d = this._ap.audio.duration || 0;
+      if (d > 0) this._ap.seek(d * p);
+    },
+    switchTo(i) {
+      if (!this._ap) return;
+      this._ap.list.switch(i);
+      this._ap.play();
+      this.showList = false;
+    },
+
+    // ═══════ 后台配置定位系统 ═══════
+
+    _applyPosition() {
+      const el = this.$el;
+      const pos = el.dataset.position || 'bottom-left';
+      const ox  = parseInt(el.dataset.offsetX) || 0;
+      const oy  = parseInt(el.dataset.offsetY) || 0;
+      const [v, h] = pos.split('-'); // vertical: top|middle|bottom, horizontal: left|center|right
+
+      // 重置所有定位状态
+      el.style.left = el.style.right = el.style.top = el.style.bottom = '';
+      el.classList.remove('sky-mp-h-center', 'sky-mp-v-middle', 'sky-mp-pos-top');
+
+      // 水平定位
+      if (h === 'left')       el.style.left  = Math.max(0, ox) + 'px';
+      else if (h === 'right') el.style.right = Math.max(0, ox) + 'px';
+      else {
+        // center：用 CSS class 基于 calc() 居中，避免 transform 与 x-transition 冲突
+        el.classList.add('sky-mp-h-center');
+        el.style.setProperty('--mp-h-nudge', ox + 'px');
+      }
+
+      // 垂直定位
+      if (v === 'top') {
+        el.style.top = Math.max(0, oy) + 'px';
+        el.classList.add('sky-mp-pos-top'); // 播放列表翻转到下方
+      } else if (v === 'bottom') {
+        el.style.bottom = Math.max(0, oy) + 'px';
+      } else {
+        el.classList.add('sky-mp-v-middle');
+        el.style.setProperty('--mp-v-nudge', oy + 'px');
+      }
+    },
+
+    destroy() { this._tickStop(); }
+  };
+}
+
 function initializeAll() {
   // 注册模板中使用的组件
-  Alpine.data("floatingDock", createFloatingDock);
-  Alpine.data("shareModal", createShareModal);
-  Alpine.data("commentDrawer", createCommentDrawer);
-  Alpine.data("headerController", createHeaderController);
-  Alpine.data("navbarController", createNavbarController);
-  Alpine.data("createThemeToggle", createThemeToggle);
-  Alpine.data("sideFloatingDock", createSideFloatingDock);
+  Alpine.data('floatingDock', createFloatingDock);
+  Alpine.data('shareModal', createShareModal);
+  Alpine.data('commentDrawer', createCommentDrawer);
+  Alpine.data('headerController', createHeaderController);
+  Alpine.data('navbarController', createNavbarController);
+  Alpine.data('createThemeToggle', createThemeToggle);
+  Alpine.data('sideFloatingDock', createSideFloatingDock);
 
   // 文档页组件
-  Alpine.data("simpleFloatingDock", createSimpleFloatingDock);
-  Alpine.data("docFloatingDock", createDocFloatingDock);
-  Alpine.data("docCommentDrawer", createDocCommentDrawer);
+  Alpine.data('simpleFloatingDock', createSimpleFloatingDock);
+  Alpine.data('docFloatingDock', createDocFloatingDock);
+  Alpine.data('docCommentDrawer', createDocCommentDrawer);
 
   // 小工具组件
-  Alpine.data("welcomeWeatherCard", welcomeWeatherCard);
+  Alpine.data('welcomeWeatherCard', welcomeWeatherCard);
+  Alpine.data('onlineStats', onlineStats);
+
+  // 音乐播放器
+  Alpine.data('skyMusicPlayer', skyMusicPlayer);
 }
+
 
 export {
   initializeAll,
@@ -1411,4 +1368,6 @@ export {
   createDocFloatingDock,
   createDocCommentDrawer,
   welcomeWeatherCard,
+  onlineStats,
+  skyMusicPlayer
 };
